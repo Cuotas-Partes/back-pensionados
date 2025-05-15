@@ -79,3 +79,8 @@ INSERT INTO IPC (fechaIPC, valorIPC) VALUES
 (1995, 19.46), (1996, 21.63), (1997, 17.68), (1998, 16.70), (1999, 9.23),(2000, 8.75), (2001, 7.65), (2002, 6.99), (2003, 6.49), (2004, 5.50),
 (2005, 4.85), (2006, 4.48), (2007, 5.69), (2008, 7.67), (2009, 2.00),(2010, 3.17), (2011, 3.73), (2012, 2.44), (2013, 1.94), (2014, 3.66),
 (2015, 6.77), (2016, 5.75), (2017, 4.09), (2018, 3.18), (2019, 3.80),(2020, 1.61), (2021, 5.62), (2022, 13.12), (2023, 9.28), (2024, 5.20), (2025, 5.16);
+
+-- Insertar un periodo
+INSERT INTO PERIODO (idPeriodo, fechaIPC, fechaInicioPeriodo, fechaFinPeriodo, numeroMesadas, cuotaParteTotalPeriodo) VALUES(1, 2023, '2023-01-01', '2023-12-31', 2, 10.145);
+
+INSERT INTO PERIODO (idPeriodo, fechaIPC, fechaInicioPeriodo, fechaFinPeriodo, numeroMesadas, cuotaParteTotalPeriodo) VALUES(2, 1983, '1983-01-01', '1983-12-31', 2, 14.145);
