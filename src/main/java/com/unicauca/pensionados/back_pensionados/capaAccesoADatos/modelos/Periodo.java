@@ -1,6 +1,6 @@
 package com.unicauca.pensionados.back_pensionados.capaAccesoADatos.modelos;
 
-import java.sql.Date;
+import java.time.LocalDate;
 import java.util.List;
 
 import jakarta.persistence.CascadeType;
@@ -14,7 +14,6 @@ import jakarta.persistence.ManyToOne;
 import jakarta.persistence.OneToMany;
 import jakarta.persistence.Table;
 import jakarta.persistence.Temporal;
-import jakarta.persistence.TemporalType;
 import lombok.Getter;
 import lombok.Setter;
 
@@ -31,12 +30,10 @@ public class Periodo {
     private IPC IPC;
 
     @Column (name = "fechaInicioPeriodo", nullable = false)
-    @Temporal(TemporalType.DATE)
-    private Date fechaInicioPeriodo;
+    private LocalDate fechaInicioPeriodo;
 
     @Column (name = "fechaFinPeriodo", nullable = false)
-    @Temporal(TemporalType.DATE)
-    private Date fechaFinPeriodo;
+    private LocalDate fechaFinPeriodo;
 
     @Column (name = "numeroMesadas", nullable = false)
     private Long numeroMesadas;
@@ -44,4 +41,4 @@ public class Periodo {
     @OneToMany(mappedBy = "periodo", cascade = CascadeType.ALL)
     private List<CuotaParte> cuotasPartes;
 
-}   
+}
