@@ -32,5 +32,6 @@ public class PensionadoRespuesta {
     private Long diasDeServicio;
     private Long nitEntidad; 
     private List<TrabajoRespuesta> trabajos;
+    private BigDecimal valorTotalCuotaParte;
     
 }

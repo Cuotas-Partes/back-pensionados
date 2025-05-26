@@ -20,6 +20,7 @@ import com.unicauca.pensionados.back_pensionados.capaPresentacion.dto.respuesta.
 
 import jakarta.transaction.Transactional;
 //import java.sql.Date;
+import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
@@ -175,6 +176,9 @@ public class PensionadoServicio implements IPensionadoServicio {
         List<Pensionado> pensionados = pensionadoRepositorio.findAll();
         List<PensionadoRespuesta> respuestas = new ArrayList<>();
         for (Pensionado pensionado : pensionados) {
+
+            BigDecimal valorTotalCuotaParte = calcularValorTotalCuotaParte(pensionado);
+
             respuestas.add(PensionadoRespuesta.builder()
                 .numeroIdPersona(pensionado.getNumeroIdPersona())
                 .tipoIdPersona(pensionado.getTipoIdPersona())
@@ -196,6 +200,7 @@ public class PensionadoServicio implements IPensionadoServicio {
                         .mapToLong(Trabajo::getDiasDeServicio)
                         .findFirst()
                         .orElse(0L))
+                .valorTotalCuotaParte(valorTotalCuotaParte)
                 .trabajos(pensionado.getTrabajos().stream()
                         .map(trabajo -> TrabajoRespuesta.builder()
                                 .idTrabajo(trabajo.getIdTrabajo())
@@ -293,6 +298,8 @@ public class PensionadoServicio implements IPensionadoServicio {
             .findFirst()
             .orElse(0L);
 
+        BigDecimal valorTotalCuotaParte = calcularValorTotalCuotaParte(pensionado);
+
         List<TrabajoRespuesta> trabajos = pensionado.getTrabajos().stream()
                 .map(trabajo -> TrabajoRespuesta.builder()
                         .idTrabajo(trabajo.getIdTrabajo())
@@ -319,7 +326,28 @@ public class PensionadoServicio implements IPensionadoServicio {
                 .entidadJubilacion(pensionado.getEntidadJubilacion().getNombreEntidad())
                 .totalDiasTrabajo(totalDiasTrabajo)
                 .diasDeServicio(diasDeServicioJubilacion)
+                .valorTotalCuotaParte(valorTotalCuotaParte)
                 .trabajos(trabajos)
                 .build();
+    }
+
+    /**
+     * Calcula el valor total de cuota parte para un pensionado.
+     * Recalcula las cuotas parte para asegurar que esten actualizadas y luego suma todos los valores.
+     * 
+     * @param pensionado el pensionado para el cual calcular el valor total de cuota parte
+     * @return el valor total de cuota parte como BigDecimal
+     */
+    private BigDecimal calcularValorTotalCuotaParte(Pensionado pensionado) {
+        // Recalcular las cuotas parte del pensionado para asegurar que esten actualizadas
+        cuotaParteServicio.recalcularCuotasPartesPorPensionado(pensionado);
+        
+        // Calcular el valor total de cuota parte sumando todas las cuotas parte de los trabajos del pensionado
+        return pensionado.getTrabajos().stream()
+                .map(trabajo -> {
+                    Optional<CuotaParte> cuotaParteOpt = cuotaParteRepositorio.findByTrabajoIdTrabajo(trabajo.getIdTrabajo());
+                    return cuotaParteOpt.map(CuotaParte::getValorCuotaParte).orElse(BigDecimal.ZERO);
+                })
+                .reduce(BigDecimal.ZERO, BigDecimal::add);
     }
 }
