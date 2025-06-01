@@ -17,12 +17,15 @@ import com.unicauca.pensionados.back_pensionados.capaPresentacion.dto.peticion.R
 
 import com.unicauca.pensionados.back_pensionados.capaPresentacion.dto.respuesta.PensionadoRespuesta;
 import com.unicauca.pensionados.back_pensionados.capaPresentacion.dto.respuesta.TrabajoRespuesta;
+import com.unicauca.pensionados.back_pensionados.capaAccesoADatos.modelos.Sucesor;
+import com.unicauca.pensionados.back_pensionados.capaPresentacion.dto.respuesta.SucesorRespuesta;
 
 import jakarta.transaction.Transactional;
 //import java.sql.Date;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
 
 
@@ -179,6 +182,26 @@ public class PensionadoServicio implements IPensionadoServicio {
         List<Pensionado> pensionados = pensionadoRepositorio.findAll();
         List<PensionadoRespuesta> respuestas = new ArrayList<>();
         for (Pensionado pensionado : pensionados) {
+            // Mapeo de Sucesores
+            List<SucesorRespuesta> sucesoresRespuesta = new ArrayList<>();
+            if (pensionado.getSucesores() != null) {
+                sucesoresRespuesta = pensionado.getSucesores().stream()
+                    .map(sucesor -> SucesorRespuesta.builder()
+                        .numeroIdPersona(sucesor.getNumeroIdPersona())
+                        .tipoIdPersona(sucesor.getTipoIdPersona())
+                        .nombrePersona(sucesor.getNombrePersona())
+                        .apellidosPersona(sucesor.getApellidosPersona())
+                        .fechaNacimientoPersona(sucesor.getFechaNacimientoPersona())
+                        .fechaExpedicionDocumentoIdPersona(sucesor.getFechaExpedicionDocumentoIdPersona())
+                        .estadoPersona(sucesor.getEstadoPersona())
+                        .generoPersona(sucesor.getGeneroPersona())
+                        .fechaDefuncionPersona(sucesor.getFechaDefuncionPersona())
+                        .fechaInicioSucesion(sucesor.getFechaInicioSucesion())
+                        .porcentajePension(sucesor.getPorcentajePension())
+                        .build())
+                    .collect(Collectors.toList());
+            }
+
             respuestas.add(PensionadoRespuesta.builder()
                 .numeroIdPersona(pensionado.getNumeroIdPersona())
                 .tipoIdPersona(pensionado.getTipoIdPersona())
@@ -208,7 +231,9 @@ public class PensionadoServicio implements IPensionadoServicio {
                                 .numeroIdPersona(trabajo.getPensionado().getNumeroIdPersona())
                                 .entidadJubilacion(trabajo.getEntidad().getNombreEntidad())
                                 .build())
-                        .toList())
+                        .collect(Collectors.toList()))
+                .sucesores(sucesoresRespuesta)
+                .aplicarIPCPrimerPeriodo(pensionado.isAplicarIPCPrimerPeriodo())
                 .build());
         }
         return respuestas;

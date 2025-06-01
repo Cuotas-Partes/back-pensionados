@@ -9,6 +9,8 @@ import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
+import com.unicauca.pensionados.back_pensionados.capaPresentacion.dto.respuesta.SucesorRespuesta;
+
 @Data
 @Builder
 @NoArgsConstructor
@@ -32,6 +34,7 @@ public class PensionadoRespuesta {
     private Long diasDeServicio;
     private Long nitEntidad; 
     private List<TrabajoRespuesta> trabajos;
+    private List<SucesorRespuesta> sucesores;
     private boolean aplicarIPCPrimerPeriodo;
     
 }

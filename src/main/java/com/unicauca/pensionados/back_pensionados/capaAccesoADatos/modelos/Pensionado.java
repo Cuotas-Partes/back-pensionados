@@ -55,6 +55,10 @@ public class Pensionado extends Persona{
     @OneToMany (mappedBy = "pensionado", cascade = CascadeType.ALL)
     private List <Trabajo> trabajos;
 
+    //relacion 1 a muchos con sucesor
+    @JsonManagedReference("pensionado-sucesor")
+    @OneToMany(mappedBy = "pensionado", cascade = CascadeType.ALL, orphanRemoval = true)
+    private List<Sucesor> sucesores;
 
     //Declaramos atributos de tipo JavaMoney para poder realizar calculos mas precisos
     @Transient 
