@@ -1,0 +1,47 @@
+# Git files
+.git
+.gitignore
+.gitattributes
+
+# Documentation
+README.md
+AUTOMATION.md
+*.md
+
+# IDE files
+.idea
+.vscode
+*.iml
+*.ipr
+*.iws
+
+# Build artifacts (except target for JAR)
+.mvn/wrapper/maven-wrapper.jar
+mvnw
+mvnw.cmd
+
+# Docker files
+Dockerfile*
+docker-compose*.yml
+deploy.sh
+dev.sh
+
+# Secrets and config
+secrets/
+*.env
+.env.*
+
+# Logs
+logs/
+*.log
+
+# Temporary files
+tmp/
+temp/
+*.tmp
+*.swp
+*.swo
+
+# OS files
+.DS_Store
+Thumbs.db

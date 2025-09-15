@@ -1,0 +1,95 @@
+version: '3.8'
+
+services:
+  # MySQL Database
+  mysql:
+    image: mysql:8.0
+    container_name: pensionados-mysql
+    restart: unless-stopped
+    environment:
+      MYSQL_ROOT_PASSWORD: root
+      MYSQL_DATABASE: cuotapartes_pensionados_db
+      MYSQL_USER: pensionados_user
+      MYSQL_PASSWORD: pensionados_pass
+    ports:
+      - "3306:3306"
+    volumes:
+      - mysql_data:/var/lib/mysql
+      - ./docker/mysql/init:/docker-entrypoint-initdb.d
+    networks:
+      - pensionados-network
+    healthcheck:
+      test: ["CMD", "mysqladmin", "ping", "-h", "localhost"]
+      timeout: 20s
+      retries: 10
+
+  # Spring Boot Application
+  app:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: pensionados-app
+    restart: unless-stopped
+    ports:
+      - "8080:8080"
+    environment:
+      # Database configuration
+      SPRING_DATASOURCE_URL: jdbc:mysql://mysql:3306/cuotapartes_pensionados_db?createDatabaseIfNotExist=true&useSSL=false&serverTimezone=UTC&allowPublicKeyRetrieval=true
+      SPRING_DATASOURCE_USERNAME: pensionados_user
+      SPRING_DATASOURCE_PASSWORD: pensionados_pass
+      SPRING_DATASOURCE_DRIVER_CLASS_NAME: com.mysql.cj.jdbc.Driver
+      
+      # JPA Configuration
+      SPRING_JPA_HIBERNATE_DDL_AUTO: update
+      SPRING_JPA_SHOW_SQL: "false"
+      SPRING_JPA_PROPERTIES_HIBERNATE_DIALECT: org.hibernate.dialect.MySQL8Dialect
+      
+      # Server configuration
+      SERVER_PORT: 8080
+      SERVER_SERVLET_CONTEXT_PATH: /api
+      
+      # JWT Configuration (use environment variables in production)
+      JWT_SECRET: n2r5u8x/A%D*G-KaPdSgVkYp3s6v9y$B&E(H+MbQeThWmZq4t7w!z%C*F-J@NcRf
+      JWT_EXPIRATION: 86400000
+      
+      # Timezone
+      SPRING_JACKSON_TIME_ZONE: America/Bogota
+    depends_on:
+      mysql:
+        condition: service_healthy
+    networks:
+      - pensionados-network
+    volumes:
+      - app_logs:/app/logs
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:8080/api/actuator/health"]
+      interval: 30s
+      timeout: 10s
+      retries: 5
+      start_period: 40s
+
+  # Adminer for database management (optional)
+  adminer:
+    image: adminer:latest
+    container_name: pensionados-adminer
+    restart: unless-stopped
+    ports:
+      - "8081:8080"
+    environment:
+      ADMINER_DEFAULT_SERVER: mysql
+    depends_on:
+      - mysql
+    networks:
+      - pensionados-network
+
+# Volumes for data persistence
+volumes:
+  mysql_data:
+    driver: local
+  app_logs:
+    driver: local
+
+# Networks
+networks:
+  pensionados-network:
+    driver: bridge

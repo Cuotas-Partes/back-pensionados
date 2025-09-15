@@ -1,0 +1,99 @@
+name: Docker Security Scan
+
+on:
+  push:
+    branches: [ main ]
+    paths: [ 'Dockerfile', 'docker-compose*.yml' ]
+  pull_request:
+    branches: [ main ]
+    paths: [ 'Dockerfile', 'docker-compose*.yml' ]
+  schedule:
+    # Run every day at 2 AM UTC
+    - cron: '0 2 * * *'
+  workflow_dispatch:
+
+jobs:
+  docker-security-scan:
+    name: 🐳 Docker Security Scan
+    runs-on: ubuntu-latest
+
+    steps:
+    - name: 📥 Checkout code
+      uses: actions/checkout@v4
+
+    - name: 🐳 Set up Docker Buildx
+      uses: docker/setup-buildx-action@v3
+
+    - name: 🏗️ Build Docker image
+      uses: docker/build-push-action@v5
+      with:
+        context: .
+        push: false
+        tags: pensionados-app:test
+        cache-from: type=gha
+        cache-to: type=gha,mode=max
+
+    - name: 🔍 Run Trivy vulnerability scanner
+      uses: aquasecurity/trivy-action@master
+      with:
+        image-ref: 'pensionados-app:test'
+        format: 'sarif'
+        output: 'trivy-results.sarif'
+
+    - name: 📤 Upload Trivy scan results to GitHub Security tab
+      uses: github/codeql-action/upload-sarif@v3
+      if: always()
+      with:
+        sarif_file: 'trivy-results.sarif'
+
+    - name: 🔍 Run Trivy vulnerability scanner (table format)
+      uses: aquasecurity/trivy-action@master
+      with:
+        image-ref: 'pensionados-app:test'
+        format: 'table'
+        exit-code: '1'
+        ignore-unfixed: true
+        vuln-type: 'os,library'
+        severity: 'CRITICAL,HIGH'
+
+    - name: 🔍 Scan Dockerfile with Hadolint
+      uses: hadolint/hadolint-action@v3.1.0
+      with:
+        dockerfile: Dockerfile
+        format: sarif
+        output-file: hadolint-results.sarif
+        no-fail: true
+
+    - name: 📤 Upload Hadolint scan results
+      uses: github/codeql-action/upload-sarif@v3
+      if: always()
+      with:
+        sarif_file: hadolint-results.sarif
+
+  docker-compose-validation:
+    name: 🐳 Docker Compose Validation
+    runs-on: ubuntu-latest
+
+    steps:
+    - name: 📥 Checkout code
+      uses: actions/checkout@v4
+
+    - name: 🔧 Validate docker-compose.yml
+      run: |
+        docker-compose -f docker-compose.yml config
+        docker-compose -f docker-compose.prod.yml config
+
+    - name: 🧪 Test docker-compose setup
+      run: |
+        # Test that all services can be started
+        docker-compose -f docker-compose.yml up -d
+        sleep 30
+        
+        # Check if services are running
+        docker-compose -f docker-compose.yml ps
+        
+        # Check application health
+        timeout 60 bash -c 'until curl -f http://localhost:8080/api/actuator/health; do sleep 5; done'
+        
+        # Cleanup
+        docker-compose -f docker-compose.yml down -v

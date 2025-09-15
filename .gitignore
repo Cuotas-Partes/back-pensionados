@@ -31,3 +31,9 @@ build/
 
 ### VS Code ###
 .vscode/
+
+### Docker and Production Secrets ###
+secrets/
+*.env
+.env.*
+docker-compose.override.yml

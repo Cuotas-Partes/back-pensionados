@@ -48,6 +48,10 @@
 		</dependency>
 		<dependency>
 			<groupId>org.springframework.boot</groupId>
+			<artifactId>spring-boot-starter-actuator</artifactId>
+		</dependency>
+		<dependency>
+			<groupId>org.springframework.boot</groupId>
 			<artifactId>spring-boot-devtools</artifactId>
 			<scope>runtime</scope>
 			<optional>true</optional>
@@ -130,6 +134,41 @@
 						</exclude>
 					</excludes>
 				</configuration>
+			</plugin>
+			
+			<!-- OWASP Dependency Check for security scanning -->
+			<plugin>
+				<groupId>org.owasp</groupId>
+				<artifactId>dependency-check-maven</artifactId>
+				<version>10.0.4</version>
+				<configuration>
+					<suppressionFiles>
+						<suppressionFile>owasp-dependency-check-suppressions.xml</suppressionFile>
+					</suppressionFiles>
+					<failBuildOnCVSS>7</failBuildOnCVSS>
+					<format>ALL</format>
+				</configuration>
+			</plugin>
+			
+			<!-- JaCoCo for code coverage -->
+			<plugin>
+				<groupId>org.jacoco</groupId>
+				<artifactId>jacoco-maven-plugin</artifactId>
+				<version>0.8.12</version>
+				<executions>
+					<execution>
+						<goals>
+							<goal>prepare-agent</goal>
+						</goals>
+					</execution>
+					<execution>
+						<id>report</id>
+						<phase>test</phase>
+						<goals>
+							<goal>report</goal>
+						</goals>
+					</execution>
+				</executions>
 			</plugin>
 		</plugins>
 	</build>

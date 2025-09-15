@@ -1,0 +1,118 @@
+version: '3.8'
+
+services:
+  # MySQL Database for Production
+  mysql:
+    image: mysql:8.0
+    container_name: pensionados-mysql-prod
+    restart: always
+    environment:
+      MYSQL_ROOT_PASSWORD_FILE: /run/secrets/mysql_root_password
+      MYSQL_DATABASE: cuotapartes_pensionados_db
+      MYSQL_USER: pensionados_user
+      MYSQL_PASSWORD_FILE: /run/secrets/mysql_password
+    ports:
+      - "3306:3306"
+    volumes:
+      - mysql_prod_data:/var/lib/mysql
+      - ./docker/mysql/production.cnf:/etc/mysql/conf.d/production.cnf:ro
+    networks:
+      - pensionados-prod-network
+    secrets:
+      - mysql_root_password
+      - mysql_password
+    healthcheck:
+      test: ["CMD", "mysqladmin", "ping", "-h", "localhost"]
+      timeout: 20s
+      retries: 10
+      interval: 30s
+
+  # Spring Boot Application for Production
+  app:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: pensionados-app-prod
+    restart: always
+    ports:
+      - "80:8080"
+    environment:
+      # Database configuration
+      SPRING_DATASOURCE_URL: jdbc:mysql://mysql:3306/cuotapartes_pensionados_db?useSSL=true&requireSSL=true&serverTimezone=UTC&allowPublicKeyRetrieval=true
+      SPRING_DATASOURCE_USERNAME: pensionados_user
+      SPRING_DATASOURCE_PASSWORD_FILE: /run/secrets/mysql_password
+      
+      # JPA Configuration for Production
+      SPRING_JPA_HIBERNATE_DDL_AUTO: validate
+      SPRING_JPA_SHOW_SQL: "false"
+      SPRING_JPA_PROPERTIES_HIBERNATE_DIALECT: org.hibernate.dialect.MySQL8Dialect
+      
+      # Server configuration
+      SERVER_PORT: 8080
+      SERVER_SERVLET_CONTEXT_PATH: /api
+      
+      # JWT Configuration (use secrets in production)
+      JWT_SECRET_FILE: /run/secrets/jwt_secret
+      JWT_EXPIRATION: 86400000
+      
+      # Production profile
+      SPRING_PROFILES_ACTIVE: production
+      
+      # Timezone
+      SPRING_JACKSON_TIME_ZONE: America/Bogota
+      
+      # Production optimizations
+      JAVA_OPTS: "-Xmx1g -Xms512m -XX:+UseG1GC -XX:+UseContainerSupport -XX:MaxRAMPercentage=75.0"
+    depends_on:
+      mysql:
+        condition: service_healthy
+    networks:
+      - pensionados-prod-network
+    secrets:
+      - mysql_password
+      - jwt_secret
+    volumes:
+      - app_prod_logs:/app/logs
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:8080/api/actuator/health"]
+      interval: 30s
+      timeout: 10s
+      retries: 5
+      start_period: 60s
+
+  # Nginx Reverse Proxy (optional for production)
+  nginx:
+    image: nginx:alpine
+    container_name: pensionados-nginx
+    restart: always
+    ports:
+      - "443:443"
+      - "80:80"
+    volumes:
+      - ./docker/nginx/nginx.conf:/etc/nginx/nginx.conf:ro
+      - ./docker/nginx/ssl:/etc/nginx/ssl:ro
+    depends_on:
+      - app
+    networks:
+      - pensionados-prod-network
+
+# Secrets for production
+secrets:
+  mysql_root_password:
+    file: ./secrets/mysql_root_password.txt
+  mysql_password:
+    file: ./secrets/mysql_password.txt
+  jwt_secret:
+    file: ./secrets/jwt_secret.txt
+
+# Volumes for data persistence
+volumes:
+  mysql_prod_data:
+    driver: local
+  app_prod_logs:
+    driver: local
+
+# Networks
+networks:
+  pensionados-prod-network:
+    driver: bridge

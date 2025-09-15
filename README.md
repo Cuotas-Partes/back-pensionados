@@ -118,7 +118,40 @@ git clone https://github.com/Cuotas-Partes/back-pensionados.git
   
   9. Puedes probar los endpoints utilizando Postman o algún cliente REST.
 
-##📤 6. Pasos para subir cambios
+## 📤 6. Automatización y Despliegue
+
+### 🚀 GitHub Actions y Docker
+
+Este proyecto incluye automatización completa con GitHub Actions y Docker. Para más detalles, consulta [AUTOMATION.md](./AUTOMATION.md).
+
+**Comandos rápidos:**
+
+```bash
+# Script de desarrollo (recomendado)
+./dev.sh build          # Construir aplicación
+./dev.sh test            # Ejecutar pruebas
+./dev.sh docker          # Construir imagen Docker
+./dev.sh docker-run      # Ejecutar en Docker
+
+# Despliegue con Docker Compose
+./deploy.sh dev          # Desarrollo
+./deploy.sh staging      # Staging
+./deploy.sh production   # Producción
+
+# Docker manual
+docker-compose up -d     # Iniciar servicios
+docker-compose down      # Detener servicios
+```
+
+**Características de automatización:**
+- ✅ CI/CD Pipeline completo
+- ✅ Tests automatizados con MySQL
+- ✅ Escaneo de seguridad (OWASP, CodeQL, Trivy)
+- ✅ Construcción de imágenes Docker
+- ✅ Despliegue multi-entorno
+- ✅ Actualizaciones automáticas de dependencias
+
+## 📤 7. Pasos para subir cambios
    ```bash
    #Fork
    Haz un fork del repositorio.
@@ -137,7 +170,7 @@ git clone https://github.com/Cuotas-Partes/back-pensionados.git
    ```
 Luego, ve a GitHub y crea un Pull Request hacia la rama main.
 
-## 7. 📦 Dependencias principales (pom.xml)
+## 8. 📦 Dependencias principales (pom.xml)
    ```xml
    <dependencies>
     <!-- Spring Boot Starters -->
@@ -225,7 +258,7 @@ Luego, ve a GitHub y crea un Pull Request hacia la rama main.
     </dependency>
 </dependencies>
 ```
-## 8. 🧑‍💻 Equipo de desarrollo:
+## 9. 🧑‍💻 Equipo de desarrollo:
    
 Proyecto desarrollado por estudiantes de la Universidad del Cauca.
 
