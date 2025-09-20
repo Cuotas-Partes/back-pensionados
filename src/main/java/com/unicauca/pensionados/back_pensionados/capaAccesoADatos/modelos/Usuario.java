@@ -58,6 +58,7 @@ public class Usuario implements UserDetails{
                 .collect(Collectors.toList());
     }
 
+
     /**
      * Indica si la cuenta no ha expirado.
      * Por ahora, siempre devuelve true. A futuro, se podría ligar a un campo en la BD.
