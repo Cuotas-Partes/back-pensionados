@@ -1,6 +1,33 @@
+-- Insertar roles
+INSERT INTO ROL (nombre, activo, creado_en, actualizado_en) VALUES ('ADMIN', TRUE, NOW(), NOW());
+
+INSERT INTO ROL (nombre, activo, creado_en, actualizado_en) VALUES ('INVITADO', TRUE, NOW(), NOW());
+
+-- Acciones para rol ADMIN
+INSERT INTO ROL_ACCION (rol_id, accion)
+SELECT id, 'EJECUCION_PAGOS' FROM ROL WHERE nombre='ADMIN';
+INSERT INTO ROL_ACCION (rol_id, accion)
+SELECT id, 'REGISTRO_PENSIONADO' FROM ROL WHERE nombre='ADMIN';
+INSERT INTO ROL_ACCION (rol_id, accion)
+SELECT id, 'PAGO_CUOTA_PARTE' FROM ROL WHERE nombre='ADMIN';
+INSERT INTO ROL_ACCION (rol_id, accion)
+SELECT id, 'GENERAR_REPORTE' FROM ROL WHERE nombre='ADMIN';
+INSERT INTO ROL_ACCION (rol_id, accion)
+SELECT id, 'CONSULTAR_HISTORIAL' FROM ROL WHERE nombre='ADMIN';
+
+-- Acciones INVITADO
+INSERT INTO ROL_ACCION (rol_id, accion) SELECT id, 'CONSULTAR_HISTORIAL' FROM ROL WHERE nombre='INVITADO';
+
+
+
 --Insertar Usuario por Defecto
-INSERT INTO USUARIO (id, apellido, nombre, password, username)
-VALUES (1, 'Unicauca', 'pensiones', '$2a$10$R6MoChK7sDHuSTrON3BC5.jENlU5fn/tMRP0v7frkmiCMfDafgKJK', 'pensiones@unicauca.edu.co');
+INSERT INTO USUARIO (apellido, nombre, password, username, rol_id)
+SELECT 'Unicauca', 'pensiones',
+       '$2a$10$R6MoChK7sDHuSTrON3BC5.jENlU5fn/tMRP0v7frkmiCMfDafgKJK',
+       'pensiones@unicauca.edu.co',
+       r.id
+FROM ROL r
+WHERE r.nombre='INVITADO';
 
 
 INSERT INTO ENTIDAD (nitEntidad, nombreEntidad, direccionEntidad, emailEntidad, telefonoEntidad, estadoEntidad)

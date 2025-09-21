@@ -15,9 +15,24 @@ DROP TABLE IF EXISTS IPC;
 DROP TABLE IF EXISTS ENTIDAD;
 DROP TABLE IF EXISTS PERSONA;
 DROP TABLE IF EXISTS USUARIO;
-
+DROP TABLE IF EXISTS ROL;
+DROP TABLE IF EXISTS ROL_ACCION;
+DROP TABLE IF EXISTS LOG_CAMBIO;
+;
 SET FOREIGN_KEY_CHECKS=1;
 
+/*==============================================================*/
+/* Table: ROL                                               */
+/*==============================================================*/
+CREATE TABLE ROL (
+   id BIGINT NOT NULL AUTO_INCREMENT,
+   nombre VARCHAR(60) NOT NULL,
+   activo BOOLEAN NOT NULL DEFAULT TRUE,
+   creado_en DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
+   actualizado_en DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+   PRIMARY KEY (id),
+   UNIQUE (nombre)
+);
 /*==============================================================*/
 /* Table: USUARIO                                               */
 /*==============================================================*/
@@ -28,7 +43,9 @@ CREATE TABLE USUARIO (
    /*email VARCHAR(100) NOT NULL,*/
    username VARCHAR(100) NOT NULL,
    password VARCHAR(200) NOT NULL,
-   PRIMARY KEY (id)
+   rol_id BIGINT NOT NULL,
+   PRIMARY KEY (id),
+   FOREIGN KEY (rol_id) REFERENCES ROL(id)
 );
 
 /*==============================================================*/
@@ -79,7 +96,7 @@ CREATE TABLE PENSIONADO (
    valorInicialPension DECIMAL (19,0) NOT NULL,
    resolucionPension  VARCHAR(200) NOT NULL,
    totalDiasTrabajo BIGINT,
-   aplicarIPCPrimerPeriodo BOOLEAN NOT NULL DEFAULT FALSE, 
+   aplicarIPCPrimerPeriodo BOOLEAN NOT NULL DEFAULT FALSE,
    PRIMARY KEY (numeroIdPersona),
    FOREIGN KEY (numeroIdPersona) REFERENCES PERSONA(numeroIdPersona),
    FOREIGN KEY (nitEntidad) REFERENCES ENTIDAD(nitEntidad)
@@ -141,7 +158,46 @@ CREATE TABLE PERIODO (
    cuotaParteTotalAnio DECIMAL (19,0) NOT NULL,
    incrementoLey476 DECIMAL (19,2),
    PRIMARY KEY (idPeriodo),
-   FOREIGN KEY (fechaIPC) REFERENCES IPC(fechaIPC), 
+   FOREIGN KEY (fechaIPC) REFERENCES IPC(fechaIPC),
    FOREIGN KEY (idCuotaParte) REFERENCES CUOTA_PARTE(idCuotaParte)
 );
+
+
+
+/*==============================================================*/
+/* Table: ROL_ACCION                                               */
+/*==============================================================*/
+CREATE TABLE ROL_ACCION (
+   rol_id BIGINT NOT NULL,
+   accion ENUM(
+     'EJECUCION_PAGOS',
+     'REGISTRO_PENSIONADO',
+     'PAGO_CUOTA_PARTE',
+     'GENERAR_REPORTE',
+     'CONSULTAR_HISTORIAL'
+   ) NOT NULL,
+   PRIMARY KEY (rol_id, accion),
+   FOREIGN KEY (rol_id) REFERENCES ROL(id)
+     ON UPDATE CASCADE
+     ON DELETE CASCADE
+);
+/*==============================================================*/
+/* Table: LOG_CAMBIO                                               */
+/*==============================================================*/
+CREATE TABLE LOG_CAMBIO (
+   id BIGINT NOT NULL AUTO_INCREMENT,
+   entidad VARCHAR(80) NOT NULL,
+   accion ENUM('CREAR','ACTUALIZAR','ELIMINAR','CONSULTAR') NOT NULL,
+   valor_anterior JSON NULL,
+   valor_nuevo JSON NULL,
+   fecha DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
+   usuario_id BIGINT NOT NULL,
+   PRIMARY KEY (id),
+   FOREIGN KEY (usuario_id) REFERENCES USUARIO(id)
+     ON UPDATE CASCADE
+     ON DELETE CASCADE,
+   INDEX idx_log_usuario (usuario_id),
+   INDEX idx_log_fecha (fecha)
+);
+
 
