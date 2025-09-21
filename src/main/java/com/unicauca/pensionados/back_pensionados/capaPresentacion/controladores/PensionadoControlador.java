@@ -18,16 +18,22 @@ import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import io.swagger.v3.oas.annotations.tags.Tag;
 
 import java.util.List;
+import java.util.stream.Collectors;
+
 import com.unicauca.pensionados.back_pensionados.capaAccesoADatos.modelos.Pensionado;
 
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.GrantedAuthority;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PatchMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 
+//IMPORTS PARA EL METODO DE VERIFICACION DE ROL
+import org.springframework.security.core.Authentication;
+import java.util.Collection;
 
 @RestController
 @RequestMapping("/pensionado")
@@ -256,5 +262,33 @@ public class PensionadoControlador {
         List<EntidadCuotaParteRespuesta> response = pensionadoServicio.getEntidadesYCuotaParteByPensionadoId(pensionadoId);
         return ResponseEntity.ok(response);
     }
+
+    //NUEVO METOD IMPLEMENTADO
+    //VERIFICA EL ROL DEL USUARIO PARA SABER SUS PERMISOS
+        @GetMapping("/verificar-permisos")
+        @Operation(summary = "Verificar los permisos del usuario autenticado", description = "Endpoint de diagnóstico para ver los permisos (acciones) asociados al token.")
+        public ResponseEntity<String> verificarPermisos(Authentication authentication) {
+        
+        String nombreUsuario = authentication.getName();
+        Collection<? extends GrantedAuthority> authorities = authentication.getAuthorities();
+
+        // Convertimos la lista de permisos a un String para mostrarla
+        String permisos = authorities.stream()
+                                        .map(GrantedAuthority::getAuthority)
+                                        .collect(Collectors.joining(", "));
+
+        // Verificamos si tiene un permiso específico
+        boolean puedeRegistrar = authorities.stream()
+                                                .anyMatch(auth -> auth.getAuthority().equals("REGISTRO_PENSIONADO"));
+
+        String mensaje = "¡Hola, " + nombreUsuario + "! Tus permisos son: [" + permisos + "]. ";
+        if (puedeRegistrar) {
+                mensaje += "Tienes permiso para registrar pensionados.";
+        } else {
+                mensaje += "NO tienes permiso para registrar pensionados.";
+        }
+        
+        return ResponseEntity.ok(mensaje);
+        }
 
 }

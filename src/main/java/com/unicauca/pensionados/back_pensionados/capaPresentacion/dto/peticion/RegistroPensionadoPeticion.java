@@ -2,9 +2,12 @@ package com.unicauca.pensionados.back_pensionados.capaPresentacion.dto.peticion;
 
 import java.math.BigDecimal;
 //import java.time.LocalDate;
+import java.time.LocalDate;
 import java.util.List;
 import java.sql.Date;
 
+import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
+import com.unicauca.pensionados.back_pensionados.capaPresentacion.dto.util.MultiDateDeserializer;
 import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -27,19 +30,23 @@ public class RegistroPensionadoPeticion {
     @Schema(description = "Apellidos de la persona", example = "Perez")
     private String apellidosPersona;
     @Schema(description = "Fecha de nacimiento de la persona", example = "1950-01-15")
-    private Date fechaNacimientoPersona;
+    @JsonDeserialize(using =  MultiDateDeserializer.class)
+    private LocalDate fechaNacimientoPersona;
     @Schema(description = "Fecha de expedición del documento de identidad de la persona", example = "1970-01-15")
-    private Date fechaExpedicionDocumentoIdPersona;
+    @JsonDeserialize(using =  MultiDateDeserializer.class)
+    private LocalDate fechaExpedicionDocumentoIdPersona;
     @Schema(description = "Estado de la persona (Activo, Fallecido)", example = "Activo")
     private String estadoPersona;
     @Schema(description = "Género de la persona", example = "Masculino")
     private String generoPersona;
     @Schema(description = "Fecha de defunción de la persona (si aplica)", example = "null")
-    private Date fechaDefuncionPersona;
+    @JsonDeserialize(using =  MultiDateDeserializer.class)
+    private LocalDate fechaDefuncionPersona;
 
     //Datos de Pensionado
     @Schema(description = "Fecha de inicio de la pensión", example = "2010-05-20")
-    private Date fechaInicioPension;
+    @JsonDeserialize(using =  MultiDateDeserializer.class)
+    private LocalDate fechaInicioPension;
     @Schema(description = "Valor inicial de la pensión", example = "1500000.00")
     private BigDecimal valorInicialPension;
     @Schema(description = "Resolución de la pensión", example = "RES-12345")

@@ -5,6 +5,7 @@ import java.util.Date;
 
 import com.fasterxml.jackson.annotation.JsonBackReference;
 
+import com.fasterxml.jackson.annotation.JsonFormat;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.JoinColumn;
@@ -24,7 +25,7 @@ import lombok.Setter;
 public class Sucesor extends Persona{
     @Column (name = "fechaInicioSucesion", nullable = false)
     @Temporal(TemporalType.DATE)
-    private Date fechaInicioSucesion;
+    private LocalDate fechaInicioSucesion;
     
     @Column (name = "porcentajePension", nullable = false)
     private Double porcentajePension;

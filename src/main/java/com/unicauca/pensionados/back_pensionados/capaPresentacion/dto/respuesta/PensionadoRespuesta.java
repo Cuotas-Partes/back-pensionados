@@ -1,6 +1,7 @@
 package com.unicauca.pensionados.back_pensionados.capaPresentacion.dto.respuesta;
 
 import java.math.BigDecimal;
+import java.time.LocalDate;
 import java.util.Date;
 import java.util.List;
 
@@ -26,17 +27,17 @@ public class PensionadoRespuesta {
     @Schema(description = "Apellidos de la persona", example = "Perez")
     private String apellidosPersona;
     @Schema(description = "Fecha de nacimiento de la persona", example = "1950-01-15")
-    private Date fechaNacimientoPersona;
+    private LocalDate fechaNacimientoPersona;
     @Schema(description = "Fecha de expedición del documento de identidad de la persona", example = "1970-01-15")
-    private Date fechaExpedicionDocumentoIdPersona;
+    private LocalDate fechaExpedicionDocumentoIdPersona;
     @Schema(description = "Estado de la persona (Activo, Fallecido)", example = "Activo")
     private String estadoPersona;
     @Schema(description = "Género de la persona", example = "Masculino")
     private String generoPersona;
     @Schema(description = "Fecha de defunción de la persona (si aplica)", example = "null")
-    private Date fechaDefuncionPersona;
+    private LocalDate fechaDefuncionPersona;
     @Schema(description = "Fecha de inicio de la pensión", example = "2010-05-20")
-    private Date fechaInicioPension;
+    private LocalDate fechaInicioPension;
     @Schema(description = "Valor inicial de la pensión", example = "1500000.00")
     private BigDecimal valorInicialPension;
     @Schema(description = "Resolución de la pensión", example = "RES-12345")

@@ -1,6 +1,11 @@
 package com.unicauca.pensionados.back_pensionados.capaPresentacion.dto.peticion;
 
 import java.time.LocalDate;
+
+import com.fasterxml.jackson.annotation.JsonFormat;
+import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
+import com.fasterxml.jackson.datatype.jsr310.deser.LocalDateDeserializer;
+import com.unicauca.pensionados.back_pensionados.capaPresentacion.dto.util.MultiDateDeserializer;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
@@ -23,18 +28,22 @@ public class RegistroSucesorPeticion {
     @Schema(description = "Apellidos de la persona", example = "Pérez")
     private String apellidosPersona;
     @Schema(description = "Fecha de nacimiento de la persona", example = "1980-05-10")
-    private Date fechaNacimientoPersona;
+    @JsonDeserialize(using =  MultiDateDeserializer.class)
+    private LocalDate fechaNacimientoPersona;
     @Schema(description = "Fecha de expedición del documento de identidad", example = "2000-01-01")
-    private Date fechaExpedicionDocumentoIdPersona;
+    @JsonDeserialize(using = MultiDateDeserializer.class)
+    private LocalDate fechaExpedicionDocumentoIdPersona;
     @Schema(description = "Estado de la persona (Activo/Inactivo)", example = "Activo")
     private String estadoPersona;
     @Schema(description = "Género de la persona", example = "M")
     private String generoPersona;
     @Schema(description = "Fecha de defunción de la persona (si aplica)", example = "2024-01-01")
-    private Date fechaDefuncionPersona;
+    @JsonDeserialize(using =  MultiDateDeserializer.class)
+    private LocalDate fechaDefuncionPersona;
 
     @Schema(description = "Fecha de inicio de la sucesión", example = "2024-06-01")
-    Date fechaInicioSucesion;
+    @JsonDeserialize(using =  MultiDateDeserializer.class)
+    LocalDate fechaInicioSucesion;
     @Schema(description = "ID del pensionado asociado al sucesor", example = "987654321")
     Long pensionado;
     @Schema(description = "Porcentaje de la pensión que le corresponde al sucesor", example = "50.0")

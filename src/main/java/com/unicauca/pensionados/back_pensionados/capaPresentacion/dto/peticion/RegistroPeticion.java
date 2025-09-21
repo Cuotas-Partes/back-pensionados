@@ -18,5 +18,5 @@ public class RegistroPeticion {
     String email;
     String nombre;
     String apellido;
-    //String rol;  //Agregamos el atributo para manejar el rol "USER"
+    Long idRol; // <-- AÑADIMOS ESTE CAMPO para recibir el ID del rol (ej: 1 para ADMIN, 2 para INVITADO)
 }

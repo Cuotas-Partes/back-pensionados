@@ -18,12 +18,14 @@ import com.unicauca.pensionados.back_pensionados.capaPresentacion.dto.respuesta.
 
 import lombok.RequiredArgsConstructor;
 
+import com.unicauca.pensionados.back_pensionados.capaAccesoADatos.repositories.RolRepositorio;
 
 @Service
 @RequiredArgsConstructor
 public class AuthService {
     
     private final UsuarioRepositorio usuarioRepositorio;
+    private final RolRepositorio rolRepositorio; // <-- INYECTAR EL REPOSITORIO DE ROL
     private final JwtService jwtService; 
     private final PasswordEncoder passwordEncoder;
     private final AuthenticationManager authenticationManager;
@@ -50,13 +52,17 @@ public class AuthService {
             throw new ResponseStatusException(HttpStatus.BAD_REQUEST,"El correo ya esta registrado");
         });
 
+        // CORRECCIÓN: Buscamos el Rol por su ID. Si no existe, lanzamos un error.
+        Rol rolAsignado = rolRepositorio.findById(request.getIdRol())
+                .orElseThrow(() -> new ResponseStatusException(HttpStatus.BAD_REQUEST, "El rol especificado no existe"));
+
         Usuario usuario = Usuario.builder()
     
             .username(request.getUsername())
             .password(passwordEncoder.encode(request.getPassword()))
             .nombre(request.getNombre())
             .apellido(request.getApellido())
-            //.role(Rol.USER)
+            .rol(rolAsignado) // <-- ASIGNAMOS EL OBJETO ROL COMPLETO
             .build();
 
             usuarioRepositorio.save(usuario);
