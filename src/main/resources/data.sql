@@ -4,16 +4,11 @@ INSERT INTO ROL (nombre, activo, creado_en, actualizado_en) VALUES ('ADMIN', TRU
 INSERT INTO ROL (nombre, activo, creado_en, actualizado_en) VALUES ('INVITADO', TRUE, NOW(), NOW());
 
 -- Acciones para rol ADMIN
-INSERT INTO ROL_ACCION (rol_id, accion);
-SELECT id, 'EJECUCION_PAGOS' FROM ROL WHERE nombre='ADMIN';
-INSERT INTO ROL_ACCION (rol_id, accion);
-SELECT id, 'REGISTRO_PENSIONADO' FROM ROL WHERE nombre='ADMIN';
-INSERT INTO ROL_ACCION (rol_id, accion);
-SELECT id, 'PAGO_CUOTA_PARTE' FROM ROL WHERE nombre='ADMIN';
-INSERT INTO ROL_ACCION (rol_id, accion);
-SELECT id, 'GENERAR_REPORTE' FROM ROL WHERE nombre='ADMIN';
-INSERT INTO ROL_ACCION (rol_id, accion);
-SELECT id, 'CONSULTAR_HISTORIAL' FROM ROL WHERE nombre='ADMIN';
+INSERT INTO ROL_ACCION (rol_id, accion) SELECT id, 'EJECUCION_PAGOS' FROM ROL WHERE nombre='ADMIN';
+INSERT INTO ROL_ACCION (rol_id, accion) SELECT id, 'REGISTRO_PENSIONADO' FROM ROL WHERE nombre='ADMIN';
+INSERT INTO ROL_ACCION (rol_id, accion) SELECT id, 'PAGO_CUOTA_PARTE' FROM ROL WHERE nombre='ADMIN';
+INSERT INTO ROL_ACCION (rol_id, accion) SELECT id, 'GENERAR_REPORTE' FROM ROL WHERE nombre='ADMIN';
+INSERT INTO ROL_ACCION (rol_id, accion) SELECT id, 'CONSULTAR_HISTORIAL' FROM ROL WHERE nombre='ADMIN';
 
 -- Acciones INVITADO
 INSERT INTO ROL_ACCION (rol_id, accion) SELECT id, 'CONSULTAR_HISTORIAL' FROM ROL WHERE nombre='INVITADO';
@@ -21,7 +16,7 @@ INSERT INTO ROL_ACCION (rol_id, accion) SELECT id, 'CONSULTAR_HISTORIAL' FROM RO
 
 
 --Insertar Usuario por Defecto
-INSERT INTO USUARIO (apellido, nombre, password, username, rol_id);
+INSERT INTO USUARIO (apellido, nombre, password, username, rol_id)
 SELECT 'Unicauca', 'pensiones',
        '$2a$10$R6MoChK7sDHuSTrON3BC5.jENlU5fn/tMRP0v7frkmiCMfDafgKJK',
        'pensiones@unicauca.edu.co',
