@@ -33,7 +33,8 @@ public class AuthControladorTest {
             "username": "prueba_pensiones@unicauca.edu.co",
             "password": "pensiones",
             "nombre": "Juan",
-            "apellido": "Pérez"
+            "apellido": "Pérez",
+            "idRol": 2
             }
         """;
 
@@ -46,21 +47,6 @@ public class AuthControladorTest {
 
     @Test
     void registerDebeRetornar200() throws Exception {
-        // String json = """
-        //     {
-        //       "username": "prueba_pensiones@unicauca.edu.co",
-        //       "password": "pensiones",
-        //       "nombre": "Juan",
-        //       "apellido": "Pérez"
-        //     }
-        // """;
-
-        // ResultActions response = mockMvc.perform(post("/auth/register")
-        //         .contentType(MediaType.APPLICATION_JSON)
-        //         .content(json))
-        //         .andExpect(status().isOk())
-        //         .andExpect(jsonPath("$.token").exists());
-
         String jsonResponse = response.andReturn().getResponse().getContentAsString();
         String resultado;
 

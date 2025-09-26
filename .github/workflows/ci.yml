@@ -2,9 +2,9 @@ name: CI - Maven Tests
 
 on:
   push:
-    branches: [ 'schanchi', 'ci/add-github-actions' ]
+    branches: [ 'main', 'ci/add-github-actions' ]
   pull_request:
-    branches: [ 'schanchi', 'ci/add-github-actions' ]
+    branches: [ 'main', 'ci/add-github-actions' ]
   workflow_dispatch:
 
 jobs:
@@ -14,12 +14,11 @@ jobs:
 
     env:
       SPRING_PROFILES_ACTIVE: test
-      # Definicion de variables auxiliares
-      DB_HOST: 127.0.0.1
-      DB_PORT: 3306
-      DB_NAME: cuotapartes_pensionados_db
-      DB_USER: root
-      DB_PASSWORD: root
+      DB_HOST: ${{ secrets.DB_HOST }}
+      DB_PORT: ${{ secrets.DB_PORT }}
+      DB_NAME: ${{ secrets.DB_NAME }}
+      DB_USER: ${{ secrets.DB_USER }}
+      DB_PASSWORD: ${{ secrets.DB_PASSWORD }}
 
     services:
       mysql:
