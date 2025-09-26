@@ -9,6 +9,9 @@ import java.util.function.Function;
 
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Service;
+
+import com.unicauca.pensionados.back_pensionados.capaAccesoADatos.modelos.Usuario;
+
 import io.jsonwebtoken.security.Keys;
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.Jwts;
@@ -35,6 +38,14 @@ public class JwtService {
             .compact();
 
     }
+
+    public String getToken(Usuario usuario) {
+        Map<String, Object> claims = new HashMap<>();
+        claims.put("rolId", usuario.getRol().getId());   // 👈 Añades el idRol
+        claims.put("rolNombre", usuario.getRol().getNombre()); // opcional
+        return getToken(claims, usuario);
+    }
+
 
     private Key getKey() {
         byte[] keyBytes=Decoders.BASE64.decode(SECRET_KEY);
