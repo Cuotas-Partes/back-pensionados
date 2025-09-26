@@ -60,6 +60,11 @@ jobs:
             sleep 2
           done
 
+      - name: Run schema.sql and data.sql
+        run: |
+          mysql -h 127.0.0.1 -u${{ env.DB_USER }} -p${{ env.DB_PASSWORD }} ${{ env.DB_NAME }} < src/main/resources/schema.sql
+          mysql -h 127.0.0.1 -u${{ env.DB_USER }} -p${{ env.DB_PASSWORD }} ${{ env.DB_NAME }} < src/main/resources/data.sql
+
       - name: Run unit tests (Maven)
         env:
           SPRING_DATASOURCE_URL: jdbc:mysql://${{ env.DB_HOST }}:${{ env.DB_PORT }}/${{ env.DB_NAME }}
