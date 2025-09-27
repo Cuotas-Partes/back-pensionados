@@ -18,7 +18,8 @@ import lombok.Setter;
 
 @Entity
 @Table (name = "PERSONA")
-@Inheritance(strategy =InheritanceType.JOINED)
+// @Inheritance(strategy =InheritanceType.JOINED) problemas de mutabilidad
+@Inheritance(strategy = InheritanceType.SINGLE_TABLE)
 @Getter @Setter @NoArgsConstructor
 public abstract class Persona {
     @Id
