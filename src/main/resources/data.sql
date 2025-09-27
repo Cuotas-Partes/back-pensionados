@@ -16,12 +16,12 @@ INSERT INTO ROL_ACCION (rol_id, accion) SELECT id, 'CONSULTAR_HISTORIAL' FROM RO
 
 
 --Insertar Usuario por Defecto
-INSERT INTO USUARIO (apellido, nombre, password, username, rol_id)
-SELECT 'Unicauca', 'pensiones',
-       '$2a$10$R6MoChK7sDHuSTrON3BC5.jENlU5fn/tMRP0v7frkmiCMfDafgKJK',
-       'pensiones@unicauca.edu.co', r.id
-FROM ROL r
-WHERE r.nombre='INVITADO';
+INSERT INTO USUARIO (apellido, nombre, password, username, rol_id) VALUES ('Unicauca', 'pensiones', '$2a$10$9PhCjFGoYcGm2C4/QlpsSOdt6iEG9e/Srme3WlTDPBJ35CO2EcLI.', 'pensiones@unicauca.edu.co', 2);
+-- SELECT 'Unicauca', 'pensiones',
+--        '$2a$10$R6MoChK7sDHuSTrON3BC5.jENlU5fn/tMRP0v7frkmiCMfDafgKJK',
+--        'pensiones@unicauca.edu.co', r.id
+-- FROM ROL r
+-- WHERE r.nombre='INVITADO';
 
 
 INSERT INTO ENTIDAD (nitEntidad, nombreEntidad, direccionEntidad, emailEntidad, telefonoEntidad, estadoEntidad)
