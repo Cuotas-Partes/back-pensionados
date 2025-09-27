@@ -199,5 +199,3 @@ CREATE TABLE LOG_CAMBIO (
    INDEX idx_log_usuario (usuario_id),
    INDEX idx_log_fecha (fecha)
 );
-
-

@@ -19,14 +19,13 @@ INSERT INTO ROL_ACCION (rol_id, accion) SELECT id, 'CONSULTAR_HISTORIAL' FROM RO
 INSERT INTO USUARIO (apellido, nombre, password, username, rol_id)
 SELECT 'Unicauca', 'pensiones',
        '$2a$10$R6MoChK7sDHuSTrON3BC5.jENlU5fn/tMRP0v7frkmiCMfDafgKJK',
-       'pensiones@unicauca.edu.co',
-       r.id
+       'pensiones@unicauca.edu.co', r.id
 FROM ROL r
 WHERE r.nombre='INVITADO';
 
 
 INSERT INTO ENTIDAD (nitEntidad, nombreEntidad, direccionEntidad, emailEntidad, telefonoEntidad, estadoEntidad)
-VALUES (8911500319, 'Universidad del Cauca', 'Calle 5 No. 4-70 (Popayán - Cauca)', 'rectoria@unicauca.edu.co', 8209900, "Activa");
+VALUES (8911500319, 'Universidad del Cauca', 'Calle 5 No. 4-70 (Popayán - Cauca)', 'rectoria@unicauca.edu.co', 8209900, 'Activa');
 
 -- Insertar más entidades para el historial laboral
 INSERT INTO ENTIDAD (nitEntidad, nombreEntidad, direccionEntidad, emailEntidad, telefonoEntidad, estadoEntidad)
