@@ -15,13 +15,8 @@ INSERT INTO ROL_ACCION (rol_id, accion) SELECT id, 'CONSULTAR_HISTORIAL' FROM RO
 
 
 
---Insertar Usuario por Defecto
+-- Insertar Usuario por Defecto
 INSERT INTO USUARIO (apellido, nombre, password, username, rol_id) VALUES ('Unicauca', 'pensiones', '$2a$10$9PhCjFGoYcGm2C4/QlpsSOdt6iEG9e/Srme3WlTDPBJ35CO2EcLI.', 'pensiones@unicauca.edu.co', 2);
--- SELECT 'Unicauca', 'pensiones',
---        '$2a$10$R6MoChK7sDHuSTrON3BC5.jENlU5fn/tMRP0v7frkmiCMfDafgKJK',
---        'pensiones@unicauca.edu.co', r.id
--- FROM ROL r
--- WHERE r.nombre='INVITADO';
 
 
 INSERT INTO ENTIDAD (nitEntidad, nombreEntidad, direccionEntidad, emailEntidad, telefonoEntidad, estadoEntidad)
@@ -40,8 +35,8 @@ VALUES
 
 
 
---INSERTAR DATOS IPC
---Datos IPC 31/12/1955 - 30/4/2025
+-- INSERTAR DATOS IPC
+-- Datos IPC 31/12/1955 - 30/4/2025
 INSERT INTO IPC (fechaIPC, valorIPC) VALUES
 (1955, 2.03), (1956, 7.91), (1957, 20.69), (1958, 7.98), (1959, 7.81),(1960, 7.35), (1961, 5.74), (1962, 6.30), (1963, 33.60), (1964, 8.80),
 (1965, 14.44), (1966, 12.86), (1967, 7.17), (1968, 6.51), (1969, 8.63),(1970, 6.58), (1971, 14.03), (1972, 13.99), (1973, 24.08), (1974, 26.35),
