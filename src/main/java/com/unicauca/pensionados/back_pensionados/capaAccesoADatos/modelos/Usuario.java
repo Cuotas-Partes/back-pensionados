@@ -27,7 +27,7 @@ import java.util.stream.Collectors;
 @NoArgsConstructor
 
 @Entity
-@Table(name="usuario", uniqueConstraints = {@UniqueConstraint(columnNames = {"username"})})
+@Table(name="USUARIO", uniqueConstraints = {@UniqueConstraint(columnNames = {"username"})})
 public class Usuario implements UserDetails{
     
   // Identificador único (primary key) de la tabla

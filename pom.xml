@@ -114,7 +114,12 @@
 			<artifactId>json-path</artifactId>
 			<version>2.7.0</version>
 		</dependency>
-	</dependencies>
+		<dependency>
+			<groupId>me.paulschwarz</groupId>
+			<artifactId>spring-dotenv</artifactId>
+			<version>3.0.0</version>
+			</dependency>
+		</dependencies>
 	<build>
 		<plugins>
 			<plugin>
@@ -142,6 +147,25 @@
 				</configuration>
 			</plugin>
 		</plugins>
+
+		<!-- cuando se haga mvn package se activara el filtro -->
+		<!-- <resources>
+			<resource>
+			<directory>src/main/resources</directory>
+			<filtering>true</filtering>
+			</resource>
+		</resources> -->
 	</build>
+
+	<!-- <profiles>
+	<profile>
+		<id>dev</id>
+		<build>
+		<filters>
+			<filter>src/main/filters/dev.properties</filter>
+		</filters>
+		</build>
+	</profile>
+	</profiles> -->
 
 </project>

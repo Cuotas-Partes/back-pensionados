@@ -10,7 +10,7 @@ import java.time.LocalDateTime;
  * y la fecha junto con el usuario actor.
  */
 @Entity
-@Table(name = "log_cambio",
+@Table(name = "LOG_CAMBIO",
         indexes = {
                 @Index(name="idx_hist_usuario", columnList="usuario_id"),
                 @Index(name="idx_hist_fecha",   columnList="fecha_evento")
