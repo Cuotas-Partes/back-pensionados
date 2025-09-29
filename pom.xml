@@ -161,9 +161,9 @@
 		<profile>
 			<id>dev</id>
 			<build>
-			<filters>
-				<filter>src/main/filters/develop.properties</filter>
-			</filters>
+				<filters>
+					<filter>src/main/filters/dev.properties</filter>
+				</filters>
 			</build>
 		</profile>
 	</profiles>
