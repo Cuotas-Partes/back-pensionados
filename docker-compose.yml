@@ -1,26 +1,34 @@
 services:
-  app_back_pensionados:
-    build: .
+  pensionados-apirest:
+    # build:
+    #   context: .
+    #   dockerfile: Dockerfile
+    image: back-pensionados:v0.1
     ports:
       - "8080:8080"
     environment:
       DB_URL: ${DB_URL}
       DB_USER_NAME: ${DB_USER_NAME}
       DB_PASSWORD: ${DB_PASSWORD}
+    networks:
+      - pensionados-mysql
     restart: always
     depends_on:
-      db_pensionados_dl:
+      db_pensionados:
         condition: service_healthy
-  db_pensionados_dl:
+ 
+  db_pensionados:
     image: mysql:8.0.40
-    ports:
-      - "3307:3306"
+    networks:
+      - pensionados-mysql
     environment:
-      MYSQL_ROOT_PASSWORD: ${MYSQL_ROOT_PASSWORD}
-      MYSQL_PASSWORD: ${MYSQL_PASSWORD}
-      MYSQL_DATABASE: ${MYSQL_DATABASE}
+      - MYSQL_ROOT_PASSWORD=${MYSQL_ROOT_PASSWORD}
+      - MYSQL_DATABASE=${MYSQL_DATABASE}
     restart: always
     healthcheck:
       test: ["CMD", "mysqladmin", "ping", "-h", "localhost"]
       timeout: 10s
       retries: 10
+
+networks:
+  pensionados-mysql:

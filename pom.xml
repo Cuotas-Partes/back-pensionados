@@ -149,23 +149,23 @@
 		</plugins>
 
 		<!-- cuando se haga mvn package se activara el filtro -->
-		<!-- <resources>
+		<resources>
 			<resource>
 			<directory>src/main/resources</directory>
 			<filtering>true</filtering>
 			</resource>
-		</resources> -->
+		</resources>
 	</build>
 
-	<!-- <profiles>
-	<profile>
-		<id>dev</id>
-		<build>
-		<filters>
-			<filter>src/main/filters/dev.properties</filter>
-		</filters>
-		</build>
-	</profile>
-	</profiles> -->
+	<profiles>
+		<profile>
+			<id>dev</id>
+			<build>
+			<filters>
+				<filter>src/main/filters/develop.properties</filter>
+			</filters>
+			</build>
+		</profile>
+	</profiles>
 
 </project>
