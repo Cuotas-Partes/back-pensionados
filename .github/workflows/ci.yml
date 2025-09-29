@@ -116,7 +116,7 @@ jobs:
           - 3306:3306
         env:
           MYSQL_DATABASE: ${{ env.DB_NAME }}
-          MYSQL_USER: ${{ env.DB_USER }}
+          # MYSQL_USER: ${{ env.DB_USER }}
           MYSQL_PASSWORD: ${{ env.DB_PASSWORD }}
           MYSQL_ROOT_PASSWORD: root
         options: >-
