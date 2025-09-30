@@ -11,16 +11,21 @@ services:
       DB_USER_NAME: ${DB_USER_NAME}
       DB_PASSWORD: ${DB_PASSWORD}
     networks:
-      - pensionados-mysql
+      - dokploy-network
     restart: always
     depends_on:
       db_pensionados:
         condition: service_healthy
+    labels:
+      - "traefik.enable=true"
+      - "traefik.http.routers.pensionados.rule=Host(`181.32.123.173`)"
+      - "traefik.http.routers.pensionados.entrypoints=web"
+      - "traefik.http.services.pensionados.loadbalancer.server.port=8080"
  
   db_pensionados:
     image: mysql:8.0.40
     networks:
-      - pensionados-mysql
+      - dokploy-network
     environment:
       - MYSQL_ROOT_PASSWORD=${MYSQL_ROOT_PASSWORD}
       - MYSQL_DATABASE=${MYSQL_DATABASE}
@@ -31,4 +36,5 @@ services:
       retries: 10
 
 networks:
-  pensionados-mysql:
+  dokploy-network:
+    external: true
