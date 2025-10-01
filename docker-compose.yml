@@ -1,8 +1,8 @@
 services:
   pensionados-apirest:
-    # build:
-    #   context: .
-    #   dockerfile: Dockerfile
+    build:
+      context: .
+      dockerfile: Dockerfile
     image: back-pensionados:v0.1
     ports:
       - "8080:8080"
