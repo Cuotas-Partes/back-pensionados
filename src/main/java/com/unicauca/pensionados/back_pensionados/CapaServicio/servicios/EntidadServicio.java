@@ -407,7 +407,9 @@ public class EntidadServicio implements IEntidadServicio {
                     // Se convierte el enum a String.
                     .estadoPersona(p.getEstadoPersona())
                     // Se convierte el enum a String, manejando el caso de que sea nulo.
-                    .generoPersona(p.getGeneroPersona())
+
+                    .generoPersona(p.getGeneroPersona() != null ? p.getGeneroPersona() : null)
+
                     .fechaDefuncionPersona(p.getFechaDefuncionPersona())
                     .fechaInicioPension(p.getFechaInicioPension())
                     .valorInicialPension(p.getValorInicialPension())
@@ -509,7 +511,9 @@ public class EntidadServicio implements IEntidadServicio {
                     .fechaNacimientoPersona(p.getFechaNacimientoPersona())
                     .fechaExpedicionDocumentoIdPersona(p.getFechaExpedicionDocumentoIdPersona())
                     .estadoPersona(p.getEstadoPersona())
-                    .generoPersona(p.getGeneroPersona())
+
+                    .generoPersona(p.getGeneroPersona() != null ? p.getGeneroPersona() : null)
+
                     .fechaDefuncionPersona(p.getFechaDefuncionPersona())
                     .fechaInicioPension(p.getFechaInicioPension())
                     .valorInicialPension(p.getValorInicialPension())

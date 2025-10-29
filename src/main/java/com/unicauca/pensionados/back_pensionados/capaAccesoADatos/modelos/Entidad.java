@@ -17,6 +17,9 @@ import jakarta.persistence.Table;
 
 import jakarta.persistence.*;
 
+import jakarta.persistence.FetchType;
+
+
 import lombok.Getter;
 import lombok.Setter;
 import com.fasterxml.jackson.annotation.JsonManagedReference;
