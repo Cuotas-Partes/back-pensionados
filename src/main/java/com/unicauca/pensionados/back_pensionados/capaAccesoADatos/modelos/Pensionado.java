@@ -17,7 +17,7 @@ import com.fasterxml.jackson.annotation.JsonManagedReference;
 
 @Entity
 @Table (name ="PENSIONADO")
-@PrimaryKeyJoinColumn (name = "numeroIdPersona") //tiene la misma PK que Persona
+@PrimaryKeyJoinColumn (name = "idPersona") //tiene la misma PK que Persona
 @Setter @Getter
 public class Pensionado extends Persona{
     @Column (name = "fechaInicioPension", nullable = true)

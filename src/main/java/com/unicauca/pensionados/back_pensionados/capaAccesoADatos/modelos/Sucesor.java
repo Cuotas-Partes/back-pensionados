@@ -16,7 +16,7 @@ import lombok.Setter;
 
 @Entity
 @Table(name="SUCESOR")
-@PrimaryKeyJoinColumn (name = "numeroIdPersona")  //tiene la misma PK que Persona
+@PrimaryKeyJoinColumn (name = "idPersona")  //tiene la misma PK que Persona
 @Getter @Setter
 
 public class Sucesor extends Persona{

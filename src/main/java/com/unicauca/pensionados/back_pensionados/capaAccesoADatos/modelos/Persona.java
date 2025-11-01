@@ -69,8 +69,8 @@ public abstract class Persona {
     private LocalDate fechaDefuncionPersona;
 
     // Relación para las dependencias (trabajos)
-    @OneToMany(cascade = CascadeType.ALL, fetch = FetchType.LAZY, mappedBy = "persona")
-    private List<Trabajo> trabajos;
+    //@OneToMany(cascade = CascadeType.ALL, fetch = FetchType.LAZY, mappedBy = "persona")
+    //private List<Trabajo> trabajos;
 
 
     //Una persona puede estar ligada a varios contratos

@@ -24,7 +24,7 @@ public class Deuda {
     private EstadoDeuda estadoDeuda;
 
     @OneToOne
-    @JoinColumn(name = "idPersona", referencedColumnName = "numeroIdPersona")
+    @JoinColumn(name = "idPersona", referencedColumnName = "idPersona")
     private Persona persona;
 
 //    @OneToOne

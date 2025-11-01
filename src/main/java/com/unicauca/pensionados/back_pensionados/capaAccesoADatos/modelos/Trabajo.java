@@ -32,8 +32,8 @@ public class Trabajo {
     
     @JsonBackReference
     @ManyToOne
-    //@MapsId("numeroIdPersona")
-    @JoinColumn(name = "numeroIdPersona", referencedColumnName = "numeroIdPersona")
+    //@MapsId("idPersona")
+    @JoinColumn(name = "idPersona", referencedColumnName = "idPersona")
     private Pensionado pensionado;
 
     @JsonBackReference(value = "entidad-trabajo")

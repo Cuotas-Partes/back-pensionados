@@ -3,25 +3,21 @@
 /* Created on:     7/04/2025 8:05:52 p. m.                      */
 /*==============================================================*/
 
-SET FOREIGN_KEY_CHECKS=0;
+-- 1️⃣ Desactiva validaciones de claves foráneas por si hay relaciones abiertas
+SET FOREIGN_KEY_CHECKS = 0;
 
+-- 2️⃣ Elimina la base de datos completa (sin tocar information_schema)
+DROP DATABASE IF EXISTS cuotapartes_pensionados_db;
 
-DROP TABLE IF EXISTS PERIODO;
-DROP TABLE IF EXISTS CUOTA_PARTE;
-DROP TABLE IF EXISTS TRABAJO;
-DROP TABLE IF EXISTS SUCESOR;
-DROP TABLE IF EXISTS PENSIONADO;
-DROP TABLE IF EXISTS IPC;
-DROP TABLE IF EXISTS ENTIDAD;
-DROP TABLE IF EXISTS PERSONA;
-DROP TABLE IF EXISTS USUARIO;
-DROP TABLE IF EXISTS ROL;
-DROP TABLE IF EXISTS ROL_ACCION;
-DROP TABLE IF EXISTS LOG_CAMBIO;
-DROP TABLE IF EXISTS CONTRATO;
+-- 3️⃣ La vuelves a crear vacía
+CREATE DATABASE cuotapartes_pensionados_db CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci;
 
-;
-SET FOREIGN_KEY_CHECKS=1;
+-- 4️⃣ Actívala
+USE cuotapartes_pensionados_db;
+
+-- 5️⃣ Reactiva validaciones
+SET FOREIGN_KEY_CHECKS = 1;
+
 
 /*==============================================================*/
 /* Table: ROL                                               */
@@ -154,7 +150,7 @@ CREATE TABLE SUCESOR (
    porcentajePension DOUBLE NOT NULL,
    PRIMARY KEY (idPersona), -- Cambiado de numeroIdPersona
    FOREIGN KEY (idPersona) REFERENCES PERSONA(idPersona), -- Apunta a la nueva llave primaria
-   FOREIGN KEY (idPensionado) REFERENCES PENSIONADO(idPersona) -- Apunta a la llave primaria de Pensionado
+   FOREIGN KEY (idPensionado) REFERENCES PENSIONADO(idPensionado) -- Apunta a la llave primaria de Pensionado
 );
 
 /*==============================================================*/
@@ -241,9 +237,9 @@ CREATE TABLE LOG_CAMBIO (
 /*==============================================================*/
 CREATE TABLE CONTRATO (
   idContrato BIGINT NOT NULL AUTO_INCREMENT,
-  numeroIdPersona BIGINT NOT NULL,
-  nitEntidad BIGINT NOT NULL,
-  numeroIdPersonaPersona BIGINT NOT NULL,
+  idPersona BIGINT NOT NULL,
+  idEntidad BIGINT NOT NULL,
+  numeroIdentificacion BIGINT NOT NULL,
   fechaInicio DATE NOT NULL,
   fechaFin DATE NOT NULL,
   cargo VARCHAR(120) NOT NULL,
@@ -255,18 +251,32 @@ CREATE TABLE CONTRATO (
   certificado_laboral LONGBLOB NULL,
   PRIMARY KEY (idContrato),
   CONSTRAINT fk_contrato_pensionado
-    FOREIGN KEY (numeroIdPersona) REFERENCES PENSIONADO(numeroIdPersona)
+    FOREIGN KEY (idPersona) REFERENCES PENSIONADO(idPersona)
     ON UPDATE CASCADE ON DELETE RESTRICT,
   CONSTRAINT fk_contrato_entidad
-    FOREIGN KEY (nitEntidad) REFERENCES ENTIDAD(nitEntidad)
+    FOREIGN KEY (idEntidad) REFERENCES ENTIDAD(idEntidad)
     ON UPDATE CASCADE ON DELETE RESTRICT,
   CONSTRAINT fk_contrato_persona
-    FOREIGN KEY (numeroIdPersonaPersona) REFERENCES PERSONA(numeroIdPersona)
+    FOREIGN KEY (idPersona) REFERENCES PERSONA(idPersona)
     ON UPDATE CASCADE ON DELETE RESTRICT,
 
-  INDEX idx_contrato_pensionado (numeroIdPersona),
-  INDEX idx_contrato_entidad (nitEntidad),
-  INDEX idx_contrato_persona (numeroIdPersonaPersona),
+  INDEX idx_contrato_pensionado (idPersona),
+  INDEX idx_contrato_entidad (idEntidad),
+  INDEX idx_contrato_persona (numeroIdentificacion),
   INDEX idx_contrato_estado (estado),
   INDEX idx_contrato_fechas (fechaInicio, fechaFin)
-)
+);
+
+CREATE TABLE EVENTO (
+   idEvento BIGINT NOT NULL AUTO_INCREMENT,         -- Identificador único del evento
+   idPersona BIGINT,                                -- Persona afectada (puede ser pensionado o sucesor)
+   idPensionado BIGINT,                             -- Pensionado relacionado con el evento
+   tipoEvento VARCHAR(50) NOT NULL,                 -- Ej: DEFUNCION, SUSTITUCION, RELIQUIDACION
+   fechaEvento DATETIME NOT NULL,                   -- Fecha y hora del evento
+   usuario VARCHAR(100) NOT NULL,                   -- Usuario que ejecutó la acción
+   tablaAfectada VARCHAR(100) NOT NULL,             -- Ej: "PENSIONADO", "CUOTAPARTE"
+   descripcion TEXT,                                -- Detalles adicionales del evento
+   PRIMARY KEY (idEvento),
+   FOREIGN KEY (idPersona) REFERENCES PERSONA(idPersona),
+   FOREIGN KEY (idPensionado) REFERENCES PENSIONADO(idPensionado)
+);

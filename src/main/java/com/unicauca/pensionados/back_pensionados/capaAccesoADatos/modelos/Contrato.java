@@ -18,17 +18,17 @@ public class Contrato {
 
     //Relacion 1:N con PENSIONADO
     @ManyToOne(fetch = FetchType.LAZY, optional = false)
-    @JoinColumn(name = "numeroIdPersona", nullable = false)
+    @JoinColumn(name = "idPersona", nullable = false)
     private Pensionado pensionado;
 
     //Relacion 1:N con ENTIDAD
     @ManyToOne(fetch = FetchType.LAZY, optional = false)
-    @JoinColumn(name = "nitEntidad", nullable = false)
+    @JoinColumn(name = "idEntidad", nullable = false)
     private Entidad entidad;
 
     //Relacion 1:N con PERSONA
     @ManyToOne(fetch = FetchType.LAZY, optional = false)
-    @JoinColumn(name = "numeroIdPersonaPersona", nullable = false)
+    @JoinColumn(name = "numeroIdentificacion", nullable = false)
     private Persona persona;
 
     @Column(nullable = false)
