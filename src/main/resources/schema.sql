@@ -231,42 +231,6 @@ CREATE TABLE LOG_CAMBIO (
    INDEX idx_log_fecha (fecha)
 );
 
-
-/*==============================================================*/
-/* Table: CONTRATO                                              */
-/*==============================================================*/
-CREATE TABLE CONTRATO (
-  idContrato BIGINT NOT NULL AUTO_INCREMENT,
-  idPersona BIGINT NOT NULL,
-  idEntidad BIGINT NOT NULL,
-  numeroIdentificacion BIGINT NOT NULL,
-  fechaInicio DATE NOT NULL,
-  fechaFin DATE NOT NULL,
-  cargo VARCHAR(120) NOT NULL,
-  tipoVinculacion ENUM('PLANTA','CATEDRATICO','OCASIONAL','OPS') NOT NULL,
-  salarioBase DECIMAL(19,2) NOT NULL,
-  ultimoSalarioReportado DECIMAL(19,2) NOT NULL,
-  tiempoServicioDias INT NOT NULL,
-  estado ENUM('ACTIVO','FINALIZADO','SUSPENDIDO') NOT NULL,
-  certificado_laboral LONGBLOB NULL,
-  PRIMARY KEY (idContrato),
-  CONSTRAINT fk_contrato_pensionado
-    FOREIGN KEY (idPersona) REFERENCES PENSIONADO(idPersona)
-    ON UPDATE CASCADE ON DELETE RESTRICT,
-  CONSTRAINT fk_contrato_entidad
-    FOREIGN KEY (idEntidad) REFERENCES ENTIDAD(idEntidad)
-    ON UPDATE CASCADE ON DELETE RESTRICT,
-  CONSTRAINT fk_contrato_persona
-    FOREIGN KEY (idPersona) REFERENCES PERSONA(idPersona)
-    ON UPDATE CASCADE ON DELETE RESTRICT,
-
-  INDEX idx_contrato_pensionado (idPersona),
-  INDEX idx_contrato_entidad (idEntidad),
-  INDEX idx_contrato_persona (numeroIdentificacion),
-  INDEX idx_contrato_estado (estado),
-  INDEX idx_contrato_fechas (fechaInicio, fechaFin)
-);
-
 CREATE TABLE EVENTO (
    idEvento BIGINT NOT NULL AUTO_INCREMENT,         -- Identificador único del evento
    idPersona BIGINT,                                -- Persona afectada (puede ser pensionado o sucesor)

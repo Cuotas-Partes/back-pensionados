@@ -20,11 +20,9 @@ import lombok.NoArgsConstructor;
 import lombok.Setter;
 
 @Entity
-@Table(name = "PERSONA",
-       uniqueConstraints = { // Anotación para la unicidad de tipo y número de identificación
-           @UniqueConstraint(columnNames = {"tipoIdentificacion", "numeroIdentificacion"})
-       })
-@Inheritance(strategy = InheritanceType.JOINED)
+@Table (name = "PERSONA")
+@Inheritance(strategy =InheritanceType.JOINED) // problemas de mutabilidad
+// @Inheritance(strategy = InheritanceType.SINGLE_TABLE)
 @Getter @Setter @NoArgsConstructor
 public abstract class Persona {
     @Id

@@ -5,6 +5,7 @@ import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.ResultActions;
 import org.springframework.transaction.annotation.Transactional;
@@ -33,7 +34,8 @@ public class AuthControladorTest {
             "username": "prueba_pensiones@unicauca.edu.co",
             "password": "pensiones",
             "nombre": "Juan",
-            "apellido": "Pérez"
+            "apellido": "Pérez",
+            "idRol": 2
             }
         """;
 
@@ -46,21 +48,6 @@ public class AuthControladorTest {
 
     @Test
     void registerDebeRetornar200() throws Exception {
-        // String json = """
-        //     {
-        //       "username": "prueba_pensiones@unicauca.edu.co",
-        //       "password": "pensiones",
-        //       "nombre": "Juan",
-        //       "apellido": "Pérez"
-        //     }
-        // """;
-
-        // ResultActions response = mockMvc.perform(post("/auth/register")
-        //         .contentType(MediaType.APPLICATION_JSON)
-        //         .content(json))
-        //         .andExpect(status().isOk())
-        //         .andExpect(jsonPath("$.token").exists());
-
         String jsonResponse = response.andReturn().getResponse().getContentAsString();
         String resultado;
 

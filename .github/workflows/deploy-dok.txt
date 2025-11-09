@@ -1,0 +1,19 @@
+# on:
+#   push:
+#     branches: ['ci/add-github-actions']
+
+# jobs:
+#   deploy:
+#     runs-on: ubuntu-latest
+#     steps:
+#       - name: Checkout repository
+#         uses: actions/checkout@v4
+    
+#       - name: Deploy to Dokploy
+#         uses: dokploy/deploy-action@v1
+#         with:
+#           dokploy_url: http://181.32.123.173:3000
+#           api_key: ${{ secrets.DEPLOY_DOKPLOY }}
+#           type: compose
+#           project_name: PensionadosUnicauca
+#           app_name: pensionados-unicauca-back-utkvrx
