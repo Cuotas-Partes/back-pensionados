@@ -14,6 +14,8 @@ import lombok.Getter;
 import lombok.Setter;
 import com.fasterxml.jackson.annotation.JsonBackReference;
 import com.fasterxml.jackson.annotation.JsonManagedReference;
+import com.unicauca.pensionados.back_pensionados.capaAccesoADatos.modelos.enumeradores.Estado;
+import com.unicauca.pensionados.back_pensionados.capaAccesoADatos.modelos.enumeradores.TipoPension;
 
 @Entity
 @Table (name ="PENSIONADO")
@@ -23,6 +25,10 @@ public class Pensionado extends Persona{
     @Column (name = "fechaInicioPension", nullable = true)
     @Temporal(TemporalType.DATE)
     private LocalDate fechaInicioPension;
+
+    @Column (name = "fechaIngreso", nullable = true)
+    @Temporal(TemporalType.DATE)
+    private LocalDate fechaIngreso;
     
     @Column (name = "valorInicialPension", nullable = false, precision = 19, scale = 0)
     private BigDecimal valorInicialPension;
@@ -42,6 +48,10 @@ public class Pensionado extends Persona{
     @JoinColumn(name = "nitEntidad", nullable = false)
     private Entidad entidadJubilacion; 
 
+    @Column(name = "tipoPension", nullable = false, length = 50)
+    @Enumerated(EnumType.STRING) // guarda el nombre del enum como texto
+    // tipo de pension o jubilacion, no puede ser nulo
+    private TipoPension tipoPension;
 
     //relacion 1 a muchos con trabajo
     @JsonManagedReference
@@ -56,7 +66,4 @@ public class Pensionado extends Persona{
     @Transient 
     private MonetaryAmount valorInicialPensionMoney;
 
-    //Un pensionado puede estar ligado a varios contratos
-    @OneToMany(mappedBy = "pensionado", fetch = FetchType.LAZY)
-    private List<Contrato> contratos = new ArrayList<>();
 }

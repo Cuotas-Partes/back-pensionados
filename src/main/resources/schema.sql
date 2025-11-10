@@ -57,12 +57,15 @@ CREATE TABLE PERSONA (
    idPersona BIGINT NOT NULL AUTO_INCREMENT,              -- 1. Nuevo ID para la persona (llave primaria)
    numeroIdentificacion BIGINT NOT NULL,                  -- 2. Renombrado desde numeroIdPersona
    tipoIdentificacion VARCHAR(50) NOT NULL,               -- 3. Renombrado desde tipoIdPersona
-   nombrePersona VARCHAR(50) NOT NULL,
-   apellidosPersona VARCHAR(50) NOT NULL,
+   nombrePersona VARCHAR(300) NOT NULL,
+   apellidosPersona VARCHAR(300) NOT NULL,
+   cargo VARCHAR(300),
+   dependencia VARCHAR(300),
    fechaNacimientoPersona DATE NOT NULL,
    fechaExpedicionDocumentoIdPersona DATE NOT NULL,
    estadoPersona VARCHAR(50) NOT NULL,
    generoPersona VARCHAR(50),
+   telefonoPersona BIGINT,
    estadoCivil VARCHAR(50) NOT NULL,                      -- 4. Nuevo campo Estado Civil
    fechaDefuncionPersona DATE,
    PRIMARY KEY (idPersona),                               -- 5. Se establece el nuevo ID como llave primaria
@@ -75,14 +78,16 @@ CREATE TABLE PERSONA (
 CREATE TABLE ENTIDAD (
    idEntidad BIGINT NOT NULL AUTO_INCREMENT,
    nitEntidad BIGINT NOT NULL,
-   tipoEntidad VARCHAR(50) NOT NULL,  -- Ej: 'PÚBLICA', 'PRIVADA', 'FONDO', 'UNIVERSIDAD'
+   idPersonaEncargado BIGINT,
+   tipoEntidad VARCHAR(50) DEFAULT 'PÚBLICA',  -- Ej: 'PÚBLICA', 'PRIVADA', 'FONDO', 'UNIVERSIDAD'
    nombreEntidad VARCHAR(100) NOT NULL,
    direccionEntidad VARCHAR(100) NOT NULL,
    emailEntidad VARCHAR(100) NOT NULL,
    telefonoEntidad BIGINT NOT NULL,
    estadoEntidad VARCHAR(50) NOT NULL,
    PRIMARY KEY (idEntidad),
-   UNIQUE KEY uk_nit (nitEntidad, tipoEntidad)
+   UNIQUE KEY uk_nit (nitEntidad, tipoEntidad),
+   FOREIGN KEY (idPersonaEncargado) REFERENCES PERSONA(idPersona)
 );
 
 /*==============================================================*/
@@ -102,8 +107,10 @@ CREATE TABLE PENSIONADO (
    idPersona BIGINT NOT NULL, -- Cambiado de numeroIdPersona
    idEntidad BIGINT NOT NULL,
    fechaInicioPension DATE,
+   fechaIngreso DATE,
    valorInicialPension DECIMAL (19,0) NOT NULL,
    resolucionPension  VARCHAR(200) NOT NULL,
+   tipoPension VARCHAR(50) DEFAULT 'VEJEZ', -- Ej: 'VEJEZ', 'INVALIDEZ', 'SOBREVIVIENTES'
    totalDiasTrabajo BIGINT,
    aplicarIPCPrimerPeriodo BOOLEAN NOT NULL DEFAULT FALSE,
    PRIMARY KEY (idPensionado), -- Cambiado de numeroIdPersona
@@ -183,6 +190,9 @@ CREATE TABLE PERIODO (
    idCuotaParte BIGINT NOT NULL,
    fechaInicioPeriodo DATE NOT NULL,
    fechaFinPeriodo DATE NOT NULL,
+   resolucionPeriodo VARCHAR(300),
+   fechaExpedicion DATE,
+   estado VARCHAR(50) DEFAULT 'ACTIVO',
    numeroMesadas DECIMAL(5,2) NOT NULL,
    valorPension DECIMAL (19,0) NOT NULL,
    cuotaParteMensual DECIMAL (19,0) NOT NULL,

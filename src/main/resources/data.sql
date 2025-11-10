@@ -18,22 +18,6 @@ INSERT INTO ROL_ACCION (rol_id, accion) SELECT id, 'CONSULTAR_HISTORIAL' FROM RO
 INSERT INTO USUARIO (apellido, nombre, password, username, rol_id) VALUES ('unicauca', 'admin', '$2a$10$9PhCjFGoYcGm2C4/QlpsSOdt6iEG9e/Srme3WlTDPBJ35CO2EcLI.', 'admin@unicauca.edu.co', 1);
 INSERT INTO USUARIO (apellido, nombre, password, username, rol_id) VALUES ('unicauca', 'invitado', '$2a$10$9PhCjFGoYcGm2C4/QlpsSOdt6iEG9e/Srme3WlTDPBJ35CO2EcLI.', 'invitado@unicauca.edu.co', 2);
 
-
-INSERT INTO ENTIDAD (nitEntidad, nombreEntidad, direccionEntidad, emailEntidad, telefonoEntidad, estadoEntidad)
-VALUES (8911500319, 'Universidad del Cauca', 'Calle 5 No. 4-70 (Popayán - Cauca)', 'rectoria@unicauca.edu.co', 8209900, 'Activa');
-
--- Insertar más entidades para el historial laboral
-INSERT INTO ENTIDAD (nitEntidad, nombreEntidad, direccionEntidad, emailEntidad, telefonoEntidad, estadoEntidad)
-VALUES 
-(9004567281, 'Hospital San José', 'Carrera 10 No. 15-45, Popayán', 'contacto@hsanjose.com', 8200972, 'Activa'),
-(8600123456, 'Alcaldía de Popayán', 'Calle 8 No. 7-30, Popayán', 'alcaldia@popayan.gov.co', 3214965013, 'Activa'),
-(9001234567, 'Gobernación del Cauca', 'Calle 4 No. 3-52, Popayán', 'info@cauca.gov.co', 3145261209, 'Activa'),
-(8300123123, 'Colegio La Salle', 'Avenida 2 No. 12-40, Popayán', 'secretaria@lasalle.edu.co', 8201548, 'Activa'),
-(8300159161, 'FONCEP', 'Carrera 30 No. 25-90, Bogota D.C.', 'atencionalciudadano@foncep.gov.co', 6013358000, 'Activa'),
-(8903990011, 'Universidad del Valle', 'Calle 13 No. 100-00, Ciudad Universitaria Meléndez, Cali', 'comunicaciones@correounivalle.edu.co', 6023212100, 'Activa'),
-(8915002154, 'Hospital Universitario de Caldas', 'Calle 48 No. 27A-80, Manizales, Caldas', 'info@hospitalcaldas.gov.co', 6068782500, 'Activa');
-
-
 -- Entidades
 INSERT INTO ENTIDAD (nitEntidad, tipoEntidad, nombreEntidad, direccionEntidad, emailEntidad, telefonoEntidad, estadoEntidad)
 VALUES

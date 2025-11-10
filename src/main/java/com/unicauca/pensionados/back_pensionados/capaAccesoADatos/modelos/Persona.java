@@ -70,9 +70,4 @@ public abstract class Persona {
     //@OneToMany(cascade = CascadeType.ALL, fetch = FetchType.LAZY, mappedBy = "persona")
     //private List<Trabajo> trabajos;
 
-
-    //Una persona puede estar ligada a varios contratos
-    @OneToMany(mappedBy = "persona", fetch = FetchType.LAZY)
-    private List<Contrato> contratos = new ArrayList<>();
-
 }
