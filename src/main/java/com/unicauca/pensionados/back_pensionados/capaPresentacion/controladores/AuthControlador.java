@@ -28,6 +28,7 @@ import io.swagger.v3.oas.annotations.tags.Tag;
 @RequestMapping("/auth")
 @RequiredArgsConstructor
 @Tag(name = "Auth Controlador", description = "Operaciones de autenticación de usuarios")
+@CrossOrigin(origins = "*")
 public class AuthControlador {
 
     private final AuthService authService;
@@ -56,4 +57,5 @@ public class AuthControlador {
     }
     
     
+
 }
