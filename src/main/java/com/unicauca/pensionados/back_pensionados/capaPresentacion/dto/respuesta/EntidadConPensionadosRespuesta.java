@@ -3,6 +3,9 @@ package com.unicauca.pensionados.back_pensionados.capaPresentacion.dto.respuesta
 import io.swagger.v3.oas.annotations.media.Schema;
 import java.util.List;
 
+
+import com.unicauca.pensionados.back_pensionados.capaAccesoADatos.enums.EstadoEntidad;
+
 import lombok.Builder;
 import lombok.Data;
 
@@ -21,7 +24,9 @@ public class EntidadConPensionadosRespuesta {
     @Schema(description = "Email de la entidad", example = "relacionesinter@unicauca.edu.co")
     private String emailEntidad;
     @Schema(description = "Estado de la entidad", example = "ACTIVO")
-    private String estadoEntidad;
+
+    private EstadoEntidad estadoEntidad;
+
     @Schema(description = "Lista de pensionados asociados a la entidad")
     private List<PensionadoRespuesta> pensionados;
     @Schema(description = "Lista de trabajos asociados a la entidad")

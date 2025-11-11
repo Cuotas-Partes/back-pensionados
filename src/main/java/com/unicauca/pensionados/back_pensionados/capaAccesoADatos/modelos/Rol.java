@@ -17,7 +17,7 @@ import com.fasterxml.jackson.annotation.JsonManagedReference;
 @NoArgsConstructor
 @AllArgsConstructor
 @Builder
-@Table(name = "rol")
+@Table(name = "ROL")
 public class Rol {
 
     /** Identificador único del rol (PK autoincremental). */
@@ -67,7 +67,8 @@ public class Rol {
         actualizadoEn = LocalDateTime.now(); }
 
     /**
-     * Enum que define las acciones posibles del dominio.
+
+     * Enum que define las acciones posibles que el usuario puede realizar.
      */
     public enum Accion {
         EJECUCION_PAGOS,       // Ejecutar pagos

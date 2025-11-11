@@ -1,13 +1,16 @@
 package com.unicauca.pensionados.back_pensionados.capaAccesoADatos.modelos;
-
+import com.unicauca.pensionados.back_pensionados.capaAccesoADatos.modelos.enumeradores.Estado;
+import jakarta.persistence.EnumType;
 import java.math.BigDecimal;
-import java.sql.Date;
+
 import java.time.LocalDate;
 
 import org.springdoc.core.converters.models.MonetaryAmount;
 
+
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
+import jakarta.persistence.Enumerated;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
@@ -15,6 +18,7 @@ import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
 
 import jakarta.persistence.Table;
+import jakarta.persistence.TemporalType;
 import jakarta.persistence.Transient;
 import lombok.Getter;
 import lombok.Setter;
@@ -55,6 +59,17 @@ public class Periodo {
 
     @Column (name = "incrementoLey476", nullable = true, precision = 19, scale = 2)
     private BigDecimal incrementoLey476;
+
+    @Column(name = "resolucionPeriodo", length = 300)
+    private String resolucionPeriodo;
+
+    @Column(name = "estado", nullable = false, length = 50)
+    @Enumerated(EnumType.STRING) // guarda el nombre del enum como texto
+    // estado del periodo, no puede ser nulo
+    private Estado estado;
+
+    @Column (name = "fechaExpedicion")
+    private LocalDate fechaExpedicion;
 
     //Declaramos atributos de tipo JavaMoney para poder realizar calculos mas precisos
     @Transient

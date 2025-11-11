@@ -11,6 +11,7 @@ import org.springframework.security.core.userdetails.UserDetails;
 
 import com.unicauca.pensionados.back_pensionados.capaAccesoADatos.modelos.Rol;
 import com.unicauca.pensionados.back_pensionados.capaAccesoADatos.modelos.Usuario;
+import com.unicauca.pensionados.back_pensionados.capaAccesoADatos.repositories.RolRepositorio;
 import com.unicauca.pensionados.back_pensionados.capaAccesoADatos.repositories.UsuarioRepositorio;
 import com.unicauca.pensionados.back_pensionados.capaPresentacion.dto.peticion.LoginPeticion;
 import com.unicauca.pensionados.back_pensionados.capaPresentacion.dto.peticion.RegistroPeticion;

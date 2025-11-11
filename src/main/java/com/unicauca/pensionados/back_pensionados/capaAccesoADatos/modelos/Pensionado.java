@@ -3,34 +3,32 @@ package com.unicauca.pensionados.back_pensionados.capaAccesoADatos.modelos;
 import java.math.BigDecimal;
 import java.sql.Date;
 import java.time.LocalDate;
+
+import java.util.ArrayList;
 import java.util.List;
 
+import jakarta.persistence.*;
 import org.springdoc.core.converters.models.MonetaryAmount;
 
-import jakarta.persistence.CascadeType;
-import jakarta.persistence.Column;
-import jakarta.persistence.Entity;
-import jakarta.persistence.JoinColumn;
-import jakarta.persistence.ManyToOne;
-import jakarta.persistence.OneToMany;
-import jakarta.persistence.PrimaryKeyJoinColumn;
-import jakarta.persistence.Table;
-import jakarta.persistence.Temporal;
-import jakarta.persistence.TemporalType;
-import jakarta.persistence.Transient;
 import lombok.Getter;
 import lombok.Setter;
 import com.fasterxml.jackson.annotation.JsonBackReference;
 import com.fasterxml.jackson.annotation.JsonManagedReference;
+import com.unicauca.pensionados.back_pensionados.capaAccesoADatos.modelos.enumeradores.Estado;
+import com.unicauca.pensionados.back_pensionados.capaAccesoADatos.modelos.enumeradores.TipoPension;
 
 @Entity
 @Table (name ="PENSIONADO")
-@PrimaryKeyJoinColumn (name = "numeroIdPersona") //tiene la misma PK que Persona
+@PrimaryKeyJoinColumn (name = "idPersona") //tiene la misma PK que Persona
 @Setter @Getter
 public class Pensionado extends Persona{
     @Column (name = "fechaInicioPension", nullable = true)
     @Temporal(TemporalType.DATE)
     private LocalDate fechaInicioPension;
+
+    @Column (name = "fechaIngreso", nullable = true)
+    @Temporal(TemporalType.DATE)
+    private LocalDate fechaIngreso;
     
     @Column (name = "valorInicialPension", nullable = false, precision = 19, scale = 0)
     private BigDecimal valorInicialPension;
@@ -50,6 +48,10 @@ public class Pensionado extends Persona{
     @JoinColumn(name = "nitEntidad", nullable = false)
     private Entidad entidadJubilacion; 
 
+    @Column(name = "tipoPension", nullable = false, length = 50)
+    @Enumerated(EnumType.STRING) // guarda el nombre del enum como texto
+    // tipo de pension o jubilacion, no puede ser nulo
+    private TipoPension tipoPension;
 
     //relacion 1 a muchos con trabajo
     @JsonManagedReference
@@ -63,4 +65,5 @@ public class Pensionado extends Persona{
     //Declaramos atributos de tipo JavaMoney para poder realizar calculos mas precisos
     @Transient 
     private MonetaryAmount valorInicialPensionMoney;
+
 }

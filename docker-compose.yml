@@ -1,26 +1,35 @@
 services:
-  app_back_pensionados:
-    build: .
+  pensionados-apirest:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    image: back-pensionados:v0.1
     ports:
       - "8080:8080"
     environment:
-      DB_URL: jdbc:mysql://db_pensionados_dl:3306/cuotapartes_pensionados_db?createDatabaseIfNotExist=true&useSSL=false&serverTimezone=UTC&allowPublicKeyRetrieval=true
-      DB_USER_NAME: root
-      DB_PASSWORD: 1234
+      DB_URL: ${DB_URL}
+      DB_USER_NAME: ${DB_USER_NAME}
+      DB_PASSWORD: ${DB_PASSWORD}
+    networks:
+      - dokploy-network
     restart: always
     depends_on:
-      db_pensionados_dl:
+      db_pensionados:
         condition: service_healthy
-  db_pensionados_dl:
+ 
+  db_pensionados:
     image: mysql:8.0.40
-    ports:
-      - "3307:3306"
+    networks:
+      - dokploy-network
     environment:
-      MYSQL_ROOT_PASSWORD: 1234
-      MYSQL_PASSWORD: 1234
-      MYSQL_DATABASE: cuotapartes_pensionados_db
+      - MYSQL_ROOT_PASSWORD=${MYSQL_ROOT_PASSWORD}
+      - MYSQL_DATABASE=${MYSQL_DATABASE}
     restart: always
     healthcheck:
       test: ["CMD", "mysqladmin", "ping", "-h", "localhost"]
       timeout: 10s
       retries: 10
+
+networks:
+  dokploy-network:
+    external: true

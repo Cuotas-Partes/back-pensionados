@@ -5,6 +5,7 @@ import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotEmpty;
 import jakarta.validation.constraints.NotNull;
 import java.util.List;
+import com.unicauca.pensionados.back_pensionados.capaAccesoADatos.enums.EstadoEntidad;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
@@ -40,7 +41,8 @@ public class RegistroEntidadPeticion {
 
     @Schema(description = "Estado de la entidad", example = "ACTIVO")
     @NotEmpty(message = "El estado de la entidad no puede estar vacio")
-    private String estadoEntidad;
+
+    private EstadoEntidad estadoEntidad;
 
     @Schema(description = "Lista de trabajos asociados a la entidad")
     //Lista de trabajos asociados a la entidad 

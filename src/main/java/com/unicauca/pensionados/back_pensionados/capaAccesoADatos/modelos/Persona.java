@@ -1,55 +1,73 @@
 package com.unicauca.pensionados.back_pensionados.capaAccesoADatos.modelos;
 
 import java.time.LocalDate;
-import java.util.Date;
 
-import jakarta.persistence.Column;
-import jakarta.persistence.Entity;
-import jakarta.persistence.Id;
-import jakarta.persistence.Inheritance;
-import jakarta.persistence.InheritanceType;
 
-import jakarta.persistence.Table;
-import jakarta.persistence.Temporal;
-import jakarta.persistence.TemporalType;
+import java.util.ArrayList;
+
+import java.util.List;
+
+// Importar los nuevos enumeradores
+import com.unicauca.pensionados.back_pensionados.capaAccesoADatos.modelos.enumeradores.EstadoCivil;
+import com.unicauca.pensionados.back_pensionados.capaAccesoADatos.modelos.enumeradores.EstadoPersona;
+import com.unicauca.pensionados.back_pensionados.capaAccesoADatos.modelos.enumeradores.Genero;
+import com.unicauca.pensionados.back_pensionados.capaAccesoADatos.modelos.enumeradores.TipoIdentificacion;
+
+import jakarta.persistence.*;
+
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 
 @Entity
 @Table (name = "PERSONA")
-@Inheritance(strategy =InheritanceType.JOINED)
+@Inheritance(strategy =InheritanceType.JOINED) // problemas de mutabilidad
+// @Inheritance(strategy = InheritanceType.SINGLE_TABLE)
 @Getter @Setter @NoArgsConstructor
 public abstract class Persona {
     @Id
-    @Column(name = "numeroIdPersona")
-    private Long numeroIdPersona;
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    private Long idPersona; // Un ID único para la persona, separado de su número de identificación
+
+    @Column(name = "numeroIdentificacion", nullable = false)
+    private Long numeroIdentificacion; // Campo renombrado
     
-    @Column (name =  "tipoIdPersona", nullable = false, length = 50)
-    private String tipoIdPersona;
+
+    @Enumerated(EnumType.STRING) // Indica a JPA que guarde el nombre del enum como String
+    @Column (name = "tipoIdentificacion", nullable = false, length = 50)
+    private TipoIdentificacion tipoIdentificacion; // Campo renombrado y de tipo Enum
 
     @Column (name = "nombrePersona", nullable = false, length = 50)
     private String nombrePersona;
 
     @Column (name = "apellidosPersona", nullable = false, length = 50)
     private String apellidosPersona;
+    
+    @Enumerated(EnumType.STRING)
+    @Column (name = "estadoCivil", nullable = false, length = 50)
+    private EstadoCivil estadoCivil; // Nuevo campo Estado Civil de tipo Enum
 
     @Column (name = "fechaNacimientoPersona", nullable = false)
-    @Temporal(TemporalType.DATE)
     private LocalDate fechaNacimientoPersona;
 
     @Column(name = "fechaExpedicionDocumentoIdPersona", nullable = false)
-    @Temporal(TemporalType.DATE)
     private LocalDate fechaExpedicionDocumentoIdPersona;
 
+
+    @Enumerated(EnumType.STRING)
     @Column (name = "estadoPersona", nullable = false, length = 50)
-    private String estadoPersona;
+    private EstadoPersona estadoPersona; // Campo cambiado a tipo Enum
 
-    @Column (name = "generoPersona", length = 50, nullable = true)
-    private String generoPersona;
+    @Enumerated(EnumType.STRING)
+    @Column (name = "generoPersona", length = 50)
+    private Genero generoPersona; // Campo cambiado a tipo Enum
 
-    @Column (name = "fechaDefuncionPersona", length = 50)
+    @Column (name = "fechaDefuncionPersona")
     @Temporal(TemporalType.DATE)
     private LocalDate fechaDefuncionPersona;
+
+    // Relación para las dependencias (trabajos)
+    //@OneToMany(cascade = CascadeType.ALL, fetch = FetchType.LAZY, mappedBy = "persona")
+    //private List<Trabajo> trabajos;
 
 }

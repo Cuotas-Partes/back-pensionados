@@ -6,9 +6,12 @@ import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 
+
+
 import com.fasterxml.jackson.annotation.JsonBackReference;
 
 import jakarta.persistence.*;
+
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
@@ -27,7 +30,7 @@ import java.util.stream.Collectors;
 @NoArgsConstructor
 
 @Entity
-@Table(name="usuario", uniqueConstraints = {@UniqueConstraint(columnNames = {"username"})})
+@Table(name="USUARIO", uniqueConstraints = {@UniqueConstraint(columnNames = {"username"})})
 public class Usuario implements UserDetails{
     
   // Identificador único (primary key) de la tabla

@@ -9,9 +9,8 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 @AllArgsConstructor
 public class TrabajoRespuestaEntidad {
-
         private Long nitEntidad;
-        private Long numeroIdPersona;
+        private Long idPersona; // <-- CAMBIO: Renombrado de numeroIdPersona a idPersona
         private Long diasDeServicio;
-  }
+}
     

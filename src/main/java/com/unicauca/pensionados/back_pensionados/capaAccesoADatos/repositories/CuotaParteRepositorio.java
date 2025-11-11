@@ -4,6 +4,7 @@ import java.time.LocalDate;
 import java.util.Optional;
 import java.util.List;
 
+import io.swagger.v3.oas.annotations.Operation;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
@@ -17,6 +18,10 @@ public interface CuotaParteRepositorio extends JpaRepository <CuotaParte, Long> 
     Optional<CuotaParte> findByTrabajoIdTrabajo(Long idTrabajo);
     List<CuotaParte> findByFechaGeneracionBetween(LocalDate fechaInicio, LocalDate fechaFin);
 
+    @Operation(
+        summary = "Obtener cuotas partes con periodos en un rango de fechas",
+        description = "Este endpoint devuelve una lista de cuotas partes que tienen al menos un periodo cuyo rango de fechas se solapa con el rango especificado."
+    )
   @Query("""
     SELECT DISTINCT cp
     FROM CuotaParte cp

@@ -4,6 +4,10 @@ package com.unicauca.pensionados.back_pensionados;
 //import org.javamoney.moneta.Money;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
+import org.springframework.context.annotation.Bean;
+import org.springframework.web.servlet.config.annotation.CorsRegistry;
+import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
+
 //import javax.money.Monetary;
 //import javax.money.MonetaryAmount;
 
@@ -23,6 +27,21 @@ public class BackPensionadosApplication {
 		MonetaryAmount resultado;
 		resultado = cantidad1.add(cantidad2);
 		System.out.println(resultado);*/
+	}
+
+	@Bean
+	public WebMvcConfigurer corsConfigurer() {
+		return new WebMvcConfigurer() {
+			@Override
+			public void addCorsMappings(CorsRegistry registry) {
+				registry.addMapping("/**")
+						.allowedOrigins("http://localhost:5173") // origen del frontend
+						//.allowedOrigins("https://pensionadosunicauca.herokuapp.com") // frontend en producción
+						.allowedMethods("GET", "POST", "PUT", "DELETE", "OPTIONS")
+						.allowedHeaders("*")
+						.allowCredentials(true);
+			}
+		};
 	}
 
 }
