@@ -3,8 +3,7 @@ package com.unicauca.pensionados.back_pensionados.CapaServicio.servicios;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import com.unicauca.pensionados.back_pensionados.capaAccesoADatos.enums.EstadoEntidad;
-import com.unicauca.pensionados.back_pensionados.capaAccesoADatos.modelos.CuotaParte;
+import com.unicauca.pensionados.back_pensionados.capaAccesoADatos.modelos.enumeradores.EstadoEntidad;
 import com.unicauca.pensionados.back_pensionados.capaAccesoADatos.modelos.Entidad;
 import com.unicauca.pensionados.back_pensionados.capaAccesoADatos.modelos.Pensionado;
 import com.unicauca.pensionados.back_pensionados.capaAccesoADatos.modelos.Trabajo;

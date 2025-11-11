@@ -53,12 +53,12 @@ public class Usuario implements UserDetails{
     private Rol rol;
 
     @Override
-    public Collection<? extends GrantedAuthority> getAuthorities(){
-        // Tomamos la lista de "Acciones" del objeto Rol
-        // y las convertimos en "GrantedAuthority" que Spring Security entiende.
-        return this.rol.getAcciones().stream()
-                .map(accion -> new SimpleGrantedAuthority(accion.name()))
-                .collect(Collectors.toList());
+    public Collection<? extends GrantedAuthority> getAuthorities() {
+        return this.rol.getAcciones() == null ?
+            List.of() :
+            this.rol.getAcciones().stream()
+                    .map(accion -> new SimpleGrantedAuthority(accion.name()))
+                    .collect(Collectors.toList());
     }
 
     /**

@@ -5,9 +5,8 @@ import com.unicauca.pensionados.back_pensionados.capaAccesoADatos.modelos.Pensio
 import com.unicauca.pensionados.back_pensionados.capaAccesoADatos.modelos.Persona;
 import com.unicauca.pensionados.back_pensionados.capaAccesoADatos.modelos.Sucesor;
 import com.unicauca.pensionados.back_pensionados.capaAccesoADatos.repositories.EventoRepository;
-import com.unicauca.pensionados.back_pensionados.capaAccesoADatos.enums.TipoEvento;
+import com.unicauca.pensionados.back_pensionados.capaAccesoADatos.modelos.enumeradores.TipoEvento;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.context.event.EventListener;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDate;

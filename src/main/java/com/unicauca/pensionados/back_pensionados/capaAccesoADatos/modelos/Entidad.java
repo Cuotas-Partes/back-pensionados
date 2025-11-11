@@ -8,7 +8,7 @@ import lombok.Getter;
 import lombok.Setter;
 import com.fasterxml.jackson.annotation.JsonManagedReference;
 
-import com.unicauca.pensionados.back_pensionados.capaAccesoADatos.enums.EstadoEntidad;
+import com.unicauca.pensionados.back_pensionados.capaAccesoADatos.modelos.enumeradores.EstadoEntidad;
 
 @Entity
 @Table(name = "ENTIDAD")
