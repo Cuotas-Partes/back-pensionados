@@ -1,5 +1,7 @@
 package com.unicauca.pensionados.back_pensionados.CapaServicio.seguridad;
 
+import java.util.HashMap;
+
 import org.springframework.http.HttpStatus;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.BadCredentialsException;
@@ -8,6 +10,8 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.web.server.ResponseStatusException;
 import org.springframework.security.core.userdetails.UserDetails;
+import java.util.Map;
+import java.util.HashMap;
 
 import com.unicauca.pensionados.back_pensionados.capaAccesoADatos.modelos.Rol;
 import com.unicauca.pensionados.back_pensionados.capaAccesoADatos.modelos.Usuario;
@@ -39,7 +43,11 @@ public class AuthService {
         throw new ResponseStatusException(HttpStatus.UNAUTHORIZED, "Usuario o contraseña incorrecta");
         }
         
-        UserDetails usuario= usuarioRepositorio.findByUsername(request.getUsername()).orElseThrow();
+        Usuario usuario= usuarioRepositorio.findByUsername(request.getUsername()).orElseThrow();
+
+        Map<String, Object> extraClaims = new HashMap<>();
+        extraClaims.put("rolId", usuario.getRol().getId());
+        extraClaims.put("rolNombre", usuario.getRol().getNombre());
         String token = jwtService.getToken(usuario);
         return AuthRespuesta.builder()
             .token(token)
