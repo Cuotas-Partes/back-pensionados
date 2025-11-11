@@ -81,7 +81,7 @@ mysql -u root -p
     spring.jpa.hibernate.naming.physical-strategy=org.hibernate.boot.model.naming.PhysicalNamingStrategyStandardImpl
     spring.jpa.defer-datasource-initialization=true
     
-    spring.sql.init.mode=always
+    spring.sql.init.mode=never
     spring.sql.init.encoding=UTF-8
     spring.sql.init.schema-locations=classpath:schema.sql
     spring.sql.init.data-locations=classpath:data.sql
