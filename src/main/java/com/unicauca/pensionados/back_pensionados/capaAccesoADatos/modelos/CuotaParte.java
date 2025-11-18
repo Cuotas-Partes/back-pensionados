@@ -52,6 +52,16 @@ public class CuotaParte {
     @Column (name = "cuotaParteTotal", nullable = true, precision = 19, scale = 0)
     private BigDecimal valorTotalCuotaParte;	
 
+    @Column(name = "fechaActualizacion")
+    @Temporal(TemporalType.DATE)
+    private LocalDate fechaActualizacion;
+
+    @Column(name = "usuarioActualizacion", length = 100)
+    private String usuarioActualizacion;
+
+    @Column(name = "observaciones", length = 250)
+    private String observaciones;
+
     @OneToMany(mappedBy = "cuotaParte", cascade = CascadeType.ALL)
     private List<Periodo> periodos;
     

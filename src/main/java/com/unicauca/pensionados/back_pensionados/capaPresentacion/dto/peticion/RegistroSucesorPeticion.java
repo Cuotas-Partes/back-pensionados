@@ -62,6 +62,12 @@ public class RegistroSucesorPeticion {
     @JsonDeserialize(using =  MultiDateDeserializer.class)
     private LocalDate fechaDefuncionPersona;
 
+    @Schema(description = "Información sobre la discapacidad de la persona", example = "Ninguna")
+    private String discapacidad;
+
+    @Schema(description = "Indica si la persona es un pensionado o sucesor activo", example = "true")
+    private boolean esPensionadoOSucesorActivo;
+
     @Schema(description = "Fecha de inicio de la sucesión", example = "2024-06-01")
     @JsonDeserialize(using =  MultiDateDeserializer.class)
     LocalDate fechaInicioSucesion;

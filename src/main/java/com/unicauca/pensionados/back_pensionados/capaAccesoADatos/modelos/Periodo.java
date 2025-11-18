@@ -1,5 +1,6 @@
 package com.unicauca.pensionados.back_pensionados.capaAccesoADatos.modelos;
 import com.unicauca.pensionados.back_pensionados.capaAccesoADatos.modelos.enumeradores.Estado;
+import com.unicauca.pensionados.back_pensionados.capaAccesoADatos.modelos.enumeradores.EstadoPeriodo;
 import jakarta.persistence.EnumType;
 import java.math.BigDecimal;
 
@@ -67,6 +68,10 @@ public class Periodo {
     @Enumerated(EnumType.STRING) // guarda el nombre del enum como texto
     // estado del periodo, no puede ser nulo
     private Estado estado;
+
+    @Enumerated(EnumType.STRING)
+    @Column(name = "estadoPeriodo") // Campo para control contable
+    private EstadoPeriodo estadoPeriodo;
 
     @Column (name = "fechaExpedicion")
     private LocalDate fechaExpedicion;

@@ -41,6 +41,9 @@ public class Entidad {
     // estado de la entidad, no puede ser nulo
     private EstadoEntidad estadoEntidad;
 
+    @Column(name = "esPagadora") // Campo para distinguir si paga o cobra cuotas partes
+    private boolean esPagadora;    
+
     // relacion 1 a muchos Pensonados
     @JsonManagedReference // rompe el ciclo infinito de serializacion al mostrar el JSON
     @OneToMany(mappedBy = "entidadJubilacion")
