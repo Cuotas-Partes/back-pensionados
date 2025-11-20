@@ -254,3 +254,33 @@ CREATE TABLE EVENTO (
    FOREIGN KEY (idPersona) REFERENCES PERSONA(idPersona),
    FOREIGN KEY (idPensionado) REFERENCES PENSIONADO(idPensionado)
 );
+CREATE TABLE HISTORICO_LIQUIDACION_POR_COBRAR (
+
+    idLiquidacion BIGINT NOT NULL AUTO_INCREMENT,
+    idPensionado BIGINT NOT NULL,
+    idEntidad BIGINT NOT NULL,
+    fechaInicioPeriodo DATE NOT NULL,
+    fechaFinPeriodo DATE NOT NULL,
+    numeroMesadas DECIMAL(5,2) NOT NULL,
+    valorPension DECIMAL(19,2) NOT NULL,
+    valorCuotaParteMensual DECIMAL(19,2) NOT NULL,
+    cuotaParteTotalAnio DECIMAL(19,2) NOT NULL,
+    porcentajeCuotaParte DECIMAL(5,2) NOT NULL,
+    porcentajeIncrementoAnual DECIMAL(5,2),
+    incrementoAdicionalLey476 DECIMAL(19,2),
+    valorInicialPension DECIMAL(19,2) NOT NULL,
+    fechaInicioPension DATE,
+    resolucionPension VARCHAR(200),
+    fechaFallecimientoPensionado DATE,
+    nombreSustituto VARCHAR(150),
+    documentoSustituto VARCHAR(20),
+    notas VARCHAR(500),
+    estadoLiquidacion ENUM('PENDIENTE','COBRADA','ANULADA','EN_TRAMITE') NOT NULL,
+    fechaRegistro DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    usuarioRegistro VARCHAR(50) NOT NULL,
+    PRIMARY KEY (idLiquidacion),
+    CONSTRAINT fk_historico_pensionado
+    FOREIGN KEY (idPensionado) REFERENCES PENSIONADO(idPensionado),
+    CONSTRAINT fk_historico_entidad
+    FOREIGN KEY (idEntidad) REFERENCES ENTIDAD(idEntidad)
+);

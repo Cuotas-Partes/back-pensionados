@@ -7,6 +7,7 @@ import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
 
+import com.unicauca.pensionados.back_pensionados.capaAccesoADatos.modelos.Eventos.HistoricoLiquidacionPorCobrar;
 import jakarta.persistence.*;
 import org.springdoc.core.converters.models.MonetaryAmount;
 
@@ -57,6 +58,10 @@ public class Pensionado extends Persona{
     @JsonManagedReference
     @OneToMany (mappedBy = "pensionado", cascade = CascadeType.ALL)
     private List <Trabajo> trabajos;
+
+    //Relacion con HistoricoLiquidacionPorCobrar
+    @OneToMany(mappedBy = "pensionado", cascade = CascadeType.ALL, orphanRemoval = false)
+    private List<HistoricoLiquidacionPorCobrar> historicos;
 
     @JsonManagedReference("pensionado-sucesor")
     @OneToMany(mappedBy = "pensionado", cascade = CascadeType.ALL, orphanRemoval = true)
