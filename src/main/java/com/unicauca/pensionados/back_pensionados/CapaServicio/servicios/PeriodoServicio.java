@@ -1,13 +1,11 @@
 package com.unicauca.pensionados.back_pensionados.CapaServicio.servicios;
 
+import com.unicauca.pensionados.back_pensionados.CapaServicio.excepciones.BusinessValidationException;
+import com.unicauca.pensionados.back_pensionados.capaAccesoADatos.modelos.*;
 import io.swagger.v3.oas.annotations.Operation;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import com.unicauca.pensionados.back_pensionados.capaAccesoADatos.modelos.CuotaParte;
-import com.unicauca.pensionados.back_pensionados.capaAccesoADatos.modelos.IPC;
-import com.unicauca.pensionados.back_pensionados.capaAccesoADatos.modelos.Pensionado;
-import com.unicauca.pensionados.back_pensionados.capaAccesoADatos.modelos.Periodo;
 import com.unicauca.pensionados.back_pensionados.capaAccesoADatos.repositories.CuotaParteRepositorio;
 import com.unicauca.pensionados.back_pensionados.capaAccesoADatos.repositories.IPCRepositorio;
 import com.unicauca.pensionados.back_pensionados.capaAccesoADatos.repositories.PeriodoRepositorio;
@@ -17,6 +15,7 @@ import jakarta.transaction.Transactional;
 import java.math.BigDecimal;
 import java.math.RoundingMode;
 import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.time.YearMonth;
 import java.time.temporal.ChronoUnit;
 import java.util.*;
@@ -103,6 +102,14 @@ public class PeriodoServicio implements IPeriodoServicio {
             BigDecimal cuotaParteTotalAnio = cuotaParteMensual.multiply(numeroMesadas);
 
             // Crear y agregar el periodo
+            if(periodoRepositorio.findPeriodoByFechas(inicioPeriodo, finPeriodo).isPresent()){
+                LogCambio logCambio = new LogCambio();
+                logCambio.setEntidad("PERIODO");
+                logCambio.setAccion(LogCambio.Accion.CREAR);
+                logCambio.setValorNuevo("Intento de crear periodo para fechas " + inicioPeriodo + " - " + finPeriodo + " duplicado");
+                logCambio.setFecha(LocalDateTime.now());
+                throw new BusinessValidationException("Error al crear el periodo: \nEl periodo entre " + inicioPeriodo + " y " + finPeriodo + " ya existe.");
+            }
             Periodo periodo = new Periodo();
             periodo.setFechaInicioPeriodo(inicioPeriodo);
             periodo.setFechaFinPeriodo(finPeriodo);
@@ -190,6 +197,11 @@ public class PeriodoServicio implements IPeriodoServicio {
             totalMesadas = totalMesadas.add(mesadas);
         }
         return totalMesadas.setScale(2, RoundingMode.HALF_UP);
+    }
+
+    public Periodo findPeriodoByFechas(LocalDate fechaInicio, LocalDate fechaFin){
+        Optional<Periodo> periodo = periodoRepositorio.findPeriodoByFechas(fechaInicio, fechaFin);
+        return periodo.orElse(null);
     }
 
     @Operation(

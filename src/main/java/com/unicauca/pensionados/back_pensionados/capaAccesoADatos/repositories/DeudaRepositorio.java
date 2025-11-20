@@ -7,6 +7,7 @@ import org.springframework.data.repository.query.Param;
 import org.springframework.security.core.parameters.P;
 
 import java.util.List;
+import java.util.Optional;
 
 public interface DeudaRepositorio extends JpaRepository<Deuda, Long> {
 
@@ -20,4 +21,13 @@ public interface DeudaRepositorio extends JpaRepository<Deuda, Long> {
         """
     )
     List<Deuda> findByTipoEstadoPersona(@Param("tipoDeuda") Deuda.TipoDeuda tipoDeuda, @Param("estadoDeuda") Deuda.EstadoDeuda estadoDeuda, @Param("idPersona") Long idPersona);
+
+    @Query(
+            """
+                SELECT d
+                FROM Deuda d
+                WHERE d.fechaVencimiento = :fechaVencimiento
+            """
+    )
+    Optional<Deuda> findByFechaVencimiento(@Param("fechaVencimiento") String fechaVencimiento);
 }

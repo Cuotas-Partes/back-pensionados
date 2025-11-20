@@ -49,7 +49,7 @@ public class LogCambio {
 
     /** Usuario que ejecutó la acción. */
     @ManyToOne(fetch = FetchType.LAZY, optional = false)
-    @JoinColumn(name = "usuario_id", nullable = false)
+    @JoinColumn(name = "usuario_id", nullable = true)
     private Usuario usuario;
 
     /** Asigna la fecha automáticamente del evento. */

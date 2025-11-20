@@ -5,6 +5,9 @@ import com.unicauca.pensionados.back_pensionados.capaAccesoADatos.modelos.Period
 import io.swagger.v3.oas.annotations.Operation;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
+import org.springframework.data.repository.query.Param;
+
+import java.time.LocalDate;
 import java.util.Optional;
 
 public interface PeriodoRepositorio extends JpaRepository<Periodo, Long> {
@@ -20,4 +23,9 @@ public interface PeriodoRepositorio extends JpaRepository<Periodo, Long> {
         description = "Este endpoint permite eliminar todos los periodos asociados a una cuota parte específica utilizando el ID de la cuota parte."
     )
     void deleteByCuotaParte_IdCuotaParte(Long idCuotaParte);
+
+    @Query("""
+            SELECT p FROM Periodo p where p.fechaInicioPeriodo = :fechaInicio AND p.fechaFinPeriodo = :fechaFin
+            """)
+    Optional<Periodo> findPeriodoByFechas(@Param("fechaInicio") LocalDate fechaInicio, @Param("fechaFin") LocalDate fechaFin);
 }
