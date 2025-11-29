@@ -15,9 +15,14 @@ import com.unicauca.pensionados.back_pensionados.capaAccesoADatos.modelos.enumer
 @Getter
 @Setter
 public class Entidad {
-    @Id // llave primaria
+    // Nueva llame primaria auto incrementable
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @Column(name = "idEntidad")
+    private Long idEntidad;
+
+    // Nit unico (ya no es PK)
     @Column(name = "nitEntidad", nullable = false, unique = true)
-    // NIT de la entidad, no puede ser nulo y debe ser unico
     private Long nitEntidad;
 
     @Column(name = "nombreEntidad", nullable = false, length = 100, unique = true)
