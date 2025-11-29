@@ -1,7 +1,6 @@
 package com.unicauca.pensionados.back_pensionados.capaAccesoADatos.modelos;
 
 import java.math.BigDecimal;
-import java.sql.Date;
 import java.time.LocalDate;
 
 import java.util.ArrayList;
@@ -14,9 +13,8 @@ import lombok.Getter;
 import lombok.Setter;
 import com.fasterxml.jackson.annotation.JsonBackReference;
 import com.fasterxml.jackson.annotation.JsonManagedReference;
-import com.unicauca.pensionados.back_pensionados.capaAccesoADatos.modelos.enumeradores.Estado;
-import com.unicauca.pensionados.back_pensionados.capaAccesoADatos.modelos.enumeradores.TipoPension;
 import com.unicauca.pensionados.back_pensionados.capaAccesoADatos.modelos.enumeradores.EstadoPensionado;
+import com.unicauca.pensionados.back_pensionados.capaAccesoADatos.modelos.enumeradores.TipoPension;
 
 @Entity
 @Table (name ="PENSIONADO")
@@ -70,6 +68,22 @@ public class Pensionado extends Persona{
     @JsonManagedReference("pensionado-sucesor")
     @OneToMany(mappedBy = "pensionado", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<Sucesor> sucesores;
+
+    // Relación con Resoluciones
+    @JsonManagedReference
+    @OneToMany(mappedBy = "pensionado", cascade = CascadeType.ALL, orphanRemoval = true)
+    private List<Resolucion> resoluciones = new ArrayList<>();
+
+    // Referencia al pensionado sustituto (en caso de fallecimiento)
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "pensionadoSustitutoId")
+    private Pensionado pensionadoSustituto;
+
+    @Column(name = "correoContacto", length = 100)
+    private String correoContacto;
+
+    @Column(name = "telefonoContacto", length = 20)
+    private String telefonoContacto;
 
     //Declaramos atributos de tipo JavaMoney para poder realizar calculos mas precisos
     @Transient 

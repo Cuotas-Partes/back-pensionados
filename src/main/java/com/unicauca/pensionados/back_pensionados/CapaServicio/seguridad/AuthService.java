@@ -1,6 +1,7 @@
 package com.unicauca.pensionados.back_pensionados.CapaServicio.seguridad;
 
 import java.util.HashMap;
+import java.util.Map;
 
 import org.springframework.http.HttpStatus;
 import org.springframework.security.authentication.AuthenticationManager;
@@ -9,9 +10,6 @@ import org.springframework.security.authentication.UsernamePasswordAuthenticatio
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.web.server.ResponseStatusException;
-import org.springframework.security.core.userdetails.UserDetails;
-import java.util.Map;
-import java.util.HashMap;
 
 import com.unicauca.pensionados.back_pensionados.capaAccesoADatos.modelos.Rol;
 import com.unicauca.pensionados.back_pensionados.capaAccesoADatos.modelos.Usuario;
@@ -22,8 +20,6 @@ import com.unicauca.pensionados.back_pensionados.capaPresentacion.dto.peticion.R
 import com.unicauca.pensionados.back_pensionados.capaPresentacion.dto.respuesta.AuthRespuesta;
 
 import lombok.RequiredArgsConstructor;
-
-import com.unicauca.pensionados.back_pensionados.capaAccesoADatos.repositories.RolRepositorio;
 
 @Service
 @RequiredArgsConstructor

@@ -1,4 +1,4 @@
-package com.unicauca.pensionados.back_pensionados.capaAccesoADatos.modelos;
+package com.unicauca.pensionados.back_pensionados.capaAccesoADatos.modelos.enumeradores;
 
 public enum Rol_Accion {
     EJECUCION_PAGOS,       // Ejecutar pagos

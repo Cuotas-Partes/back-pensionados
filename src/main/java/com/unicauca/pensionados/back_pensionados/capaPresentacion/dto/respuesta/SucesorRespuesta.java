@@ -6,8 +6,6 @@ import java.time.LocalDate;
 
 
 import com.unicauca.pensionados.back_pensionados.capaAccesoADatos.modelos.EstadoPersona;
-import com.unicauca.pensionados.back_pensionados.capaAccesoADatos.modelos.GeneroPersona;
-import com.unicauca.pensionados.back_pensionados.capaAccesoADatos.modelos.TipoIdPersona;
 import com.unicauca.pensionados.back_pensionados.capaAccesoADatos.modelos.enumeradores.Genero;
 import com.unicauca.pensionados.back_pensionados.capaAccesoADatos.modelos.enumeradores.TipoIdentificacion;
 

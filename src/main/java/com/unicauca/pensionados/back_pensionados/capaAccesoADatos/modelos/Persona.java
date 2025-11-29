@@ -53,7 +53,6 @@ public abstract class Persona {
     @Column(name = "fechaExpedicionDocumentoIdPersona", nullable = false)
     private LocalDate fechaExpedicionDocumentoIdPersona;
 
-
     @Enumerated(EnumType.STRING)
     @Column (name = "estadoPersona", nullable = false, length = 50)
     private EstadoPersona estadoPersona; // Campo cambiado a tipo Enum
@@ -68,12 +67,5 @@ public abstract class Persona {
 
     @Column(name = "discapacidad", length = 255) // Campo para discapacidad (texto)
     private String discapacidad;
-
-    @Column(name = "esPensionadoOSucesorActivo") // Campo para marcar si es pensionado o sucesor activo
-    private boolean esPensionadoOSucesorActivo;
-
-    // Relación para las dependencias (trabajos)
-    //@OneToMany(cascade = CascadeType.ALL, fetch = FetchType.LAZY, mappedBy = "persona")
-    //private List<Trabajo> trabajos;
 
 }

@@ -1,5 +1,6 @@
 package com.unicauca.pensionados.back_pensionados.capaAccesoADatos.modelos;
 
+import com.unicauca.pensionados.back_pensionados.capaAccesoADatos.modelos.enumeradores.Rol_Accion;
 import jakarta.persistence.*;
 import lombok.*;
 import java.time.LocalDateTime;
@@ -48,7 +49,7 @@ public class Rol {
 
     @ElementCollection(fetch = FetchType.EAGER, targetClass = Rol_Accion.class)
     @Enumerated(EnumType.STRING)
-    @CollectionTable(name = "rol_accion", joinColumns = @JoinColumn(name = "rol_id"))
+    @CollectionTable(name = "ROL_ACCION", joinColumns = @JoinColumn(name = "rol_id"))
     @Column(name = "accion")
     private List<Rol_Accion> acciones = new ArrayList<>();
 
