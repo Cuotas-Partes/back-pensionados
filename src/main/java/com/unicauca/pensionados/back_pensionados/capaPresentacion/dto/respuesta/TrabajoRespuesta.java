@@ -12,8 +12,7 @@ import lombok.NoArgsConstructor;
 public class TrabajoRespuesta {
         private Long idTrabajo;
         private Long nitEntidad;
-        private Long numeroIdPersona;
+        private Long idPersona; // <-- CAMBIO: Renombrado de numeroIdPersona a idPersona
         private String entidadJubilacion;
         private Long diasDeServicio;
 }
-    

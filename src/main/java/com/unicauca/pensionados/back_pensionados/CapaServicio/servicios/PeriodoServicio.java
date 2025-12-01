@@ -1,5 +1,6 @@
 package com.unicauca.pensionados.back_pensionados.CapaServicio.servicios;
 
+import io.swagger.v3.oas.annotations.Operation;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -19,6 +20,7 @@ import java.time.LocalDate;
 import java.time.YearMonth;
 import java.time.temporal.ChronoUnit;
 import java.util.*;
+
 import java.util.function.Function;
 import java.util.stream.Collectors;
 
@@ -36,6 +38,10 @@ public class PeriodoServicio implements IPeriodoServicio {
 
     @Override
     @Transactional
+    @Operation(
+            summary = "Genera y calcula los periodos de pensión para una cuota parte específica",
+            description = "Crea periodos anuales desde la fecha de inicio de pensión hasta la fecha actual, calculando el valor de la pensión, cuota parte mensual y total anual, considerando IPC y reajustes legales."
+    )
     public void generarYCalcularPeriodos(LocalDate fechaInicioPension, CuotaParte cuotaParte) {
         List<Periodo> periodos = new ArrayList<>();
         LocalDate fechaActual = LocalDate.now();
@@ -122,6 +128,10 @@ public class PeriodoServicio implements IPeriodoServicio {
 
     }
 
+    @Operation(
+            summary = "Calcula el número total de mesadas pensionales entre dos fechas",
+            description = "Incluye mesadas ordinarias y adicionales (junio y diciembre) según la cobertura anual entre las fechas de inicio y fin."
+    )
     public BigDecimal calcularMesadas(LocalDate inicio, LocalDate fin) {
         BigDecimal totalMesadas = BigDecimal.ZERO;
 
@@ -182,9 +192,14 @@ public class PeriodoServicio implements IPeriodoServicio {
         return totalMesadas.setScale(2, RoundingMode.HALF_UP);
     }
 
+    @Operation(
+            summary = "Aplica los reajustes legales a la pensión entre 1993 y 1997",
+            description = "Calcula el valor reajustado de la pensión según el año de inicio de pensión y el año a calcular, aplicando los porcentajes establecidos por la ley."
+    )
     public BigDecimal reajuste1993_1997(int anio, Pensionado pensionado, BigDecimal valorPension) {
         Calendar cal = Calendar.getInstance();
         cal.setTime(java.sql.Date.valueOf(pensionado.getFechaInicioPension()));
+
         int anioInicioPension = cal.get(Calendar.YEAR);
         if (anio == 1993 || anio == 1994) {
             if (anioInicioPension <= 1981 ) {

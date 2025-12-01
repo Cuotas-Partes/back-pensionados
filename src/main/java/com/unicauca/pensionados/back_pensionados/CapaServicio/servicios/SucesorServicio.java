@@ -1,6 +1,7 @@
 package com.unicauca.pensionados.back_pensionados.CapaServicio.servicios;
 
 import java.util.List;
+import java.util.stream.Collectors;
 import java.util.Date;
 import org.springframework.beans.factory.annotation.Autowired;
 
@@ -35,20 +36,24 @@ public class SucesorServicio implements ISucesorServicio {
     @Transactional
     @Override
     public void registrarSucesor(RegistroSucesorPeticion request) {
-        // Validar si ya existe un sucesor con el mismo número de identificación
-        if (personaRepositorio.existsById(request.getNumeroIdPersona())) {
-            throw new RuntimeException("El número de identificación ya está registrado");
+        // ==================== CORRECCIÓN 1: Validación de Existencia ====================
+        // Se valida usando el método correcto del repositorio para el tipo y número de ID.
+        if (personaRepositorio.existsByTipoIdentificacionAndNumeroIdentificacion(request.getTipoIdentificacion(), request.getNumeroIdentificacion())) {
+            throw new RuntimeException("Ya existe una persona con ese tipo y número de identificación");
         }
-        // Validar si el pensionado esta registrado
+        
+        // La búsqueda del pensionado por su ID primario es correcta.
         Pensionado pensionado = pensionadoRepositorio.findById(request.getPensionado())
                 .orElseThrow(() -> new RuntimeException("El pensionado no está registrado"));
 
-        // Crear el sucesor
+        // ==================== CORRECCIÓN 2: Creación del Sucesor ====================
+        // Se usan los nuevos setters y se añade el campo 'estadoCivil'.
         Sucesor sucesor = new Sucesor();
-        sucesor.setNumeroIdPersona(request.getNumeroIdPersona());
-        sucesor.setTipoIdPersona(request.getTipoIdPersona());
+        sucesor.setNumeroIdentificacion(request.getNumeroIdentificacion());
+        sucesor.setTipoIdentificacion(request.getTipoIdentificacion());
         sucesor.setNombrePersona(request.getNombrePersona());
         sucesor.setApellidosPersona(request.getApellidosPersona());
+        sucesor.setEstadoCivil(request.getEstadoCivil()); // Campo nuevo
         sucesor.setFechaNacimientoPersona(request.getFechaNacimientoPersona());
         sucesor.setFechaExpedicionDocumentoIdPersona(request.getFechaExpedicionDocumentoIdPersona());
         sucesor.setEstadoPersona(request.getEstadoPersona());
@@ -56,7 +61,7 @@ public class SucesorServicio implements ISucesorServicio {
         sucesor.setFechaInicioSucesion(request.getFechaInicioSucesion());
         sucesor.setPorcentajePension(request.getPorcentajePension());
         sucesor.setPensionado(pensionado);
-        // Guardar el sucesor
+        
         sucesorRepositorio.save(sucesor);
     }
 
@@ -69,20 +74,24 @@ public class SucesorServicio implements ISucesorServicio {
     public List<RegistroSucesorPeticion> listaSucesores() {
         List<Sucesor> sucesores = sucesorRepositorio.findAll();
         return sucesores.stream().map(sucesor -> {
+            // ==================== CORRECCIÓN 3: Mapeo a DTO ====================
+            // Se usan los nuevos getters para poblar el DTO de respuesta.
             RegistroSucesorPeticion request = new RegistroSucesorPeticion();
-            request.setNumeroIdPersona(sucesor.getNumeroIdPersona());
-            request.setTipoIdPersona(sucesor.getTipoIdPersona());
+            request.setNumeroIdentificacion(sucesor.getNumeroIdentificacion());
+            request.setTipoIdentificacion(sucesor.getTipoIdentificacion());
             request.setNombrePersona(sucesor.getNombrePersona());
             request.setApellidosPersona(sucesor.getApellidosPersona());
+            request.setEstadoCivil(sucesor.getEstadoCivil()); // Campo nuevo
             request.setFechaNacimientoPersona(sucesor.getFechaNacimientoPersona());
             request.setFechaExpedicionDocumentoIdPersona(sucesor.getFechaExpedicionDocumentoIdPersona());
             request.setEstadoPersona(sucesor.getEstadoPersona());
             request.setGeneroPersona(sucesor.getGeneroPersona());
             request.setFechaInicioSucesion(sucesor.getFechaInicioSucesion());
-            request.setPensionado(sucesor.getPensionado().getNumeroIdPersona());
+            // Se obtiene el ID primario del pensionado.
+            request.setPensionado(sucesor.getPensionado().getIdPersona()); 
             request.setPorcentajePension(sucesor.getPorcentajePension());
             return request;
-        }).toList();
+        }).collect(Collectors.toList()); // Usar .collect(Collectors.toList()) para compatibilidad
     }
 
     /**
@@ -95,22 +104,22 @@ public class SucesorServicio implements ISucesorServicio {
      */
     @Override
     public RegistroSucesorPeticion obtenerSucesorPorId(Long id) {
-        // Validar si el sucesor existe
         Sucesor sucesor = sucesorRepositorio.findById(id)
                 .orElseThrow(() -> new RuntimeException("El sucesor no está registrado"));
 
-        // Crear el objeto de respuesta
+        // ==================== CORRECCIÓN 4: Mapeo a DTO ====================
         RegistroSucesorPeticion request = new RegistroSucesorPeticion();
-        request.setNumeroIdPersona(sucesor.getNumeroIdPersona());
-        request.setTipoIdPersona(sucesor.getTipoIdPersona());
+        request.setNumeroIdentificacion(sucesor.getNumeroIdentificacion());
+        request.setTipoIdentificacion(sucesor.getTipoIdentificacion());
         request.setNombrePersona(sucesor.getNombrePersona());
         request.setApellidosPersona(sucesor.getApellidosPersona());
+        request.setEstadoCivil(sucesor.getEstadoCivil()); // Campo nuevo
         request.setFechaNacimientoPersona(sucesor.getFechaNacimientoPersona());
         request.setFechaExpedicionDocumentoIdPersona(sucesor.getFechaExpedicionDocumentoIdPersona());
         request.setEstadoPersona(sucesor.getEstadoPersona());
         request.setGeneroPersona(sucesor.getGeneroPersona());
         request.setFechaInicioSucesion(sucesor.getFechaInicioSucesion());
-        request.setPensionado(sucesor.getPensionado().getNumeroIdPersona());
+        request.setPensionado(sucesor.getPensionado().getIdPersona());
         request.setPorcentajePension(sucesor.getPorcentajePension());
 
         return request;
@@ -128,23 +137,24 @@ public class SucesorServicio implements ISucesorServicio {
      */
     @Override
     public void editarSucesor(Long id, RegistroSucesorPeticion request) {
-        // Validar si el sucesor existe
         Sucesor sucesor = sucesorRepositorio.findById(id)
                 .orElseThrow(() -> new RuntimeException("El sucesor no está registrado"));
 
-        // Actualizar los campos del sucesor
-        sucesor.setTipoIdPersona(request.getTipoIdPersona());
+        // ==================== CORRECCIÓN 5: Actualización de Campos ====================
+        // Se usan los setters correctos y se añade el nuevo campo.
+        // No se permite cambiar el tipo o número de identificación en la edición.
         sucesor.setNombrePersona(request.getNombrePersona());
         sucesor.setApellidosPersona(request.getApellidosPersona());
+        sucesor.setEstadoCivil(request.getEstadoCivil()); // Campo nuevo
         sucesor.setFechaNacimientoPersona(request.getFechaNacimientoPersona());
         sucesor.setFechaExpedicionDocumentoIdPersona(request.getFechaExpedicionDocumentoIdPersona());
         sucesor.setEstadoPersona(request.getEstadoPersona());
         sucesor.setGeneroPersona(request.getGeneroPersona());
         sucesor.setFechaInicioSucesion(request.getFechaInicioSucesion());
 
-        // Guardar los cambios
         sucesorRepositorio.save(sucesor);
     }
+
 
     /**
      * Elimina un sucesor por su ID.

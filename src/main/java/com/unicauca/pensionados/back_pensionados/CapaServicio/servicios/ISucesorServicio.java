@@ -6,7 +6,7 @@ import java.util.List;
 public interface ISucesorServicio {
     void registrarSucesor(RegistroSucesorPeticion request);
     List<RegistroSucesorPeticion> listaSucesores();
-    RegistroSucesorPeticion obtenerSucesorPorId(Long numeroIdPersona);
-    void eliminarSucesor(Long numeroIdPersona);
-    void editarSucesor(Long numeroIdPersona, RegistroSucesorPeticion request);
+    RegistroSucesorPeticion obtenerSucesorPorId(Long idPersona);
+    void eliminarSucesor(Long idPersona);
+    void editarSucesor(Long idPersona, RegistroSucesorPeticion request);
 }
