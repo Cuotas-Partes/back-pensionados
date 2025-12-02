@@ -1,12 +1,10 @@
 package com.unicauca.pensionados.back_pensionados.capaPresentacion.dto.respuesta;
 
+import java.math.BigDecimal;
+import java.time.LocalDate;
+
 import com.unicauca.pensionados.back_pensionados.capaAccesoADatos.modelos.Deuda;
-import com.unicauca.pensionados.back_pensionados.capaAccesoADatos.modelos.Pensionado;
 import com.unicauca.pensionados.back_pensionados.capaAccesoADatos.modelos.Persona;
-import jakarta.persistence.Column;
-import jakarta.persistence.GeneratedValue;
-import jakarta.persistence.GenerationType;
-import jakarta.persistence.OneToOne;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;

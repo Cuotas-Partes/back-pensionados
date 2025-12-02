@@ -30,6 +30,11 @@ public class GlobalExceptionHandler {
         return ResponseEntity.status(HttpStatus.NOT_FOUND).body(new ErrorResponse("Recurso no encontrado", ex.getMessage()));
     }
 
+    @ExceptionHandler(RecursoNoEncontrado.class)
+    public ResponseEntity<?> handleRecursoNoEncontrado(RecursoNoEncontrado ex) {
+        return ResponseEntity.status(HttpStatus.NOT_FOUND).body(new ErrorResponse("Recurso no encontrado", ex.getMessage()));
+    }
+
     @ExceptionHandler(Exception.class)
     public ResponseEntity<?> handleInternalServerError(Exception ex) {
         return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(new ErrorResponse("Error interno", ex.getMessage()));

@@ -1,15 +1,19 @@
 package com.unicauca.pensionados.back_pensionados.capaAccesoADatos.modelos;
 
 import java.math.BigDecimal;
-import java.sql.Date;
 import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.util.List;
 
 import javax.money.MonetaryAmount;
 
+import com.unicauca.pensionados.back_pensionados.capaAccesoADatos.modelos.enumeradores.EstadoCuota;
+
 import jakarta.persistence.CascadeType;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
+import jakarta.persistence.EnumType;
+import jakarta.persistence.Enumerated;
 import jakarta.persistence.FetchType;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
@@ -17,6 +21,7 @@ import jakarta.persistence.Id;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
 import jakarta.persistence.OneToMany;
+import jakarta.persistence.PreUpdate;
 import jakarta.persistence.Table;
 import jakarta.persistence.Temporal;
 import jakarta.persistence.TemporalType;
@@ -45,12 +50,33 @@ public class CuotaParte {
     @Column(name = "fechaGeneracion", nullable = true)
     private LocalDate fechaGeneracion;
 
-
     @Column (name = "notas", nullable = true, length = 200)
     private String notas;
 
     @Column (name = "cuotaParteTotal", nullable = true, precision = 19, scale = 0)
     private BigDecimal valorTotalCuotaParte;	
+
+    // Campos adicionales según schema
+    @Column(name = "valorCorriente", precision = 19, scale = 2)
+    private BigDecimal valorCorriente = BigDecimal.ZERO;
+
+    @Column(name = "valorNoCorriente", precision = 19, scale = 2)
+    private BigDecimal valorNoCorriente = BigDecimal.ZERO;
+
+    @Column(name = "valorPrescrito", precision = 19, scale = 2)
+    private BigDecimal valorPrescrito = BigDecimal.ZERO;
+
+    @Enumerated(EnumType.STRING)
+    @Column(name = "estado", length = 50)
+    private EstadoCuota estado = EstadoCuota.PENDIENTE;
+
+    @Column(name = "fechaVencimiento")
+    @Temporal(TemporalType.DATE)
+    private LocalDate fechaVencimiento;
+
+    @Column(name = "fechaPago")
+    @Temporal(TemporalType.DATE)
+    private LocalDate fechaPago;
 
     @Column(name = "fechaActualizacion")
     @Temporal(TemporalType.DATE)
@@ -62,6 +88,12 @@ public class CuotaParte {
     @Column(name = "observaciones", length = 250)
     private String observaciones;
 
+    @Column(name = "createdAt", nullable = false)
+    private LocalDateTime createdAt = LocalDateTime.now();
+
+    @Column(name = "updatedAt")
+    private LocalDateTime updatedAt;
+
     @OneToMany(mappedBy = "cuotaParte", cascade = CascadeType.ALL)
     private List<Periodo> periodos;
     
@@ -71,4 +103,9 @@ public class CuotaParte {
     
     @Transient
     private MonetaryAmount valorTotalCuotaParteMoney;
+
+    @PreUpdate
+    public void preUpdate() {
+        this.updatedAt = LocalDateTime.now();
+    }
 }

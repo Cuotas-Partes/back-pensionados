@@ -5,6 +5,7 @@ import jakarta.persistence.EnumType;
 import java.math.BigDecimal;
 
 import java.time.LocalDate;
+import java.time.LocalDateTime;
 
 import org.springdoc.core.converters.models.MonetaryAmount;
 
@@ -17,9 +18,9 @@ import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
+import jakarta.persistence.PreUpdate;
 
 import jakarta.persistence.Table;
-import jakarta.persistence.TemporalType;
 import jakarta.persistence.Transient;
 import lombok.Getter;
 import lombok.Setter;
@@ -32,6 +33,9 @@ public class Periodo {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long idPeriodo;
 
+    @Column(name = "nombrePeriodo", length = 50)
+    private String nombrePeriodo; // Ej: "2024-01", "2024-Q1"
+
     @ManyToOne
     @JoinColumn(name = "fechaIPC", nullable = false)
     private IPC IPC;
@@ -39,6 +43,10 @@ public class Periodo {
     @ManyToOne
     @JoinColumn(name = "idCuotaParte")
     private CuotaParte cuotaParte;
+
+    @ManyToOne
+    @JoinColumn(name = "idSMMLV")
+    private SMMLVHistorico smmlv;
 
     @Column(name = "fechaInicioPeriodo", nullable = false)
     private LocalDate fechaInicioPeriodo;
@@ -76,6 +84,12 @@ public class Periodo {
     @Column (name = "fechaExpedicion")
     private LocalDate fechaExpedicion;
 
+    @Column(name = "createdAt", nullable = false)
+    private LocalDateTime createdAt = LocalDateTime.now();
+
+    @Column(name = "updatedAt")
+    private LocalDateTime updatedAt;
+
     //Declaramos atributos de tipo JavaMoney para poder realizar calculos mas precisos
     @Transient
     private MonetaryAmount valorPensionMoney;
@@ -88,5 +102,9 @@ public class Periodo {
 
     @Transient
     private MonetaryAmount incrementoLey476Money;
-    
+
+    @PreUpdate
+    public void preUpdate() {
+        this.updatedAt = LocalDateTime.now();
+    }
 }   

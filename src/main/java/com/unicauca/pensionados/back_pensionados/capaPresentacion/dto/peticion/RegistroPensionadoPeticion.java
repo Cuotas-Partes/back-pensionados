@@ -14,9 +14,6 @@ import com.unicauca.pensionados.back_pensionados.capaAccesoADatos.modelos.enumer
 import com.unicauca.pensionados.back_pensionados.capaAccesoADatos.modelos.enumeradores.TipoIdentificacion;
 import com.unicauca.pensionados.back_pensionados.capaPresentacion.dto.util.MultiDateDeserializer;
 
-import com.unicauca.pensionados.back_pensionados.capaAccesoADatos.modelos.GeneroPersona;
-import com.unicauca.pensionados.back_pensionados.capaAccesoADatos.modelos.TipoIdPersona;
-
 import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.AllArgsConstructor;
 import lombok.Builder;

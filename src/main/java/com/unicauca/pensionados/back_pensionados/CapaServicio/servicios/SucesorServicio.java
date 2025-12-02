@@ -2,7 +2,6 @@ package com.unicauca.pensionados.back_pensionados.CapaServicio.servicios;
 
 import java.util.List;
 import java.util.stream.Collectors;
-import java.util.Date;
 import org.springframework.beans.factory.annotation.Autowired;
 
 import com.unicauca.pensionados.back_pensionados.capaAccesoADatos.repositories.PersonaRepositorio;

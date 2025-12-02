@@ -1,4 +1,4 @@
-package com.unicauca.pensionados.back_pensionados.capaAccesoADatos.modelos;
+package com.unicauca.pensionados.back_pensionados.capaAccesoADatos.modelos.enumeradores;
 
 /**
  * Enumeración para el género de una persona.
