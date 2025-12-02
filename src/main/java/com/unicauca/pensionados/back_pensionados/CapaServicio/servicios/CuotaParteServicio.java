@@ -191,6 +191,11 @@ public class CuotaParteServicio implements ICuotaParteServicio {
             cuotaParte.setPorcentajeCuotaParte(porcentajeCuotaParte);
             cuotaParte.setFechaGeneracion(LocalDate.now());
             cuotaParte.setNotas(porcentajeCuotaParte.toString());
+
+            cuotaParte.setFechaActualizacion(LocalDate.now());
+            cuotaParte.setUsuarioActualizacion("SISTEMA"); // TODO: El usuario "SISTEMA" es temporal .Se debe reemplazar con el usuario autenticado del contexto de seguridad
+            cuotaParte.setObservaciones("Registro de cuota parte actualizado por recálculo.");
+
             cuotaParteRepositorio.save(cuotaParte);
             periodoRepositorio.deleteByCuotaParte_IdCuotaParte(cuotaParte.getIdCuotaParte());
 

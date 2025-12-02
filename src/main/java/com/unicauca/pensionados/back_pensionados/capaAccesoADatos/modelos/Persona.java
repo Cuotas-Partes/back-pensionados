@@ -66,6 +66,12 @@ public abstract class Persona {
     @Temporal(TemporalType.DATE)
     private LocalDate fechaDefuncionPersona;
 
+    @Column(name = "discapacidad", length = 255) // Campo para discapacidad (texto)
+    private String discapacidad;
+
+    @Column(name = "esPensionadoOSucesorActivo") // Campo para marcar si es pensionado o sucesor activo
+    private boolean esPensionadoOSucesorActivo;
+
     // Relación para las dependencias (trabajos)
     //@OneToMany(cascade = CascadeType.ALL, fetch = FetchType.LAZY, mappedBy = "persona")
     //private List<Trabajo> trabajos;

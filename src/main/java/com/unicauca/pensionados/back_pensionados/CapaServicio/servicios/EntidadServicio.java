@@ -3,8 +3,7 @@ package com.unicauca.pensionados.back_pensionados.CapaServicio.servicios;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import com.unicauca.pensionados.back_pensionados.capaAccesoADatos.enums.EstadoEntidad;
-import com.unicauca.pensionados.back_pensionados.capaAccesoADatos.modelos.CuotaParte;
+import com.unicauca.pensionados.back_pensionados.capaAccesoADatos.modelos.enumeradores.EstadoEntidad;
 import com.unicauca.pensionados.back_pensionados.capaAccesoADatos.modelos.Entidad;
 import com.unicauca.pensionados.back_pensionados.capaAccesoADatos.modelos.Pensionado;
 import com.unicauca.pensionados.back_pensionados.capaAccesoADatos.modelos.Trabajo;
@@ -141,9 +140,9 @@ public class EntidadServicio implements IEntidadServicio {
      */
     @Transactional
     @Override
-    public void actualizar(Long nid, RegistroEntidadPeticion entidad) {
-    Entidad entidadExistente = entidadRepository.findById(nid)
-        .orElseThrow(() -> new RuntimeException("No se encontró la entidad con NIT: " + nid));
+    public void actualizar(Long idEntidad, RegistroEntidadPeticion entidad) {
+    Entidad entidadExistente = entidadRepository.findById(idEntidad)
+        .orElseThrow(() -> new RuntimeException("No se encontró la entidad con ID: " + idEntidad));
 
     if (entidadRepository.existsByNombreEntidad(entidad.getNombreEntidad())
         && !entidadExistente.getNombreEntidad().equals(entidad.getNombreEntidad())) {
@@ -250,8 +249,9 @@ public class EntidadServicio implements IEntidadServicio {
     @Transactional
     @Override
     public void editarPensionadosDeEntidad(Long nitEntidad, List<RegistroTrabajoPeticion> trabajosActualizados) {
-        Entidad entidad = entidadRepository.findById(nitEntidad)
-                .orElseThrow(() -> new RuntimeException("No se encontró la entidad con NIT: " + nitEntidad));
+        Entidad entidad = entidadRepository.findByNitEntidad(nitEntidad)
+        .orElseThrow(() -> new RuntimeException("No se encontró la entidad con NIT: " + nitEntidad));
+
 
         List<Trabajo> trabajosActuales = trabajoRepositorio.findByEntidadNitEntidad(nitEntidad);
         
@@ -453,8 +453,9 @@ public class EntidadServicio implements IEntidadServicio {
      */
     @Override
     public Entidad buscarPorNit(Long nit) {
-        return entidadRepository.findById(nit)
-                .orElseThrow(() -> new RuntimeException("No se encontró la entidad con NIT: " + nit));
+        return entidadRepository.findByNitEntidad(nit)
+            .orElseThrow(() -> new RuntimeException("No se encontró la entidad con NIT: " + nit));
+
     }
 
     /**
@@ -470,7 +471,8 @@ public class EntidadServicio implements IEntidadServicio {
         // Buscar entidades por NIT o criterios de texto
         try {
             Long nit = Long.parseLong(query);
-            entidades.addAll(entidadRepository.findByNitEntidadIs(nit));
+            entidadRepository.findByNitEntidad(nit).ifPresent(entidades::add);
+
         } catch (NumberFormatException e) {
             // Si no es un número, buscar por nombre, dirección o email
             entidades.addAll(entidadRepository.findByNombreEntidadContainingIgnoreCase(query));
@@ -557,7 +559,8 @@ public class EntidadServicio implements IEntidadServicio {
      */
     @Override
     public boolean activarEntidad(Long nid) {
-        Optional<Entidad> entidadOptional = entidadRepository.findById(nid);
+        Optional<Entidad> entidadOptional = entidadRepository.findByNitEntidad(nid);
+
 
         if (entidadOptional.isPresent()) {
             Entidad entidad = entidadOptional.get();
@@ -577,7 +580,8 @@ public class EntidadServicio implements IEntidadServicio {
      */
     @Override
     public boolean desactivarEntidad(Long nid) {
-        Optional<Entidad> entidadOptional = entidadRepository.findById(nid);
+        Optional<Entidad> entidadOptional = entidadRepository.findByNitEntidad(nid);
+
 
         if (entidadOptional.isPresent()) {
             Entidad entidad = entidadOptional.get();
@@ -600,5 +604,21 @@ public class EntidadServicio implements IEntidadServicio {
     @Override
     public List<Entidad> buscarEntidadPorNombre(String nombre) {
         return entidadRepository.findByNombreEntidadContainingIgnoreCase(nombre);
-    }    
+    }   
+
+    public List<Pensionado> listarPensionadosPorEntidad(Long idEntidad) {
+    Entidad entidad = entidadRepository.findById(idEntidad)
+            .orElseThrow(() -> new RuntimeException("No se encontró la entidad con ID: " + idEntidad));
+
+    return entidad.getPensionados();
+    }
+
+    public List<Trabajo> listarTrabajosPorEntidad(Long idEntidad) {
+    Entidad entidad = entidadRepository.findById(idEntidad)
+            .orElseThrow(() -> new RuntimeException("No se encontró la entidad con ID: " + idEntidad));
+
+    return entidad.getTrabajos();
+    }
+
+
 }

@@ -9,16 +9,21 @@ import lombok.Getter;
 import lombok.Setter;
 import com.fasterxml.jackson.annotation.JsonManagedReference;
 
-import com.unicauca.pensionados.back_pensionados.capaAccesoADatos.enums.EstadoEntidad;
+import com.unicauca.pensionados.back_pensionados.capaAccesoADatos.modelos.enumeradores.EstadoEntidad;
 
 @Entity
 @Table(name = "ENTIDAD")
 @Getter
 @Setter
 public class Entidad {
-    @Id // llave primaria
+    // Nueva llame primaria auto incrementable
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @Column(name = "idEntidad")
+    private Long idEntidad;
+
+    // Nit unico (ya no es PK)
     @Column(name = "nitEntidad", nullable = false, unique = true)
-    // NIT de la entidad, no puede ser nulo y debe ser unico
     private Long nitEntidad;
 
     @Column(name = "nombreEntidad", nullable = false, length = 100, unique = true)
@@ -41,6 +46,9 @@ public class Entidad {
     @Enumerated(EnumType.STRING) // guarda el nombre del enum como texto
     // estado de la entidad, no puede ser nulo
     private EstadoEntidad estadoEntidad;
+
+    @Column(name = "esPagadora") // Campo para distinguir si paga o cobra cuotas partes
+    private boolean esPagadora;    
 
     // relacion 1 a muchos Pensonados
     @JsonManagedReference // rompe el ciclo infinito de serializacion al mostrar el JSON

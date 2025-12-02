@@ -17,6 +17,7 @@ import com.fasterxml.jackson.annotation.JsonBackReference;
 import com.fasterxml.jackson.annotation.JsonManagedReference;
 import com.unicauca.pensionados.back_pensionados.capaAccesoADatos.modelos.enumeradores.Estado;
 import com.unicauca.pensionados.back_pensionados.capaAccesoADatos.modelos.enumeradores.TipoPension;
+import com.unicauca.pensionados.back_pensionados.capaAccesoADatos.modelos.enumeradores.EstadoPensionado;
 
 @Entity
 @Table (name ="PENSIONADO")
@@ -42,6 +43,14 @@ public class Pensionado extends Persona{
 
     @Column (name = "aplicarIPCPrimerPeriodo", nullable = false)
     private boolean aplicarIPCPrimerPeriodo = false;
+
+    @Enumerated(EnumType.STRING)
+    @Column(name = "estadoPensionado")
+    private EstadoPensionado estadoPensionado; // (activo, fallecido, suspendido)
+
+    @Column(name = "fechaFinPension")
+    @Temporal(TemporalType.DATE)
+    private LocalDate fechaFinPension; // (si cesa el pago o se liquida)
 
     //relacion entidad de Jubilacion
     @JsonBackReference //rompe el ciclo infinito de serializacion al mostrar el JSON

@@ -18,6 +18,10 @@ public class PensionadoConTrabajoRespuesta {
     private String nombrePersona;
     @Schema(description = "Apellidos de la persona", example = "Perez")
     private String apellidosPersona;
+    @Schema(description = "Información sobre la discapacidad de la persona", example = "Ninguna")
+    private String discapacidad;
+    @Schema(description = "Indica si la persona es un pensionado o sucesor activo", example = "true")
+    private boolean esPensionadoOSucesorActivo;
     @Schema(description = "Días de servicio del trabajo asociado a la entidad", example = "3650")
     private Long diasDeServicio; 
 }

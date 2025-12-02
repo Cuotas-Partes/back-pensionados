@@ -2,7 +2,7 @@ package com.unicauca.pensionados.back_pensionados.capaAccesoADatos.modelos;
 
 import java.time.LocalDate;
 
-import com.unicauca.pensionados.back_pensionados.capaAccesoADatos.enums.TipoEvento;
+import com.unicauca.pensionados.back_pensionados.capaAccesoADatos.modelos.enumeradores.TipoEvento;
 
 
 

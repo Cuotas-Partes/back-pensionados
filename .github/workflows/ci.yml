@@ -62,10 +62,6 @@ jobs:
             sleep 2
           done
 
-      - name: Run schema.sql and data.sql
-        run: |
-          mysql -h 127.0.0.1 -u${{ env.DB_USER }} -p${{ env.DB_PASSWORD }} ${{ env.DB_NAME }} < src/main/resources/schema.sql
-          mysql -h 127.0.0.1 -u${{ env.DB_USER }} -p${{ env.DB_PASSWORD }} ${{ env.DB_NAME }} < src/main/resources/data.sql
 # Remember to adjust dev profile settings to test profile if needed
       - name: Run unit tests (Maven with dev profile)
         env:
