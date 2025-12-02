@@ -1,6 +1,8 @@
 package com.unicauca.pensionados.back_pensionados.CapaServicio.servicios;
 
+import com.unicauca.pensionados.back_pensionados.CapaServicio.excepciones.BusinessValidationException;
 import com.unicauca.pensionados.back_pensionados.capaAccesoADatos.modelos.DTF;
+import com.unicauca.pensionados.back_pensionados.capaAccesoADatos.modelos.LogCambio;
 import com.unicauca.pensionados.back_pensionados.capaAccesoADatos.repositories.DTFRepositorio;
 import com.unicauca.pensionados.back_pensionados.capaPresentacion.dto.respuesta.DTFDTO;
 import org.modelmapper.ModelMapper;
@@ -8,6 +10,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Optional;
 
@@ -23,6 +26,15 @@ public class DTFServicio implements IDTFServicio {
     public DTFDTO guardarDTF(DTFDTO dtf) {
         try{
             DTF nuevoDTF = modelMapper.map(dtf, DTF.class);
+            Optional<DTF> dtfExistente = dtfRepositorio.findByMesAndAnio(nuevoDTF.getMes(), nuevoDTF.getAnio());
+            if(dtfExistente.isPresent()) {
+                LogCambio logCambio = new LogCambio();
+                logCambio.setEntidad("DTF");
+                logCambio.setAccion(LogCambio.Accion.CREAR);
+                logCambio.setValorNuevo("Intento de crear DTF para mes " + nuevoDTF.getMes() + " y año " + nuevoDTF.getAnio() + " duplicado");
+                logCambio.setFecha(LocalDateTime.now());
+                throw new BusinessValidationException("Ya existe un DTF para el mes " + nuevoDTF.getMes() + " y año " + nuevoDTF.getAnio());
+            }
             nuevoDTF.setFechaRegistro(LocalDate.now().toString());
             dtfRepositorio.save(nuevoDTF);
             return modelMapper.map(nuevoDTF, DTFDTO.class);
@@ -67,7 +79,7 @@ public class DTFServicio implements IDTFServicio {
 
     @Override
     public List<DTFDTO> obtenerDTFPorMesAnio(Long mes, Long anio) {
-        List<DTF> dtfs = dtfRepositorio.findByMesAndAnio(mes, anio);
+        List<DTF> dtfs = dtfRepositorio.findByMesOrAnio(mes, anio);
         return dtfs.isEmpty() ? null : dtfs.stream().map(obj -> modelMapper.map(obj, DTFDTO.class)).toList();
     }
 

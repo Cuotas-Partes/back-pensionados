@@ -38,6 +38,24 @@ public class DeudaControlador {
         }
     }
 
+    @PostMapping
+    public ResponseEntity<?> crearDeuda(@RequestBody DeudaDTO deudaDTO) {
+        Map<String, String> response = new HashMap<>();
+        try {
+            deudaDTO = deudaServicio.crearDeuda(deudaDTO);
+            return ResponseEntity.ok(deudaDTO);
+        } catch (RuntimeException e){
+            response.put("estado", "error");
+            response.put("mensaje", e.getMessage());
+            return ResponseEntity.status(400).body(response);
+        }
+        catch (Exception e) {
+            response.put("estado", "error");
+            response.put("mensaje", "Error al crear la deuda: " + e.getMessage());
+            return ResponseEntity.status(500).body(response);
+        }
+    }
+
     @PutMapping
     public ResponseEntity<?> actualizarDeuda(@RequestBody DeudaDTO deudaDTO) {
         Map<String, String> response = new HashMap<>();

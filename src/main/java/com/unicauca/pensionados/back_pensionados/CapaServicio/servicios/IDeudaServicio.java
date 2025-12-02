@@ -7,7 +7,7 @@ import java.util.List;
 
 public interface IDeudaServicio {
 
-    DeudaDTO guardarDeuda(DeudaDTO deuda);
+    DeudaDTO crearDeuda(DeudaDTO deuda);
     DeudaDTO actualizarDeuda(DeudaDTO deuda);
     void eliminarDeuda(Long id);
 

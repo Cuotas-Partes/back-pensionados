@@ -6,10 +6,13 @@ import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 
 import java.util.List;
+import java.util.Optional;
 
 public interface DTFRepositorio extends JpaRepository<DTF, Long> {
 
     @Query("SELECT d FROM DTF d WHERE (:mes IS NULL OR d.mes = :mes) AND (:anio IS NULL OR d.anio = :anio)")
-    List<DTF> findByMesAndAnio(@Param("mes") Long mes, @Param("anio") Long anio);
+    List<DTF> findByMesOrAnio(@Param("mes") Long mes, @Param("anio") Long anio);
 
+    @Query("SELECT d FROM DTF d WHERE (:mes IS NULL OR d.mes = :mes) AND (:anio IS NULL OR d.anio = :anio)")
+    Optional<DTF> findByMesAndAnio(@Param("mes") Long mes, @Param("anio") Long anio);
 }
