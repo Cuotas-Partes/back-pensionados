@@ -48,7 +48,7 @@ public class Entidad {
     private EstadoEntidad estadoEntidad;
 
     @Column(name = "esPagadora") // Campo para distinguir si paga o cobra cuotas partes
-    private boolean esPagadora;    
+    private Boolean esPagadora = false;    
 
     // relacion 1 a muchos Pensonados
     @JsonManagedReference // rompe el ciclo infinito de serializacion al mostrar el JSON
