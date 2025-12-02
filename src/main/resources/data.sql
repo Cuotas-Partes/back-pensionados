@@ -41,12 +41,18 @@ WHERE r.nombre='INVITADO'
 AND NOT EXISTS (SELECT 1 FROM ROL_ACCION ra WHERE ra.rol_id = r.id AND ra.accion = 'CONSULTAR_HISTORIAL');
 
 -- Insertar Usuario por Defecto (solo si no existen)
-INSERT INTO USUARIO (apellido, nombre, password, username, rol_id) 
-SELECT 'unicauca', 'admin', '$2a$10$9PhCjFGoYcGm2C4/QlpsSOdt6iEG9e/Srme3WlTDPBJ35CO2EcLI.', 'admin@unicauca.edu.co', 1
+INSERT INTO USUARIO (apellido, nombre, password, username, rol_id, createdAt, updatedAt, estado) 
+SELECT 'unicauca', 'admin', '$2a$10$9PhCjFGoYcGm2C4/QlpsSOdt6iEG9e/Srme3WlTDPBJ35CO2EcLI.', 'admin@unicauca.edu.co', 1,
+  NOW(),
+  NOW(),
+  1
 WHERE NOT EXISTS (SELECT 1 FROM USUARIO WHERE username = 'admin@unicauca.edu.co');
 
-INSERT INTO USUARIO (apellido, nombre, password, username, rol_id) 
-SELECT 'unicauca', 'invitado', '$2a$10$9PhCjFGoYcGm2C4/QlpsSOdt6iEG9e/Srme3WlTDPBJ35CO2EcLI.', 'invitado@unicauca.edu.co', 2
+INSERT INTO USUARIO (apellido, nombre, password, username, rol_id, createdAt, updatedAt, estado) 
+SELECT 'unicauca', 'invitado', '$2a$10$9PhCjFGoYcGm2C4/QlpsSOdt6iEG9e/Srme3WlTDPBJ35CO2EcLI.', 'invitado@unicauca.edu.co', 2,
+  NOW(),
+  NOW(),
+  1
 WHERE NOT EXISTS (SELECT 1 FROM USUARIO WHERE username = 'invitado@unicauca.edu.co');
 
 -- Entidades (solo si no existen)

@@ -1,5 +1,5 @@
 package com.unicauca.pensionados.back_pensionados.CapaServicio.servicios;
-
+import com.unicauca.pensionados.back_pensionados.CapaServicio.excepciones.BusinessValidationException;
 import com.unicauca.pensionados.back_pensionados.capaAccesoADatos.modelos.Deuda;
 import com.unicauca.pensionados.back_pensionados.capaAccesoADatos.repositories.DeudaRepositorio;
 import com.unicauca.pensionados.back_pensionados.capaPresentacion.dto.respuesta.DeudaDTO;
