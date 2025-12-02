@@ -93,4 +93,8 @@ public class RegistroPensionadoPeticion {
      //Lista de trabajos asociados a la entidad (Dependencias)
      @Schema(description = "Lista de trabajos asociados al pensionado")
      private List<RegistroTrabajoPeticion> trabajos; // <-- 7. Este campo representa las 'Dependencias'
+
+ //
+ @Schema(description = "")
+ private String tipoPension;
 }

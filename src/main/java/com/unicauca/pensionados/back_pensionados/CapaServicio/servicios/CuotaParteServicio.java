@@ -14,6 +14,8 @@ import javax.money.Monetary;
 import javax.money.MonetaryAmount;
 
 import org.javamoney.moneta.Money;
+import org.springframework.beans.BeanUtils;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -56,6 +58,10 @@ public class CuotaParteServicio implements ICuotaParteServicio {
 
     private final EntidadProperties entidadProperties;
 
+    @Autowired
+    private ILogCambioServicio logCambioServicio;
+    private final String nombreEntidad = "CUOTA_PARTE";
+
     public CuotaParteServicio (CuotaParteRepositorio cuotaParteRepositorio, TrabajoRepositorio trabajoRepositorio, PeriodoServicio periodoServicio, PeriodoRepositorio periodoRepositorio, PensionadoRepositorio pensionadoRepositorio, EntidadProperties entidadProperties){
 
         this.cuotaParteRepositorio = cuotaParteRepositorio;
@@ -92,7 +98,10 @@ public class CuotaParteServicio implements ICuotaParteServicio {
             cuotaParte.setPorcentajeCuotaParte(porcentajeCuotaParte);
             cuotaParte.setFechaGeneracion(LocalDate.now());
             cuotaParte.setNotas(porcentajeCuotaParte.toString());
-            cuotaParteRepositorio.save(cuotaParte);
+            cuotaParte = cuotaParteRepositorio.save(cuotaParte);
+            //Registrar log
+            logCambioServicio.registrarCreacion(nombreEntidad, cuotaParte);
+
             periodoRepositorio.deleteByCuotaParte_IdCuotaParte(cuotaParte.getIdCuotaParte());
 
 
@@ -121,6 +130,7 @@ public class CuotaParteServicio implements ICuotaParteServicio {
     }
 
     public CuotaParte buscarPorTrabajoId(Long idTrabajo) {
+        logCambioServicio.registrarConsulta(nombreEntidad);
         return cuotaParteRepositorio.findById(idTrabajo)
             .orElseThrow(() -> new RuntimeException("CuotaParte no encontrada para trabajo id: " + idTrabajo));
     }
@@ -175,6 +185,8 @@ public class CuotaParteServicio implements ICuotaParteServicio {
     public void actualizarCuotaParte(Trabajo trabajo) {
         if (trabajo != null) {
             CuotaParte cuotaParte = buscarPorTrabajoId(trabajo.getIdTrabajo());
+            CuotaParte cuotaParteAntigua = new CuotaParte();
+            BeanUtils.copyProperties(cuotaParte, cuotaParteAntigua);
             BigDecimal diasDeServicio = BigDecimal.valueOf(trabajo.getDiasDeServicio());
             BigDecimal totalDiasTrabajo = BigDecimal.valueOf(trabajo.getPensionado().getTotalDiasTrabajo());
     
@@ -191,7 +203,8 @@ public class CuotaParteServicio implements ICuotaParteServicio {
             cuotaParte.setPorcentajeCuotaParte(porcentajeCuotaParte);
             cuotaParte.setFechaGeneracion(LocalDate.now());
             cuotaParte.setNotas(porcentajeCuotaParte.toString());
-            cuotaParteRepositorio.save(cuotaParte);
+            cuotaParte = cuotaParteRepositorio.save(cuotaParte);
+            logCambioServicio.registrarActualizacion(nombreEntidad, cuotaParteAntigua, cuotaParte);
             periodoRepositorio.deleteByCuotaParte_IdCuotaParte(cuotaParte.getIdCuotaParte());
 
             LocalDate fechaInicioPensionDate = trabajo.getPensionado().getFechaInicioPension();
@@ -220,6 +233,7 @@ public class CuotaParteServicio implements ICuotaParteServicio {
         for(Trabajo trabajo : trabajos){
             actualizarCuotaParte(trabajo);
         }
+
     }
 
 
@@ -248,6 +262,8 @@ public class CuotaParteServicio implements ICuotaParteServicio {
 
     @Override
     public ResultadoCobroPorPensionado  cuotasPartesPorCobrarPensionado() {
+        //Registrar log
+        logCambioServicio.registrarConsulta(nombreEntidad);
         List<CuotaParte> todasLasCuotasParte = cuotaParteRepositorio.findAll();
     
         Map<Long, PensionadoConCuotaParteDTO> mapPensionados = new HashMap<>();
@@ -413,7 +429,8 @@ public class CuotaParteServicio implements ICuotaParteServicio {
         BigDecimal totalGeneral = listaPensionados.stream()
             .map(PensionadoConCuotaParteDTO::getValorTotalCobro)
             .reduce(BigDecimal.ZERO, BigDecimal::add);
-    
+
+        logCambioServicio.registrarConsulta(nombreEntidad);
         return new ResultadoCobroPorPeriodoDTO(listaPensionados, totalGeneral);
     }
     
@@ -519,6 +536,7 @@ public class CuotaParteServicio implements ICuotaParteServicio {
             dto.setValorACobrar(dto.getValorACobrar().add(totalPorEntidad));
         }
 
+        logCambioServicio.registrarConsulta(nombreEntidad);
         return new ArrayList<>(entidadValorMap.values());
     }
 

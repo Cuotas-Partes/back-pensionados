@@ -36,6 +36,10 @@ public class PeriodoServicio implements IPeriodoServicio {
     @Autowired
     private CuotaParteRepositorio cuotaParteRepositorio;
 
+    @Autowired
+    private ILogCambioServicio logCambioServicio;
+    private final String nombreEntidad = "PERIODO";
+
     @Override
     @Transactional
     @Operation(

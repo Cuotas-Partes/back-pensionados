@@ -9,7 +9,7 @@ import java.util.List;
 
 import org.springframework.stereotype.Service;
 
-@Service
+
 public interface IEntidadServicio {
     List<EntidadConPensionadosRespuesta> buscarEntidadesPorCriterio(String query);
     List<Entidad> buscarEntidadPorNombre(String nombre);

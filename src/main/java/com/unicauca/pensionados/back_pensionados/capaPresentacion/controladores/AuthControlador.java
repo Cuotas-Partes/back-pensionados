@@ -54,6 +54,11 @@ public class AuthControlador {
         
         return ResponseEntity.ok(authService.register(request));
     }
+
+    @GetMapping("/test")
+    public String test() {
+        return "test";
+    }
     
     
 }

@@ -4,6 +4,7 @@ import com.unicauca.pensionados.back_pensionados.capaAccesoADatos.modelos.IPC;
 import com.unicauca.pensionados.back_pensionados.capaAccesoADatos.repositories.IPCRepositorio;
 import com.unicauca.pensionados.back_pensionados.capaPresentacion.dto.respuesta.IPCRespuestaDTO;
 import com.unicauca.pensionados.back_pensionados.capaPresentacion.dto.peticion.RegistroIPCPeticion;
+import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import java.time.Year;
@@ -18,6 +19,10 @@ public class IPCServicio implements IIPCServicio {
     @Autowired
     private IPCRepositorio ipcRepositorio;
 
+    @Autowired
+    private ILogCambioServicio logCambioServicio;
+    private final String nombreEntidad = "IPC";
+
     /**
      * Lista todos los registros de IPC existentes.
      * @return Lista de DTOs con los valores de IPC registrados.
@@ -25,6 +30,7 @@ public class IPCServicio implements IIPCServicio {
     @Override
     public List<IPCRespuestaDTO> listarIPC() {
         List<IPC> lista = ipcRepositorio.findAll();
+        logCambioServicio.registrarConsulta(nombreEntidad);
         return lista.stream().map(ipc -> {
             IPCRespuestaDTO dto = new IPCRespuestaDTO();
             dto.setFechaIPC(ipc.getFechaIPC());
@@ -50,6 +56,7 @@ public class IPCServicio implements IIPCServicio {
         IPCRespuestaDTO dto = new IPCRespuestaDTO();
         dto.setFechaIPC(ipc.getFechaIPC());
         dto.setValorIPC(ipc.getValorIPC());
+        logCambioServicio.registrarConsulta(nombreEntidad);
         return dto;
     }
 
@@ -91,7 +98,8 @@ public class IPCServicio implements IIPCServicio {
         IPC ipc = new IPC();
         ipc.setFechaIPC(peticion.getFechaIPC());
         ipc.setValorIPC(peticion.getValorIPC());
-        ipcRepositorio.save(ipc);
+        ipc = ipcRepositorio.save(ipc);
+        logCambioServicio.registrarCreacion(nombreEntidad, ipc);
     }
 
 
@@ -117,11 +125,14 @@ public class IPCServicio implements IIPCServicio {
             throw new RuntimeException("No existe un IPC registrado para el año especificado");
         }
         IPC ipcExistente = existente.get();
+        IPC ipcAntiguo = new IPC();
+        BeanUtils.copyProperties(ipcExistente, ipcAntiguo);
         if(ipcExistente.getFechaIPC() != anioActual) {
             throw new RuntimeException("No se puede actualizar el IPC de un año anterior al actual");
         }
         ipcExistente.setValorIPC(peticion.getValorIPC());
-        ipcRepositorio.save(ipcExistente);
+        ipcExistente = ipcRepositorio.save(ipcExistente);
+        logCambioServicio.registrarActualizacion(nombreEntidad, ipcAntiguo, ipcExistente);
     }
 
     /**
@@ -136,6 +147,8 @@ public class IPCServicio implements IIPCServicio {
         if (anio < anioActual) {
             throw new RuntimeException("No se puede eliminar IPC de años anteriores al actual");
         }
+        IPC ipc = ipcRepositorio.findById(anio).orElseThrow(()->new RuntimeException("No se encontro el IPC"));
         ipcRepositorio.deleteById(anio);
+        logCambioServicio.registrarEliminacion(nombreEntidad, ipc);
     }
 }

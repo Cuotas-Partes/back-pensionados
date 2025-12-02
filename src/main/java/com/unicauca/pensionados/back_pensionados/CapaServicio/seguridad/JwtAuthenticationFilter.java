@@ -32,26 +32,33 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
     private final UserDetailsService userDetailsService;
 
     @Override
-    protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain) throws ServletException, IOException
-    {
-        final String token = getTokenFromRequest(request);
-        final String username;
+    protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain)
+            throws ServletException, IOException {
 
-        if(token==null)
-        {
+        String token = getTokenFromRequest(request);
+
+        if (token == null) {
             filterChain.doFilter(request, response);
             return;
         }
 
-        username = jwtService.getUsernameFromToken(token);
+        String username = null;
 
-        if(username!=null && SecurityContextHolder.getContext().getAuthentication()==null)
-        {
-            UserDetails userDetails=userDetailsService.loadUserByUsername(username);
+        try {
+            username = jwtService.getUsernameFromToken(token);
+        } catch (Exception e) {
+            System.out.println("TOKEN INVALIDO: " + e.getMessage());
+            filterChain.doFilter(request, response);
+            return;
+        }
 
-            if (jwtService.isTokenValid(token, userDetails))
-            {
-                UsernamePasswordAuthenticationToken authToken = new UsernamePasswordAuthenticationToken( userDetails,null,userDetails.getAuthorities());
+        if (username != null && SecurityContextHolder.getContext().getAuthentication() == null) {
+            UserDetails userDetails = userDetailsService.loadUserByUsername(username);
+
+            if (jwtService.isTokenValid(token, userDetails)) {
+                UsernamePasswordAuthenticationToken authToken =
+                        new UsernamePasswordAuthenticationToken(
+                                userDetails, null, userDetails.getAuthorities());
 
                 authToken.setDetails(new WebAuthenticationDetailsSource().buildDetails(request));
                 SecurityContextHolder.getContext().setAuthentication(authToken);
@@ -59,25 +66,43 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
         }
 
         filterChain.doFilter(request, response);
-
     }
 
-  
+
+
     private String getTokenFromRequest(HttpServletRequest request) {
-        final String authHeader= request.getHeader(HttpHeaders.AUTHORIZATION);
+        final String authHeader = request.getHeader(HttpHeaders.AUTHORIZATION);
 
-        if(StringUtils.hasText(authHeader) && authHeader.startsWith("Bearer"))
-        {
-            return authHeader.substring(7);
+        // no hay header -> no filtrar
+        if (!StringUtils.hasText(authHeader)) {
+            return null;
         }
-        return null;
+
+        // no empieza por "Bearer " -> no filtrar
+        if (!authHeader.startsWith("Bearer ")) {
+            return null;
+        }
+
+        // extraer token
+        String token = authHeader.substring(7);
+
+        // token vacío -> no filtrar
+        if (!StringUtils.hasText(token)) {
+            return null;
+        }
+
+        return token;
     }
+
 
     @Override
-        protected boolean shouldNotFilter(HttpServletRequest request) throws ServletException {
-            String path = request.getServletPath();
-            return path.startsWith("/v3/api-docs") || path.startsWith("/swagger-ui") || path.startsWith("/swagger-ui.html");
-        }
+    protected boolean shouldNotFilter(HttpServletRequest request) throws ServletException {
+        String path = request.getServletPath();
+        return path.startsWith("/auth/login") || path.startsWith("/auth/register")
+                || path.startsWith("/v3/api-docs")
+                || path.startsWith("/swagger-ui");
+    }
+
 
     
 }

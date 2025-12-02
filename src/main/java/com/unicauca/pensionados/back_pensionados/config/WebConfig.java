@@ -15,5 +15,11 @@ public class WebConfig implements WebMvcConfigurer {
                 .allowedMethods("GET", "POST", "PUT", "DELETE", "OPTIONS") // métodos permitidos
                 .allowedHeaders("*") // permite todos los headers
                 .allowCredentials(true); // permite enviar cookies o tokens
+
+        //Regla específica que BLOQUEA /api/logs/**
+        registry.addMapping("/api/logs/**")
+                .allowedOrigins()
+                .allowedMethods()
+                .allowedHeaders();
     }
 }

@@ -3,6 +3,8 @@ package com.unicauca.pensionados.back_pensionados.CapaServicio.servicios;
 import java.util.List;
 import java.util.stream.Collectors;
 import java.util.Date;
+
+import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 
 import com.unicauca.pensionados.back_pensionados.capaAccesoADatos.repositories.PersonaRepositorio;
@@ -24,6 +26,9 @@ public class SucesorServicio implements ISucesorServicio {
     private SucesorRepositorio sucesorRepositorio;
     @Autowired
     private PensionadoRepositorio pensionadoRepositorio;
+    @Autowired
+    private ILogCambioServicio logCambioServicio;
+    private final String nombreEntidad = "SUCESOR";
 
     /**
      * Registra un sucesor.
@@ -62,7 +67,7 @@ public class SucesorServicio implements ISucesorServicio {
         sucesor.setPorcentajePension(request.getPorcentajePension());
         sucesor.setPensionado(pensionado);
         
-        sucesorRepositorio.save(sucesor);
+        logCambioServicio.registrarCreacion(nombreEntidad, sucesorRepositorio.save(sucesor));
     }
 
     /**
@@ -73,6 +78,7 @@ public class SucesorServicio implements ISucesorServicio {
     @Override
     public List<RegistroSucesorPeticion> listaSucesores() {
         List<Sucesor> sucesores = sucesorRepositorio.findAll();
+        logCambioServicio.registrarConsulta(nombreEntidad);
         return sucesores.stream().map(sucesor -> {
             // ==================== CORRECCIÓN 3: Mapeo a DTO ====================
             // Se usan los nuevos getters para poblar el DTO de respuesta.
@@ -106,6 +112,7 @@ public class SucesorServicio implements ISucesorServicio {
     public RegistroSucesorPeticion obtenerSucesorPorId(Long id) {
         Sucesor sucesor = sucesorRepositorio.findById(id)
                 .orElseThrow(() -> new RuntimeException("El sucesor no está registrado"));
+        logCambioServicio.registrarConsulta(nombreEntidad);
 
         // ==================== CORRECCIÓN 4: Mapeo a DTO ====================
         RegistroSucesorPeticion request = new RegistroSucesorPeticion();
@@ -139,6 +146,8 @@ public class SucesorServicio implements ISucesorServicio {
     public void editarSucesor(Long id, RegistroSucesorPeticion request) {
         Sucesor sucesor = sucesorRepositorio.findById(id)
                 .orElseThrow(() -> new RuntimeException("El sucesor no está registrado"));
+        Sucesor sucesorAntiguo = new Sucesor();
+        BeanUtils.copyProperties(sucesor, sucesorAntiguo);
 
         // ==================== CORRECCIÓN 5: Actualización de Campos ====================
         // Se usan los setters correctos y se añade el nuevo campo.
@@ -152,7 +161,8 @@ public class SucesorServicio implements ISucesorServicio {
         sucesor.setGeneroPersona(request.getGeneroPersona());
         sucesor.setFechaInicioSucesion(request.getFechaInicioSucesion());
 
-        sucesorRepositorio.save(sucesor);
+        sucesor = sucesorRepositorio.save(sucesor);
+        logCambioServicio.registrarActualizacion(nombreEntidad, sucesorAntiguo, sucesor);
     }
 
 
@@ -165,11 +175,10 @@ public class SucesorServicio implements ISucesorServicio {
      */
     @Override
     public void eliminarSucesor(Long id) {
-        // Validar si el sucesor existe
-        if (!sucesorRepositorio.existsById(id)) {
-            throw new RuntimeException("El sucesor no está registrado");
-        }
+        Sucesor sucesor = sucesorRepositorio.findById(id).orElseThrow(() -> new RuntimeException("El sucesor no está registrado"));
         // Eliminar el sucesor
         sucesorRepositorio.deleteById(id);
+        //Registrar log de eliminacion
+        logCambioServicio.registrarEliminacion(nombreEntidad,sucesor);
     }
 }

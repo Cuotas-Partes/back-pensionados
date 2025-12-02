@@ -4,6 +4,7 @@ import com.unicauca.pensionados.back_pensionados.capaAccesoADatos.modelos.DTF;
 import com.unicauca.pensionados.back_pensionados.capaAccesoADatos.repositories.DTFRepositorio;
 import com.unicauca.pensionados.back_pensionados.capaPresentacion.dto.respuesta.DTFDTO;
 import org.modelmapper.ModelMapper;
+import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -18,13 +19,17 @@ public class DTFServicio implements IDTFServicio {
     private DTFRepositorio dtfRepositorio;
     @Autowired
     private ModelMapper modelMapper;
+    @Autowired
+    private ILogCambioServicio logCambioServicio;
+    private final String nombreEntidad = "DTF";
 
     @Override
     public DTFDTO guardarDTF(DTFDTO dtf) {
         try{
             DTF nuevoDTF = modelMapper.map(dtf, DTF.class);
             nuevoDTF.setFechaRegistro(LocalDate.now().toString());
-            dtfRepositorio.save(nuevoDTF);
+            nuevoDTF = dtfRepositorio.save(nuevoDTF);
+            logCambioServicio.registrarCreacion(nombreEntidad, nuevoDTF);
             return modelMapper.map(nuevoDTF, DTFDTO.class);
         }catch (Exception e){
             throw new RuntimeException("No se ha podido guardar el DTF" + e.getMessage());
@@ -37,13 +42,17 @@ public class DTFServicio implements IDTFServicio {
             Optional<DTF> dtfToUpdate = dtfRepositorio.findById(dtf.getIdDtf());
             if(dtfToUpdate.isEmpty()) throw new RuntimeException("El DTF con id " + dtf.getIdDtf() + " no existe");
             DTF dtfToUpdateEntity = dtfToUpdate.get();
+            DTF dtfAntiguo = new DTF();
+            BeanUtils.copyProperties(dtfToUpdateEntity, dtfAntiguo);
 
             if (dtf.getValor() != null)  dtfToUpdateEntity.setValor(dtf.getValor());
             if (dtf.getAnio() != null) dtfToUpdateEntity.setAnio(dtf.getAnio());
             if (dtf.getMes() != null) dtfToUpdateEntity.setMes(dtf.getMes());
             if (dtf.getUsuario() != null) dtfToUpdateEntity.setUsuario(dtf.getUsuario());
 
-            dtfRepositorio.save(dtfToUpdateEntity);
+            dtfToUpdateEntity = dtfRepositorio.save(dtfToUpdateEntity);
+            logCambioServicio.registrarActualizacion(nombreEntidad, dtfAntiguo, dtfToUpdateEntity);
+
             return modelMapper.map(dtfToUpdate, DTFDTO.class);
         }catch (Exception e){
             throw new RuntimeException("No se ha podido actualizar el DTF" + e.getMessage());
@@ -52,27 +61,28 @@ public class DTFServicio implements IDTFServicio {
 
     @Override
     public void eliminarDTF(Long id) {
-        try {
-            dtfRepositorio.deleteById(id);
-        } catch (Exception e) {
-            throw new RuntimeException("No se ha podido eliminar el DTF" + e.getMessage());
-        }
+        DTF dtf = dtfRepositorio.findById(id).orElseThrow(() -> new RuntimeException("El DTF con id " + id + " no existe"));
+        dtfRepositorio.deleteById(id);
+        logCambioServicio.registrarEliminacion(nombreEntidad, dtf);
     }
 
     @Override
     public DTFDTO obtenerDTFPorId(Long id) {
         DTF dtf = dtfRepositorio.findById(id).orElse(null);
+        logCambioServicio.registrarConsulta(nombreEntidad);
         return dtf == null ? null : modelMapper.map(dtfRepositorio.findById(id), DTFDTO.class);
     }
 
     @Override
     public List<DTFDTO> obtenerDTFPorMesAnio(Long mes, Long anio) {
         List<DTF> dtfs = dtfRepositorio.findByMesAndAnio(mes, anio);
+        logCambioServicio.registrarConsulta(nombreEntidad);
         return dtfs.isEmpty() ? null : dtfs.stream().map(obj -> modelMapper.map(obj, DTFDTO.class)).toList();
     }
 
     @Override
     public List<DTFDTO> listarDTFs() {
+        logCambioServicio.registrarConsulta(nombreEntidad);
         return dtfRepositorio.findAll().stream().map(obj -> modelMapper.map(obj, DTFDTO.class)).toList();
     }
 }

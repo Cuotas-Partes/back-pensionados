@@ -1,6 +1,9 @@
 package com.unicauca.pensionados.back_pensionados.CapaServicio.servicios;
 
 
+import com.unicauca.pensionados.back_pensionados.capaAccesoADatos.modelos.enumeradores.TipoPension;
+import org.springframework.beans.BeanUtils;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import com.unicauca.pensionados.back_pensionados.capaAccesoADatos.modelos.CuotaParte;
@@ -38,6 +41,9 @@ public class PensionadoServicio implements IPensionadoServicio {
     private final EntidadRepositorio entidadRepositorio;
     private final TrabajoRepositorio trabajoRepositorio;
     private final CuotaParteServicio cuotaParteServicio;
+    @Autowired
+    private ILogCambioServicio logCambioServicio;
+    private final String nombreEntidad = "PENSIONADO";
 
     public PensionadoServicio(PersonaRepositorio personaRepositorio,
                               PensionadoRepositorio pensionadoRepositorio,
@@ -62,6 +68,14 @@ public class PensionadoServicio implements IPensionadoServicio {
         Entidad entidadJubilacion = entidadRepositorio.findById(request.getNitEntidad())
                 .orElseThrow(() -> new RuntimeException("La Entidad de jubilación no se encuentra registrada"));
 
+        TipoPension tipoPension;
+        try{
+             tipoPension = TipoPension.valueOf(request.getTipoPension().toUpperCase());
+        }catch (IllegalArgumentException e){
+            throw new RuntimeException("Tipo de pension no valido");
+        }
+
+
         // 1. Crear y guardar la entidad Pensionado
         Pensionado pensionado = new Pensionado();
         pensionado.setNumeroIdentificacion(request.getNumeroIdentificacion());
@@ -79,10 +93,10 @@ public class PensionadoServicio implements IPensionadoServicio {
         pensionado.setResolucionPension(request.getResolucionPension());
         pensionado.setEntidadJubilacion(entidadJubilacion);
         pensionado.setAplicarIPCPrimerPeriodo(request.isAplicarIPCPrimerPeriodo());
-        
-        Pensionado pensionadoGuardado = pensionadoRepositorio.save(pensionado);
+        pensionado.setTipoPension(tipoPension);
 
-        pensionadoRepositorio.save(pensionadoGuardado);
+        //Guardar log del registro
+        logCambioServicio.registrarCreacion(nombreEntidad, pensionadoRepositorio.save(pensionado));
     }
     /*==============================================================*/
     /* Actualizar Pensionado no es lo mismo que actualizar persona
@@ -99,7 +113,9 @@ public class PensionadoServicio implements IPensionadoServicio {
 
         Entidad entidadJubilacion = entidadRepositorio.findById(request.getNitEntidad())
                 .orElseThrow(() -> new RuntimeException("La Entidad de jubilación no se encuentra registrada"));
-        
+        Pensionado pensionadoAntiguo = new Pensionado();
+        BeanUtils.copyProperties(pensionadoExistente, pensionadoAntiguo);
+
         pensionadoExistente.setNombrePersona(request.getNombrePersona());
         pensionadoExistente.setApellidosPersona(request.getApellidosPersona());
         pensionadoExistente.setEstadoCivil(request.getEstadoCivil());
@@ -113,14 +129,16 @@ public class PensionadoServicio implements IPensionadoServicio {
         pensionadoExistente.setResolucionPension(request.getResolucionPension());
         pensionadoExistente.setEntidadJubilacion(entidadJubilacion);
         pensionadoExistente.setAplicarIPCPrimerPeriodo(request.isAplicarIPCPrimerPeriodo());
-        
-        pensionadoRepositorio.save(pensionadoExistente);
+
+        pensionadoExistente = pensionadoRepositorio.save(pensionadoExistente);
+        logCambioServicio.registrarActualizacion(nombreEntidad, pensionadoAntiguo, pensionadoExistente);
         
     }
 
     @Override
     public List<PensionadoRespuesta> listarPensionados() {
         List<Pensionado> pensionados = pensionadoRepositorio.findAll();
+        logCambioServicio.registrarConsulta(nombreEntidad);
         return pensionados.stream().map(this::convertirAPensionadoRespuesta).collect(Collectors.toList());
     }
     
@@ -128,6 +146,7 @@ public class PensionadoServicio implements IPensionadoServicio {
     public PensionadoRespuesta buscarPensionadoPorId(Long id) {
         Pensionado pensionado = pensionadoRepositorio.findById(id)
                 .orElseThrow(() -> new RuntimeException("No se encontró el pensionado con ID: " + id));
+        logCambioServicio.registrarConsulta(nombreEntidad);
         return convertirAPensionadoRespuesta(pensionado);
     }
     
@@ -194,26 +213,32 @@ public class PensionadoServicio implements IPensionadoServicio {
     public void desactivarPensionado(Long id) {
         Pensionado pensionado = pensionadoRepositorio.findById(id)
                 .orElseThrow(() -> new RuntimeException("Pensionado no encontrado con ID: " + id));
+        Pensionado pensionadoAntiguo = new Pensionado();
+        BeanUtils.copyProperties(pensionado, pensionadoAntiguo);
         
         // Asumiendo que "RETIRADO" o un estado similar existe en tu enum
         pensionado.setEstadoPersona(EstadoPersona.RETIRADO);
-        pensionadoRepositorio.save(pensionado);
+        pensionado = pensionadoRepositorio.save(pensionado);
+        logCambioServicio.registrarActualizacion(nombreEntidad, pensionadoAntiguo, pensionado);
     }
     
     // El resto de los métodos de búsqueda deberían funcionar, pero siempre es bueno revisarlos.
 
     @Override
     public List<Pensionado> buscarPensionadosPorNombre(String nombre) {
+        logCambioServicio.registrarConsulta(nombreEntidad);
         return pensionadoRepositorio.findByNombrePersonaContainingIgnoreCase(nombre);
     }
 
     @Override
     public List<Pensionado> buscarPensionadosPorApellido(String apellido) {
+        logCambioServicio.registrarConsulta(nombreEntidad);
         return pensionadoRepositorio.findByApellidosPersonaContainingIgnoreCase(apellido);
     }
 
     @Override
     public List<Pensionado> buscarPensionadosPorCriterio(String query) {
+        logCambioServicio.registrarConsulta(nombreEntidad);
         if (query == null || query.trim().isEmpty()) {
             return pensionadoRepositorio.findAll();
         }

@@ -1,10 +1,10 @@
 package com.unicauca.pensionados.back_pensionados.CapaServicio.servicios;
 
+import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import com.unicauca.pensionados.back_pensionados.capaAccesoADatos.enums.EstadoEntidad;
-import com.unicauca.pensionados.back_pensionados.capaAccesoADatos.modelos.CuotaParte;
 import com.unicauca.pensionados.back_pensionados.capaAccesoADatos.modelos.Entidad;
 import com.unicauca.pensionados.back_pensionados.capaAccesoADatos.modelos.Pensionado;
 import com.unicauca.pensionados.back_pensionados.capaAccesoADatos.modelos.Trabajo;
@@ -32,6 +32,8 @@ import jakarta.transaction.Transactional;
 @Service
 public class EntidadServicio implements IEntidadServicio {
 
+    private final String nombreEntidad = "ENTIDAD";
+
     @Autowired
     private EntidadRepositorio entidadRepository;
     @Autowired
@@ -44,6 +46,8 @@ public class EntidadServicio implements IEntidadServicio {
     private CuotaParteRepositorio cuotaParteRepositorio;
     @Autowired
     private PeriodoRepositorio periodoRepositorio;
+    @Autowired
+    private ILogCambioServicio logCambioService;
 
     /**
      * Registra una nueva entidad en la base de datos junto con sus pensionados y trabajos asociados.
@@ -74,7 +78,9 @@ public class EntidadServicio implements IEntidadServicio {
         if (entidad.getTrabajos() == null) {
             entidad.setTrabajos(new ArrayList<>());
         }
-        entidadRepository.save(entidad);
+        //Guardar log
+        logCambioService.registrarCreacion(nombreEntidad,entidadRepository.save(entidad));
+
 
         if (request.getTrabajos() != null && !request.getTrabajos().isEmpty()) {
             for (RegistroTrabajoPeticion registroTrabajoPeticion : request.getTrabajos()) {
@@ -150,6 +156,9 @@ public class EntidadServicio implements IEntidadServicio {
         throw new RuntimeException("Ya existe una entidad con el nombre: " + entidad.getNombreEntidad());
     }
 
+    Entidad entidadAntigua = new Entidad();
+    BeanUtils.copyProperties(entidadExistente, entidadAntigua);
+
     entidadExistente.setNombreEntidad(entidad.getNombreEntidad());
     entidadExistente.setDireccionEntidad(entidad.getDireccionEntidad());
     entidadExistente.setTelefonoEntidad(entidad.getTelefonoEntidad());
@@ -203,7 +212,7 @@ public class EntidadServicio implements IEntidadServicio {
         }
 
         */
-        entidadRepository.save(entidadExistente);
+    logCambioService.registrarActualizacion(nombreEntidad, entidadAntigua, entidadRepository.save(entidadExistente));
     }
 
     /**
@@ -370,8 +379,9 @@ public class EntidadServicio implements IEntidadServicio {
      */
     @Override
     public List<EntidadConPensionadosRespuesta> listarTodos() {
+        //Registrar log
+        logCambioService.registrarConsulta(nombreEntidad);
         List<Entidad> entidades = entidadRepository.findAllByOrderByNitEntidadAsc();
-
         return entidades.stream().map(entidad -> {
             
             // ==================== CORRECCIÓN Bloque 1: Mapeo de Trabajos ====================
@@ -453,8 +463,10 @@ public class EntidadServicio implements IEntidadServicio {
      */
     @Override
     public Entidad buscarPorNit(Long nit) {
-        return entidadRepository.findById(nit)
-                .orElseThrow(() -> new RuntimeException("No se encontró la entidad con NIT: " + nit));
+        Entidad entidad = entidadRepository.findById(nit).orElseThrow(()-> new RuntimeException("No se encontró la entidad con NIT: " + nit));
+        logCambioService.registrarConsulta(nombreEntidad);
+        System.out.println("LOG GUARDADO DESDE ENTIDAD SERVICE");
+        return entidad;
     }
 
     /**
@@ -466,6 +478,7 @@ public class EntidadServicio implements IEntidadServicio {
       @Override
     public List<EntidadConPensionadosRespuesta> buscarEntidadesPorCriterio(String query) {
         List<Entidad> entidades = new ArrayList<>();
+        logCambioService.registrarConsulta(nombreEntidad);
 
         // Buscar entidades por NIT o criterios de texto
         try {
@@ -561,13 +574,24 @@ public class EntidadServicio implements IEntidadServicio {
 
         if (entidadOptional.isPresent()) {
             Entidad entidad = entidadOptional.get();
+
+            Entidad entidadAntigua = new Entidad();
+            BeanUtils.copyProperties(entidad, entidadAntigua);
+
             entidad.setEstadoEntidad(EstadoEntidad.ACTIVA);
-            entidadRepository.save(entidad);
+
+            logCambioService.registrarActualizacion(
+                    nombreEntidad,
+                    entidadAntigua,
+                    entidadRepository.save(entidad)
+            );
+
             return true;
         } else {
             return false;
         }
     }
+
 
     /**
      * Desactiva una entidad cambiando su estado a "No Activa".
@@ -581,10 +605,12 @@ public class EntidadServicio implements IEntidadServicio {
 
         if (entidadOptional.isPresent()) {
             Entidad entidad = entidadOptional.get();
+            Entidad  entidadAntigua = new Entidad();
+            BeanUtils.copyProperties(entidad, entidadAntigua);
 
             entidad.setEstadoEntidad(EstadoEntidad.NO_ACTIVA);
 
-            entidadRepository.save(entidad);
+            logCambioService.registrarActualizacion(nombreEntidad, entidadAntigua,entidadRepository.save(entidad));
             return true;
         } else {
             return false;
@@ -599,6 +625,7 @@ public class EntidadServicio implements IEntidadServicio {
      */
     @Override
     public List<Entidad> buscarEntidadPorNombre(String nombre) {
+        logCambioService.registrarConsulta(nombreEntidad);
         return entidadRepository.findByNombreEntidadContainingIgnoreCase(nombre);
     }    
 }
