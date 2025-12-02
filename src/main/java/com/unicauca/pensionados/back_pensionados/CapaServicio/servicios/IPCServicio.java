@@ -1,12 +1,16 @@
 package com.unicauca.pensionados.back_pensionados.CapaServicio.servicios;
 
+import com.unicauca.pensionados.back_pensionados.CapaServicio.excepciones.BusinessValidationException;
 import com.unicauca.pensionados.back_pensionados.capaAccesoADatos.modelos.IPC;
+import com.unicauca.pensionados.back_pensionados.capaAccesoADatos.modelos.LogCambio;
 import com.unicauca.pensionados.back_pensionados.capaAccesoADatos.repositories.IPCRepositorio;
 import com.unicauca.pensionados.back_pensionados.capaPresentacion.dto.respuesta.IPCRespuestaDTO;
 import com.unicauca.pensionados.back_pensionados.capaPresentacion.dto.peticion.RegistroIPCPeticion;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+
+import java.time.LocalDateTime;
 import java.time.Year;
 import java.util.List;
 import java.util.Optional;
@@ -81,7 +85,12 @@ public class IPCServicio implements IIPCServicio {
         // Validar primero si ya existe un IPC para el año
         Optional<IPC> existente = ipcRepositorio.findByFechaIPC(peticion.getFechaIPC());
         if (existente.isPresent()) {
-            throw new RuntimeException("Ya existe un registro de IPC para el año " + peticion.getFechaIPC());
+            LogCambio logCambio = new LogCambio();
+            logCambio.setEntidad("IPC");
+            logCambio.setAccion(LogCambio.Accion.CREAR);
+            logCambio.setValorNuevo("Intento de crear IPC para el año " + peticion.getFechaIPC() + " duplicado");
+            logCambio.setFecha(LocalDateTime.now());
+            throw new BusinessValidationException("Ya existe un registro de IPC para el año " + peticion.getFechaIPC());
         }
 
         // Obtener todos los IPCs registrados

@@ -4,7 +4,7 @@ import io.swagger.v3.oas.annotations.media.Schema;
 import java.util.List;
 
 
-import com.unicauca.pensionados.back_pensionados.capaAccesoADatos.enums.EstadoEntidad;
+import com.unicauca.pensionados.back_pensionados.capaAccesoADatos.modelos.enumeradores.EstadoEntidad;
 
 import lombok.Builder;
 import lombok.Data;

@@ -1,0 +1,31 @@
+package com.unicauca.pensionados.back_pensionados.capaPresentacion.dto.respuesta;
+
+import java.math.BigDecimal;
+import java.time.LocalDate;
+import java.time.LocalDateTime;
+
+import com.unicauca.pensionados.back_pensionados.capaAccesoADatos.modelos.enumeradores.EstadoResolucion;
+import com.unicauca.pensionados.back_pensionados.capaAccesoADatos.modelos.enumeradores.TipoResolucion;
+
+import lombok.AllArgsConstructor;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+import lombok.Setter;
+
+@Getter
+@Setter
+@NoArgsConstructor
+@AllArgsConstructor
+public class ResolucionDTORespuesta {
+    
+    private Long id;
+    private String numeroResolucion;
+    private LocalDate fechaResolucion;
+    private BigDecimal valorResolucion;
+    private EstadoResolucion estado;
+    private TipoResolucion tipoResolucion;
+    private Long pensionadoId;
+    private String pensionadoNombre;
+    private LocalDateTime createdAt;
+    private LocalDateTime updatedAt;
+}

@@ -1,10 +1,9 @@
 package com.unicauca.pensionados.back_pensionados.capaAccesoADatos.modelos;
 
 import java.time.LocalDate;
+import java.time.LocalDateTime;
 
-import com.unicauca.pensionados.back_pensionados.capaAccesoADatos.enums.TipoEvento;
-
-
+import com.unicauca.pensionados.back_pensionados.capaAccesoADatos.modelos.enumeradores.TipoEvento;
 
 import jakarta.persistence.*;
 import lombok.Getter;
@@ -43,4 +42,33 @@ public class Evento {
 
     @Column(name = "descripcion", columnDefinition = "TEXT")
     private String descripcion;
+
+    // Campos adicionales para novedades detalladas
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "pensionadoSustitutoId")
+    private Pensionado pensionadoSustituto;
+
+    @Column(name = "resolucionAnterior", columnDefinition = "TEXT")
+    private String resolucionAnterior; // JSON
+
+    @Column(name = "resolucionNueva", columnDefinition = "TEXT")
+    private String resolucionNueva; // JSON
+
+    @Column(name = "cambiosRealizados", columnDefinition = "TEXT")
+    private String cambiosRealizados; // JSON con los campos que cambiaron
+
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "usuarioId")
+    private Usuario usuarioRegistro;
+
+    @Column(name = "createdAt", nullable = false)
+    private LocalDateTime createdAt = LocalDateTime.now();
+
+    @Column(name = "updatedAt")
+    private LocalDateTime updatedAt;
+
+    @PreUpdate
+    public void preUpdate() {
+        this.updatedAt = LocalDateTime.now();
+    }
 }

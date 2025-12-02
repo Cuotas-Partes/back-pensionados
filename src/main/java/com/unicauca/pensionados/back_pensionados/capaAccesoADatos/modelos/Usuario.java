@@ -1,12 +1,11 @@
 package com.unicauca.pensionados.back_pensionados.capaAccesoADatos.modelos;
 
+import java.time.LocalDateTime;
 import java.util.Collection;
 
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
-
-
 
 import com.fasterxml.jackson.annotation.JsonBackReference;
 
@@ -44,6 +43,9 @@ public class Usuario implements UserDetails{
     String nombre;
     String apellido;
 
+    @Column(name = "email", length = 100)
+    String email;
+
     /** Rol asignado al usuario. */
     // La carga EAGER es importante aquí para que los permisos estén disponibles al autenticar
     @ManyToOne(fetch = FetchType.EAGER, optional = false) 
@@ -52,13 +54,29 @@ public class Usuario implements UserDetails{
     @JsonBackReference
     private Rol rol;
 
+    @Column(name = "estado", length = 50)
+    @Builder.Default
+    private String estado = "Activo"; // Activo, Inactivo, Suspendido
+
+    @Column(name = "createdAt", nullable = false)
+    @Builder.Default
+    private LocalDateTime createdAt = LocalDateTime.now();
+
+    @Column(name = "updatedAt")
+    private LocalDateTime updatedAt;
+
+    @PreUpdate
+    public void preUpdate() {
+        this.updatedAt = LocalDateTime.now();
+    }
+
     @Override
-    public Collection<? extends GrantedAuthority> getAuthorities(){
-        // Tomamos la lista de "Acciones" del objeto Rol
-        // y las convertimos en "GrantedAuthority" que Spring Security entiende.
-        return this.rol.getAcciones().stream()
-                .map(accion -> new SimpleGrantedAuthority(accion.name()))
-                .collect(Collectors.toList());
+    public Collection<? extends GrantedAuthority> getAuthorities() {
+        return this.rol.getAcciones() == null ?
+            List.of() :
+            this.rol.getAcciones().stream()
+                    .map(accion -> new SimpleGrantedAuthority(accion.name()))
+                    .collect(Collectors.toList());
     }
 
     /**
@@ -94,6 +112,6 @@ public class Usuario implements UserDetails{
      */
     @Override
     public boolean isEnabled() {
-        return true;
+        return "Activo".equals(estado);
     }
 }

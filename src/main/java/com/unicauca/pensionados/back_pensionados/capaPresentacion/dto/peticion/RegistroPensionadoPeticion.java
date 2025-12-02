@@ -8,13 +8,11 @@ import java.util.List;
 
 import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 import com.unicauca.pensionados.back_pensionados.capaAccesoADatos.modelos.enumeradores.EstadoCivil;
+import com.unicauca.pensionados.back_pensionados.capaAccesoADatos.modelos.enumeradores.EstadoPensionado;
 import com.unicauca.pensionados.back_pensionados.capaAccesoADatos.modelos.enumeradores.EstadoPersona;
 import com.unicauca.pensionados.back_pensionados.capaAccesoADatos.modelos.enumeradores.Genero;
 import com.unicauca.pensionados.back_pensionados.capaAccesoADatos.modelos.enumeradores.TipoIdentificacion;
 import com.unicauca.pensionados.back_pensionados.capaPresentacion.dto.util.MultiDateDeserializer;
-
-import com.unicauca.pensionados.back_pensionados.capaAccesoADatos.modelos.GeneroPersona;
-import com.unicauca.pensionados.back_pensionados.capaAccesoADatos.modelos.TipoIdPersona;
 
 import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.AllArgsConstructor;
@@ -68,6 +66,12 @@ public class RegistroPensionadoPeticion {
     @JsonDeserialize(using =  MultiDateDeserializer.class)
     private LocalDate fechaDefuncionPersona;
 
+    @Schema(description = "Información sobre la discapacidad de la persona", example = "Ninguna")
+    private String discapacidad;
+
+    @Schema(description = "Indica si la persona es un pensionado o sucesor activo", example = "true")
+    private boolean esPensionadoOSucesorActivo;
+
     //Datos de Pensionado
     @Schema(description = "Fecha de inicio de la pensión", example = "2010-05-20")
     @JsonDeserialize(using =  MultiDateDeserializer.class)
@@ -82,6 +86,9 @@ public class RegistroPensionadoPeticion {
     @Schema(description = "Indica si se debe aplicar IPC al primer periodo", example = "false")
     @lombok.Builder.Default
     private boolean aplicarIPCPrimerPeriodo = false;
+
+    @Schema(description = "Estado del pensionado (ACTIVO, FALLECIDO, SUSPENDIDO)", example = "ACTIVO")
+    private EstadoPensionado estadoPensionado;
 
     @Schema(description = "NIT de la entidad de jubilación", example = "800123456")
     private Long nitEntidad;

@@ -1,6 +1,5 @@
 package com.unicauca.pensionados.back_pensionados.CapaServicio.servicios;
-
-import com.fasterxml.jackson.core.json.async.NonBlockingJsonParser;
+import com.unicauca.pensionados.back_pensionados.CapaServicio.excepciones.BusinessValidationException;
 import com.unicauca.pensionados.back_pensionados.capaAccesoADatos.modelos.Deuda;
 import com.unicauca.pensionados.back_pensionados.capaAccesoADatos.repositories.DeudaRepositorio;
 import com.unicauca.pensionados.back_pensionados.capaPresentacion.dto.respuesta.DeudaDTO;
@@ -25,10 +24,14 @@ public class DeudaServicio implements IDeudaServicio{
     private final String nombreEntidad = "DEUDA";
 
     @Override
-    public DeudaDTO guardarDeuda(DeudaDTO deuda) {
+    public DeudaDTO crearDeuda(DeudaDTO deuda) {
         try{
             Deuda nuevaDeuda = modelMapper.map(deuda, Deuda.class);
             logCambioServicio.registrarCreacion(nombreEntidad,deudaRepositorio.save(nuevaDeuda));
+            if(nuevaDeuda.getMontoDeuda() <= 0) throw new BusinessValidationException("El monto de la deuda debe ser mayor a cero");
+            Optional<Deuda> deudaExistente = deudaRepositorio.findByFechaVencimiento(nuevaDeuda.getFechaVencimiento());
+            if(deudaExistente.isPresent()) throw new BusinessValidationException("Ya existe una deuda con la misma fecha de vencimiento: " + nuevaDeuda.getFechaVencimiento());
+            deudaRepositorio.save(nuevaDeuda);
             return modelMapper.map(nuevaDeuda, DeudaDTO.class);
         }catch (Exception e){
             throw new RuntimeException("No se ha podido guardar la deuda" + e.getMessage());
@@ -45,6 +48,7 @@ public class DeudaServicio implements IDeudaServicio{
             Deuda deudaAntigua = new Deuda();
             BeanUtils.copyProperties(deuda, deudaAntigua);
 
+            if (deuda.getMontoDeuda() <= 0) throw new BusinessValidationException("El monto de la deuda debe ser mayor a cero");
             if (deuda.getTipoDeuda() != null) deudaToUpdate.setTipoDeuda(deuda.getTipoDeuda());
             if (deuda.getEstadoDeuda() != null) deudaToUpdate.setEstadoDeuda(deuda.getEstadoDeuda());
             if (deuda.getPersona() != null) deudaToUpdate.setPersona(deuda.getPersona());

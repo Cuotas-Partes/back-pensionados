@@ -5,7 +5,7 @@ import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotEmpty;
 import jakarta.validation.constraints.NotNull;
 import java.util.List;
-import com.unicauca.pensionados.back_pensionados.capaAccesoADatos.enums.EstadoEntidad;
+import com.unicauca.pensionados.back_pensionados.capaAccesoADatos.modelos.enumeradores.EstadoEntidad;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
@@ -43,6 +43,9 @@ public class RegistroEntidadPeticion {
     @NotEmpty(message = "El estado de la entidad no puede estar vacio")
 
     private EstadoEntidad estadoEntidad;
+
+    @Schema(description = "Indica si la entidad paga cuotas partes (true) o las cobra (false)", example = "true")
+    private boolean esPagadora;
 
     @Schema(description = "Lista de trabajos asociados a la entidad")
     //Lista de trabajos asociados a la entidad 

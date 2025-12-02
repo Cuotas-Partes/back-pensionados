@@ -15,12 +15,32 @@ public class CuotaParteDTO {
     @Schema(description = "Fecha de generación de la cuota parte", example = "2023-10-01")
     private LocalDate fechaGeneracion;
 
+    @Schema(description = "Fecha de la última actualización de la cuota parte", example = "2023-11-15")
+    private LocalDate fechaActualizacion;
+
+    @Schema(description = "Usuario que realizó la última actualización", example = "CarlosT")
+    private String usuarioActualizacion;
+
+    @Schema(description = "Observaciones sobre la actualización", example = "Recálculo por ajuste de IPC.")
+    private String observaciones;
+
     public CuotaParteDTO() {}
 
     public CuotaParteDTO(Long idCuotaParte, BigDecimal valorCuotaParte, LocalDate fechaGeneracion) {
         this.idCuotaParte = idCuotaParte;
         this.valorCuotaParte = valorCuotaParte;
         this.fechaGeneracion = fechaGeneracion;
+    }
+
+    // Constructor extendido con nuevos campos
+    public CuotaParteDTO(Long idCuotaParte, BigDecimal valorCuotaParte, LocalDate fechaGeneracion,
+                         LocalDate fechaActualizacion, String usuarioActualizacion, String observaciones) {
+        this.idCuotaParte = idCuotaParte;
+        this.valorCuotaParte = valorCuotaParte;
+        this.fechaGeneracion = fechaGeneracion;
+        this.fechaActualizacion = fechaActualizacion;
+        this.usuarioActualizacion = usuarioActualizacion;
+        this.observaciones = observaciones;
     }
 
     public Long getIdCuotaParte() {
@@ -46,4 +66,29 @@ public class CuotaParteDTO {
     public void setFechaGeneracion(LocalDate fechaGeneracion) {
         this.fechaGeneracion = fechaGeneracion;
     }
+
+     public LocalDate getFechaActualizacion() {
+        return fechaActualizacion;
+    }
+
+    public void setFechaActualizacion(LocalDate fechaActualizacion) {
+        this.fechaActualizacion = fechaActualizacion;
+    }
+
+    public String getUsuarioActualizacion() {
+        return usuarioActualizacion;
+    }
+
+    public void setUsuarioActualizacion(String usuarioActualizacion) {
+        this.usuarioActualizacion = usuarioActualizacion;
+    }
+
+    public String getObservaciones() {
+        return observaciones;
+    }
+
+    public void setObservaciones(String observaciones) {
+        this.observaciones = observaciones;
+    }
+
 }

@@ -1,5 +1,6 @@
 package com.unicauca.pensionados.back_pensionados.capaAccesoADatos.modelos;
 
+import com.unicauca.pensionados.back_pensionados.capaAccesoADatos.modelos.enumeradores.Rol_Accion;
 import jakarta.persistence.*;
 import lombok.*;
 import java.time.LocalDateTime;
@@ -38,7 +39,6 @@ public class Rol {
 
     @Column(name = "actualizado_en")
     private LocalDateTime actualizadoEn;
-
     /**
      * Un rol puede tener muchos usuarios.
      */
@@ -47,35 +47,11 @@ public class Rol {
     @JsonManagedReference
     private List<Usuario> usuarios = new ArrayList<>();
 
-    /**
-     * Acciones (permisos) permitidas para este rol.
-     * Se almacena en la tabla intermedia "rol_accion" como texto.
-     */
-    @ElementCollection(fetch = FetchType.EAGER)
+    @ElementCollection(fetch = FetchType.EAGER, targetClass = Rol_Accion.class)
     @Enumerated(EnumType.STRING)
-    @CollectionTable(name = "rol_accion", joinColumns = @JoinColumn(name = "rol_id"))
+    @CollectionTable(name = "ROL_ACCION", joinColumns = @JoinColumn(name = "rol_id"))
     @Column(name = "accion")
-    private Set<Accion> acciones = new HashSet<>();
+    private List<Rol_Accion> acciones = new ArrayList<>();
 
-    /** Setea timestamps automáticamente. */
-    @PrePersist
-    public void prePersist(){
-        creadoEn = actualizadoEn = LocalDateTime.now(); }
-
-    @PreUpdate
-    public void preUpdate(){
-        actualizadoEn = LocalDateTime.now(); }
-
-    /**
-
-     * Enum que define las acciones posibles que el usuario puede realizar.
-     */
-    public enum Accion {
-        EJECUCION_PAGOS,       // Ejecutar pagos
-        REGISTRO_PENSIONADO,   // Registrar pensionados
-        PAGO_CUOTA_PARTE,      // Registrar pago de cuota parte
-        GENERAR_REPORTE,       // Generación de reportes
-        CONSULTAR_HISTORIAL    // Consultar historial de operaciones
-    }
 }
 

@@ -7,8 +7,7 @@ import java.util.List;
 
 
 import com.unicauca.pensionados.back_pensionados.capaAccesoADatos.modelos.enumeradores.EstadoPersona;
-import com.unicauca.pensionados.back_pensionados.capaAccesoADatos.modelos.GeneroPersona;
-import com.unicauca.pensionados.back_pensionados.capaAccesoADatos.modelos.TipoIdPersona;
+import com.unicauca.pensionados.back_pensionados.capaAccesoADatos.modelos.enumeradores.EstadoPensionado;
 import com.unicauca.pensionados.back_pensionados.capaAccesoADatos.modelos.enumeradores.Genero;
 import com.unicauca.pensionados.back_pensionados.capaAccesoADatos.modelos.enumeradores.TipoIdentificacion;
 
@@ -62,6 +61,12 @@ public class PensionadoRespuesta {
 
     private LocalDate fechaDefuncionPersona;
 
+    @Schema(description = "Información sobre la discapacidad de la persona", example = "Ninguna")
+    private String discapacidad;
+
+    @Schema(description = "Indica si la persona es un pensionado o sucesor activo", example = "true")
+    private boolean esPensionadoOSucesorActivo;
+
     // --- Otros campos de Pensionado ---
     @Schema(description = "Fecha de inicio de la pensión", example = "2010-05-20")
     private LocalDate fechaInicioPension;
@@ -79,6 +84,9 @@ public class PensionadoRespuesta {
     private Long diasDeServicio;
     @Schema(description = "NIT de la entidad de jubilación", example = "800123456")
     private Long nitEntidad; 
+
+    @Schema(description = "Estado del pensionado (ACTIVO, FALLECIDO, SUSPENDIDO)", example = "ACTIVO")
+    private EstadoPensionado estadoPensionado;
 
     @Schema(description = "Lista de trabajos asociados al pensionado (Dependencias)")
     private List<TrabajoRespuesta> trabajos; // <-- 7. Este campo representa las 'Dependencias'

@@ -47,7 +47,7 @@ public class SecurityConfig {
     private final CustomAccessDeniedHandler accessDeniedHandler;
 
 
-    @Value("${CORS_URL:http://181.32.123.173:5173}")
+    @Value("${CORS_URL:https://front-pensionados-production.up.railway.app/}")
     private String corsUrl;
 
         @Bean
@@ -83,7 +83,7 @@ public class SecurityConfig {
             CorsConfiguration configuration = new CorsConfiguration();
             // configuration.setAllowedOrigins(Arrays.asList("http://localhost:3000", "http://localhost:5173",corsUrlFront,corsUrlDok));
             // configuration.setAllowedOrigins(Arrays.asList(corsUrl.split(",")));
-            configuration.setAllowedOrigins(Arrays.asList("http://localhost:3000", "http://localhost:5173","http://54.80.246.88:3000", "http://54.80.246.88:5173"));
+            configuration.setAllowedOrigins(Arrays.asList("http://localhost:3000", "http://localhost:5173","http://54.80.246.88:3000", "http://54.80.246.88:5173", "https://front-pensionados-production.up.railway.app"));
             configuration.setAllowedMethods(Arrays.asList("GET", "POST", "PUT", "DELETE", "OPTIONS" , "PATCH"));
             configuration.setAllowedHeaders(Arrays.asList("Authorization", "Content-Type"));
             configuration.setAllowCredentials(true);

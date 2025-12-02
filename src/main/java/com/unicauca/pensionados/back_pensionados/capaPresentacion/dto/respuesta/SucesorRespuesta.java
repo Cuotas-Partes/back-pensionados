@@ -6,8 +6,6 @@ import java.time.LocalDate;
 
 
 import com.unicauca.pensionados.back_pensionados.capaAccesoADatos.modelos.EstadoPersona;
-import com.unicauca.pensionados.back_pensionados.capaAccesoADatos.modelos.GeneroPersona;
-import com.unicauca.pensionados.back_pensionados.capaAccesoADatos.modelos.TipoIdPersona;
 import com.unicauca.pensionados.back_pensionados.capaAccesoADatos.modelos.enumeradores.Genero;
 import com.unicauca.pensionados.back_pensionados.capaAccesoADatos.modelos.enumeradores.TipoIdentificacion;
 
@@ -59,6 +57,12 @@ public class SucesorRespuesta {
 
     @Schema(description = "Fecha de defunción de la persona (si aplica)", example = "null")
     private LocalDate fechaDefuncionPersona;
+
+    @Schema(description = "Información sobre la discapacidad de la persona", example = "Ninguna")
+    private String discapacidad;
+
+    @Schema(description = "Indica si la persona es un pensionado o sucesor activo", example = "true")
+    private boolean esPensionadoOSucesorActivo;
 
     // --- Otros campos de Sucesión ---
     @Schema(description = "Fecha de inicio de la sucesión", example = "2024-06-01")
