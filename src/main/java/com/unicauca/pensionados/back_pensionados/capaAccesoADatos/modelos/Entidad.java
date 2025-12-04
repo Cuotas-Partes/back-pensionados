@@ -7,6 +7,8 @@ import com.unicauca.pensionados.back_pensionados.capaAccesoADatos.modelos.Evento
 import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.Setter;
+
+import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonManagedReference;
 
 import com.unicauca.pensionados.back_pensionados.capaAccesoADatos.modelos.enumeradores.EstadoEntidad;
@@ -48,7 +50,11 @@ public class Entidad {
     private EstadoEntidad estadoEntidad;
 
     @Column(name = "esPagadora") // Campo para distinguir si paga o cobra cuotas partes
-    private Boolean esPagadora = false;    
+    private Boolean esPagadora = false;   
+    public Boolean getEsPagadora() {
+    return esPagadora != null ? esPagadora : false;
+}
+ 
 
     // relacion 1 a muchos Pensonados
     @JsonManagedReference // rompe el ciclo infinito de serializacion al mostrar el JSON
@@ -67,5 +73,10 @@ public class Entidad {
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "idPersonaEncargado")
     private Persona encargado;
+@JsonInclude(JsonInclude.Include.NON_NULL)
+public Persona getEncargado() {
+    return encargado; // sin reemplazar por persona vacía
+}
+
 
 }
