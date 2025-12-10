@@ -1,0 +1,22 @@
+package com.unicauca.pensionados.backend.application.dto.request;
+
+import java.sql.Date;
+import java.time.LocalDate;
+
+import lombok.AllArgsConstructor;
+import lombok.Builder;
+import lombok.Data;
+import lombok.NoArgsConstructor;
+
+@Data
+@Builder
+@NoArgsConstructor
+@AllArgsConstructor
+public class EditarPeriodoPeticion {
+    private Long idPeriodo;
+    private Integer fechaIPC;
+    private Date fechaInicioPeriodo;
+    private Date fechaFinPeriodo;
+    private Double cuotaParteTotalPeriodo;
+    
+}

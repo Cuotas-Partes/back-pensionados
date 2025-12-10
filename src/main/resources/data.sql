@@ -10,49 +10,44 @@ WHERE NOT EXISTS (SELECT 1 FROM ROL WHERE nombre = 'INVITADO');
 
 -- Acciones para rol ADMIN (solo si no existen)
 INSERT INTO ROL_ACCION (rol_id, accion) 
-SELECT r.id, 'EJECUCION_PAGOS' FROM ROL r 
+SELECT r.id, 'CREAR' FROM ROL r 
 WHERE r.nombre='ADMIN' 
-AND NOT EXISTS (SELECT 1 FROM ROL_ACCION ra WHERE ra.rol_id = r.id AND ra.accion = 'EJECUCION_PAGOS');
+AND NOT EXISTS (SELECT 1 FROM ROL_ACCION ra WHERE ra.rol_id = r.id AND ra.accion = 'CREAR');
 
 INSERT INTO ROL_ACCION (rol_id, accion) 
-SELECT r.id, 'REGISTRO_PENSIONADO' FROM ROL r 
+SELECT r.id, 'CONSULTAR' FROM ROL r 
 WHERE r.nombre='ADMIN' 
-AND NOT EXISTS (SELECT 1 FROM ROL_ACCION ra WHERE ra.rol_id = r.id AND ra.accion = 'REGISTRO_PENSIONADO');
+AND NOT EXISTS (SELECT 1 FROM ROL_ACCION ra WHERE ra.rol_id = r.id AND ra.accion = 'CONSULTAR');
 
 INSERT INTO ROL_ACCION (rol_id, accion) 
-SELECT r.id, 'PAGO_CUOTA_PARTE' FROM ROL r 
+SELECT r.id, 'ACTUALIZAR' FROM ROL r 
 WHERE r.nombre='ADMIN' 
-AND NOT EXISTS (SELECT 1 FROM ROL_ACCION ra WHERE ra.rol_id = r.id AND ra.accion = 'PAGO_CUOTA_PARTE');
+AND NOT EXISTS (SELECT 1 FROM ROL_ACCION ra WHERE ra.rol_id = r.id AND ra.accion = 'ACTUALIZAR');
 
 INSERT INTO ROL_ACCION (rol_id, accion) 
-SELECT r.id, 'GENERAR_REPORTE' FROM ROL r 
+SELECT r.id, 'ELIMINAR' FROM ROL r 
 WHERE r.nombre='ADMIN' 
-AND NOT EXISTS (SELECT 1 FROM ROL_ACCION ra WHERE ra.rol_id = r.id AND ra.accion = 'GENERAR_REPORTE');
-
-INSERT INTO ROL_ACCION (rol_id, accion) 
-SELECT r.id, 'CONSULTAR_HISTORIAL' FROM ROL r 
-WHERE r.nombre='ADMIN' 
-AND NOT EXISTS (SELECT 1 FROM ROL_ACCION ra WHERE ra.rol_id = r.id AND ra.accion = 'CONSULTAR_HISTORIAL');
+AND NOT EXISTS (SELECT 1 FROM ROL_ACCION ra WHERE ra.rol_id = r.id AND ra.accion = 'ELIMINAR');
 
 -- Acciones para rol INVITADO (solo si no existen)
 INSERT INTO ROL_ACCION (rol_id, accion) 
-SELECT r.id, 'CONSULTAR_HISTORIAL' FROM ROL r 
+SELECT r.id, 'CONSULTAR' FROM ROL r 
 WHERE r.nombre='INVITADO' 
-AND NOT EXISTS (SELECT 1 FROM ROL_ACCION ra WHERE ra.rol_id = r.id AND ra.accion = 'CONSULTAR_HISTORIAL');
+AND NOT EXISTS (SELECT 1 FROM ROL_ACCION ra WHERE ra.rol_id = r.id AND ra.accion = 'CONSULTAR');
 
 -- Insertar Usuario por Defecto (solo si no existen)
 INSERT INTO USUARIO (apellido, nombre, password, username, rol_id, createdAt, updatedAt, estado) 
-SELECT 'unicauca', 'admin', '$2a$10$9PhCjFGoYcGm2C4/QlpsSOdt6iEG9e/Srme3WlTDPBJ35CO2EcLI.', 'admin@unicauca.edu.co', 1,
+SELECT 'unicauca', 'admin', '$2a$10$MIrmvVP1vJ9bbEJjtufrR.5nx2fcrLNJFT5PJyT7SpoxcKYtgblCK', 'admin@unicauca.edu.co', 1,
   NOW(),
   NOW(),
-  1
+  'Activo'
 WHERE NOT EXISTS (SELECT 1 FROM USUARIO WHERE username = 'admin@unicauca.edu.co');
 
 INSERT INTO USUARIO (apellido, nombre, password, username, rol_id, createdAt, updatedAt, estado) 
 SELECT 'unicauca', 'invitado', '$2a$10$9PhCjFGoYcGm2C4/QlpsSOdt6iEG9e/Srme3WlTDPBJ35CO2EcLI.', 'invitado@unicauca.edu.co', 2,
   NOW(),
   NOW(),
-  1
+  'Activo'
 WHERE NOT EXISTS (SELECT 1 FROM USUARIO WHERE username = 'invitado@unicauca.edu.co');
 
 -- Entidades (solo si no existen)

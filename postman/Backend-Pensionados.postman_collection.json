@@ -1,0 +1,684 @@
+{
+	"info": {
+		"name": "Backend Pensionados - API Tests",
+		"description": "Colección de pruebas para el sistema de gestión de pensionados",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+	},
+	"auth": {
+		"type": "bearer",
+		"bearer": [
+			{
+				"key": "token",
+				"value": "{{jwt_token}}",
+				"type": "string"
+			}
+		]
+	},
+	"variable": [
+		{
+			"key": "base_url",
+			"value": "http://localhost:8080/api",
+			"type": "string"
+		},
+		{
+			"key": "jwt_token",
+			"value": "",
+			"type": "string"
+		},
+		{
+			"key": "pensionado_id",
+			"value": "",
+			"type": "string"
+		},
+		{
+			"key": "entidad_nit",
+			"value": "",
+			"type": "string"
+		}
+	],
+	"item": [
+		{
+			"name": "1. Autenticación",
+			"item": [
+				{
+					"name": "Login Admin",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"if (pm.response.code === 200) {",
+									"    var jsonData = pm.response.json();",
+									"    pm.collectionVariables.set('jwt_token', jsonData.token);",
+									"    pm.environment.set('jwt_token', jsonData.token);",
+									"    console.log('Token guardado:', jsonData.token);",
+									"}",
+									"",
+									"pm.test('Login exitoso', function () {",
+									"    pm.response.to.have.status(200);",
+									"});",
+									"",
+									"pm.test('Response tiene token', function () {",
+									"    var jsonData = pm.response.json();",
+									"    pm.expect(jsonData).to.have.property('token');",
+									"});"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"auth": {
+							"type": "noauth"
+						},
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"username\": \"admin@unicauca.edu.co\",\n    \"password\": \"admin123\"\n}"
+						},
+						"url": {
+							"raw": "{{base_url}}/auth/login",
+							"host": ["{{base_url}}"],
+							"path": ["auth", "login"]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Registro Usuario",
+					"request": {
+						"auth": {
+							"type": "noauth"
+						},
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"username\": \"test@unicauca.edu.co\",\n    \"password\": \"Test123!\",\n    \"nombre\": \"Usuario\",\n    \"apellido\": \"Test\",\n    \"rolId\": 2\n}"
+						},
+						"url": {
+							"raw": "{{base_url}}/auth/registro",
+							"host": ["{{base_url}}"],
+							"path": ["auth", "registro"]
+						}
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "2. Entidades",
+			"item": [
+				{
+					"name": "Listar Entidades",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test('Status code es 200', function () {",
+									"    pm.response.to.have.status(200);",
+									"});",
+									"",
+									"pm.test('Response es un array', function () {",
+									"    var jsonData = pm.response.json();",
+									"    pm.expect(jsonData).to.be.an('array');",
+									"});"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{base_url}}/entidades",
+							"host": ["{{base_url}}"],
+							"path": ["entidades"]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Crear Entidad",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"if (pm.response.code === 201 || pm.response.code === 200) {",
+									"    var jsonData = pm.response.json();",
+									"    pm.collectionVariables.set('entidad_nit', jsonData.nitEntidad);",
+									"}",
+									"",
+									"pm.test('Entidad creada exitosamente', function () {",
+									"    pm.expect(pm.response.code).to.be.oneOf([200, 201]);",
+									"});"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"nitEntidad\": 800123456,\n    \"nombreEntidad\": \"Entidad de Prueba\",\n    \"direccionEntidad\": \"Calle 123 #45-67\",\n    \"telefonoEntidad\": \"3001234567\",\n    \"emailEntidad\": \"entidad@test.com\",\n    \"estadoEntidad\": \"ACTIVA\"\n}"
+						},
+						"url": {
+							"raw": "{{base_url}}/entidades",
+							"host": ["{{base_url}}"],
+							"path": ["entidades"]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Obtener Entidad por NIT",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{base_url}}/entidades/{{entidad_nit}}",
+							"host": ["{{base_url}}"],
+							"path": ["entidades", "{{entidad_nit}}"]
+						}
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "3. Pensionados",
+			"item": [
+				{
+					"name": "Listar Pensionados",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test('Status code es 200', function () {",
+									"    pm.response.to.have.status(200);",
+									"});",
+									"",
+									"pm.test('Response es un array', function () {",
+									"    var jsonData = pm.response.json();",
+									"    pm.expect(jsonData).to.be.an('array');",
+									"});"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{base_url}}/pensionados",
+							"host": ["{{base_url}}"],
+							"path": ["pensionados"]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Registrar Pensionado",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"if (pm.response.code === 201 || pm.response.code === 200) {",
+									"    var jsonData = pm.response.json();",
+									"    pm.collectionVariables.set('pensionado_id', jsonData.idPersona);",
+									"}",
+									"",
+									"pm.test('Pensionado registrado exitosamente', function () {",
+									"    pm.expect(pm.response.code).to.be.oneOf([200, 201]);",
+									"});"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"numeroIdentificacion\": 1061777777,\n    \"tipoIdentificacion\": \"CEDULA_CIUDADANIA\",\n    \"nombrePersona\": \"Juan\",\n    \"apellidosPersona\": \"Pérez García\",\n    \"estadoCivil\": \"CASADO\",\n    \"fechaNacimientoPersona\": \"1950-01-15\",\n    \"direccionPersona\": \"Calle 10 #20-30\",\n    \"telefonoPersona\": \"3101234567\",\n    \"emailPersona\": \"juan.perez@email.com\",\n    \"generoPersona\": \"MASCULINO\",\n    \"fechaInicioPension\": \"2010-01-01\",\n    \"tipoPension\": \"VEJEZ\",\n    \"valorInicialPension\": 1500000.00,\n    \"resolucionPension\": \"RES-12345\",\n    \"totalDiasTrabajo\": 7500,\n    \"aplicarIPCPrimerPeriodo\": false,\n    \"estadoPensionado\": \"ACTIVO\",\n    \"nitEntidad\": 800123456,\n    \"diasDeServicio\": 7500,\n    \"entidadJubilacion\": \"Colpensiones\",\n    \"trabajos\": [\n        {\n            \"nombreDependencia\": \"Rectoría\",\n            \"diasLaborados\": 3650,\n            \"porcentajeCuotaParte\": 48.67\n        },\n        {\n            \"nombreDependencia\": \"Facultad de Ingeniería\",\n            \"diasLaborados\": 3850,\n            \"porcentajeCuotaParte\": 51.33\n        }\n    ]\n}"
+						},
+						"url": {
+							"raw": "{{base_url}}/pensionados/registro",
+							"host": ["{{base_url}}"],
+							"path": ["pensionados", "registro"]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Obtener Pensionado por ID",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{base_url}}/pensionados/{{pensionado_id}}",
+							"host": ["{{base_url}}"],
+							"path": ["pensionados", "{{pensionado_id}}"]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Buscar Pensionado por Documento",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{base_url}}/pensionados/documento/1061777777",
+							"host": ["{{base_url}}"],
+							"path": ["pensionados", "documento", "1061777777"]
+						}
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "4. Períodos",
+			"item": [
+				{
+					"name": "Listar Períodos",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{base_url}}/periodos",
+							"host": ["{{base_url}}"],
+							"path": ["periodos"]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Crear Período",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"añoPeriodo\": 2025,\n    \"mesInicial\": 1,\n    \"mesFinal\": 1,\n    \"fechaInicioPeriodo\": \"2025-01-01\",\n    \"fechaFinPeriodo\": \"2025-01-31\",\n    \"estadoPeriodo\": \"ACTIVO\"\n}"
+						},
+						"url": {
+							"raw": "{{base_url}}/periodos",
+							"host": ["{{base_url}}"],
+							"path": ["periodos"]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Obtener Período Activo",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{base_url}}/periodos/activo",
+							"host": ["{{base_url}}"],
+							"path": ["periodos", "activo"]
+						}
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "5. Cuota Anual",
+			"item": [
+				{
+					"name": "Listar Cuotas Anuales",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{base_url}}/cuota-anual",
+							"host": ["{{base_url}}"],
+							"path": ["cuota-anual"]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Crear Cuota Anual",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"anio\": 2025,\n    \"valorIpc\": 3.5,\n    \"salarioMinimoVigente\": 1300000,\n    \"uvt\": 47065,\n    \"tasaInteresMoraAnual\": 1.5,\n    \"pIncrementoPensionalAnual\": 3.5\n}"
+						},
+						"url": {
+							"raw": "{{base_url}}/cuota-anual",
+							"host": ["{{base_url}}"],
+							"path": ["cuota-anual"]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Obtener Cuota Anual por Año",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{base_url}}/cuota-anual/anio/2025",
+							"host": ["{{base_url}}"],
+							"path": ["cuota-anual", "anio", "2025"]
+						}
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "6. Liquidaciones",
+			"item": [
+				{
+					"name": "Liquidación Pensionado",
+					"item": [
+						{
+							"name": "Crear Liquidación Pensionado",
+							"request": {
+								"method": "POST",
+								"header": [
+									{
+										"key": "Content-Type",
+										"value": "application/json"
+									}
+								],
+								"body": {
+									"mode": "raw",
+									"raw": "{\n    \"idPensionado\": {{pensionado_id}},\n    \"idPeriodo\": 1,\n    \"mesaPago\": 1,\n    \"anioPago\": 2025,\n    \"valorMesada\": 1500000,\n    \"ajusteIPC\": 52500,\n    \"estadoLiquidacion\": \"PENDIENTE\"\n}"
+								},
+								"url": {
+									"raw": "{{base_url}}/liquidacion-pensionado",
+									"host": ["{{base_url}}"],
+									"path": ["liquidacion-pensionado"]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "Listar Liquidaciones Pensionado",
+							"request": {
+								"method": "GET",
+								"header": [],
+								"url": {
+									"raw": "{{base_url}}/liquidacion-pensionado",
+									"host": ["{{base_url}}"],
+									"path": ["liquidacion-pensionado"]
+								}
+							},
+							"response": []
+						}
+					]
+				},
+				{
+					"name": "Liquidación Entidad",
+					"item": [
+						{
+							"name": "Crear Liquidación Entidad",
+							"request": {
+								"method": "POST",
+								"header": [
+									{
+										"key": "Content-Type",
+										"value": "application/json"
+									}
+								],
+								"body": {
+									"mode": "raw",
+									"raw": "{\n    \"nitEntidad\": {{entidad_nit}},\n    \"idPeriodo\": 1,\n    \"totalCuotaParte\": 750000,\n    \"estadoLiquidacion\": \"PENDIENTE\"\n}"
+								},
+								"url": {
+									"raw": "{{base_url}}/liquidacion-entidad",
+									"host": ["{{base_url}}"],
+									"path": ["liquidacion-entidad"]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "Listar Liquidaciones Entidad",
+							"request": {
+								"method": "GET",
+								"header": [],
+								"url": {
+									"raw": "{{base_url}}/liquidacion-entidad",
+									"host": ["{{base_url}}"],
+									"path": ["liquidacion-entidad"]
+								}
+							},
+							"response": []
+						}
+					]
+				}
+			]
+		},
+		{
+			"name": "7. Reportes",
+			"item": [
+				{
+					"name": "Generar Reporte",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"tipoReporte\": \"LIQUIDACIONES\",\n    \"fechaInicio\": \"2025-01-01\",\n    \"fechaFin\": \"2025-12-31\",\n    \"formato\": \"PDF\"\n}"
+						},
+						"url": {
+							"raw": "{{base_url}}/reportes/generar",
+							"host": ["{{base_url}}"],
+							"path": ["reportes", "generar"]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Listar Reportes",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{base_url}}/reportes",
+							"host": ["{{base_url}}"],
+							"path": ["reportes"]
+						}
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "8. Cuota Parte",
+			"item": [
+				{
+					"name": "Listar Cuotas Parte",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{base_url}}/cuota-parte",
+							"host": ["{{base_url}}"],
+							"path": ["cuota-parte"]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Cuotas Parte por Pensionado",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{base_url}}/cuota-parte/pensionado/{{pensionado_id}}",
+							"host": ["{{base_url}}"],
+							"path": ["cuota-parte", "pensionado", "{{pensionado_id}}"]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Cuotas Parte por Entidad",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{base_url}}/cuota-parte/entidad/{{entidad_nit}}",
+							"host": ["{{base_url}}"],
+							"path": ["cuota-parte", "entidad", "{{entidad_nit}}"]
+						}
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "9. Pagos",
+			"item": [
+				{
+					"name": "Registrar Pago",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"idLiquidacionEntidad\": 1,\n    \"valorPagado\": 750000,\n    \"fechaPago\": \"2025-01-15\",\n    \"tipoPago\": \"TRANSFERENCIA\",\n    \"referenciaPago\": \"TRF-2025-001\",\n    \"observaciones\": \"Pago período enero 2025\"\n}"
+						},
+						"url": {
+							"raw": "{{base_url}}/pagos",
+							"host": ["{{base_url}}"],
+							"path": ["pagos"]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Listar Pagos",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{base_url}}/pagos",
+							"host": ["{{base_url}}"],
+							"path": ["pagos"]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Pagos por Entidad",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{base_url}}/pagos/entidad/{{entidad_nit}}",
+							"host": ["{{base_url}}"],
+							"path": ["pagos", "entidad", "{{entidad_nit}}"]
+						}
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "10. Histórico de Cambios",
+			"item": [
+				{
+					"name": "Listar Cambios",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{base_url}}/log-cambios",
+							"host": ["{{base_url}}"],
+							"path": ["log-cambios"]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Cambios por Entidad",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{base_url}}/log-cambios/entidad/PENSIONADO",
+							"host": ["{{base_url}}"],
+							"path": ["log-cambios", "entidad", "PENSIONADO"]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Cambios por Usuario",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{base_url}}/log-cambios/usuario/admin@unicauca.edu.co",
+							"host": ["{{base_url}}"],
+							"path": ["log-cambios", "usuario", "admin@unicauca.edu.co"]
+						}
+					},
+					"response": []
+				}
+			]
+		}
+	]
+}
