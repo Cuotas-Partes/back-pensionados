@@ -26,28 +26,28 @@ public class Pensionado {
     @Column(name = "fecha_expedicion_cedula", nullable = false)
     private LocalDate fechaExpedicionCedula;
 
-    @Column(name = "nombre", nullable = false, columnDefinition = "TEXT")
+    @Column(name = "nombre", nullable = false, length = 200)
     private String nombre;
 
-    @Column(name = "apellidos", nullable = false, columnDefinition = "TEXT")
+    @Column(name = "apellidos", nullable = false, length = 200)
     private String apellidos;
 
     @Column(name = "fecha_nacimiento", nullable = false)
     private LocalDate fechaNacimiento;
 
-    @Column(name = "telefono", nullable = false, columnDefinition = "TEXT")
+    @Column(name = "telefono", nullable = false, length = 20)
     private String telefono;
 
-    @Column(name = "correo", columnDefinition = "TEXT")
+    @Column(name = "correo", length = 100)
     private String correo;
 
-    @Column(name = "entidad_jubilacion", nullable = false, columnDefinition = "TEXT")
+    @Column(name = "entidad_jubilacion", nullable = false, length = 200)
     private String entidadJubilacion;
 
-    @Column(name = "entity_nit", nullable = false, columnDefinition = "TEXT")
+    @Column(name = "entity_nit", nullable = false, length = 20)
     private String entityNit;
 
-    @Column(name = "entity_id", nullable = false, columnDefinition = "TEXT")
+    @Column(name = "entity_id", nullable = false, length = 20)
     private String entityId;
 
     @Column(name = "dias_trabajados_entidad", nullable = false)
@@ -60,20 +60,20 @@ public class Pensionado {
     private BigDecimal porcentajeCuota;
 
     @Enumerated(EnumType.STRING)
-    @Column(name = "tipo_jubilacion", nullable = false, columnDefinition = "TEXT")
+    @Column(name = "tipo_jubilacion", nullable = false, length = 50)
     private TipoPension tipoJubilacion;
 
     @Column(name = "valor_pension", nullable = false, precision = 19, scale = 2)
     private BigDecimal valorPension;
 
     @Enumerated(EnumType.STRING)
-    @Column(name = "estado", columnDefinition = "TEXT DEFAULT 'Activo'")
+    @Column(name = "estado", length = 50)
     private EstadoPersona estado = EstadoPersona.ACTIVO;
 
     @Column(name = "fecha_fallecimiento")
     private LocalDate fechaFallecimiento;
 
-    @Column(name = "pensionado_sustituido", columnDefinition = "TEXT")
+    @Column(name = "pensionado_sustituido", length = 200)
     private String pensionadoSustituido;
 
     @Column(name = "tiene_sustituto")
