@@ -18,7 +18,7 @@ import com.unicauca.pensionados.backend.domain.model.enums.EstadoPersona;
 import com.unicauca.pensionados.backend.domain.model.enums.TipoPension;
 
 @Entity
-@Table (name ="PENSIONADO")
+@Table (name ="pensionado")
 @PrimaryKeyJoinColumn (name = "idPersona") //tiene la misma PK que Persona
 @Setter @Getter
 public class Pensionado extends Persona{

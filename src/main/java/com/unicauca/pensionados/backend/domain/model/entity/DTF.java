@@ -15,7 +15,7 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 @AllArgsConstructor
 @Table(
-        name = "DTF",
+        name = "dtf",
         uniqueConstraints = @UniqueConstraint(columnNames = {"mes", "anio"})
 )
 public class DTF {

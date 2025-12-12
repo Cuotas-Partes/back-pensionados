@@ -11,7 +11,7 @@ import lombok.NoArgsConstructor;
 import lombok.Setter;
 
 @Entity
-@Table(name = "SMMLV_HISTORICO")
+@Table(name = "smmlvHistorico")
 @Getter
 @Setter
 @NoArgsConstructor

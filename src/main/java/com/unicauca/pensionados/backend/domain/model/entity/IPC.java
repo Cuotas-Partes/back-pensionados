@@ -10,7 +10,7 @@ import lombok.Getter;
 import lombok.Setter;
 
 @Entity
-@Table (name = "IPC")
+@Table (name = "ipc")
 @Getter @Setter
 public class IPC {
     @Id

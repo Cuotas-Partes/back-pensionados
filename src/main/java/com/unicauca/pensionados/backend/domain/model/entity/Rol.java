@@ -18,7 +18,7 @@ import com.fasterxml.jackson.annotation.JsonManagedReference;
 @NoArgsConstructor
 @AllArgsConstructor
 @Builder
-@Table(name = "ROL")
+@Table(name = "rol")
 public class Rol {
 
     /** Identificador único del rol (PK autoincremental). */

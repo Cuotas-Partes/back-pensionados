@@ -26,7 +26,7 @@ import lombok.Getter;
 import lombok.Setter;
 
 @Entity
-@Table (name = "PERIODO")
+@Table (name = "periodo")
 @Getter @Setter
 public class Periodo {
     @Id

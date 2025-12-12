@@ -19,7 +19,7 @@ import lombok.Getter;
 import lombok.Setter;
 
 @Entity
-@Table(name="SUCESOR")
+@Table(name="sucesor")
 @PrimaryKeyJoinColumn (name = "idPersona")  //tiene la misma PK que Persona
 @Getter @Setter
 

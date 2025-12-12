@@ -30,7 +30,7 @@ import lombok.Getter;
 import lombok.Setter;
 
 @Entity
-@Table (name = "CUOTA_PARTE")
+@Table (name = "cuotaParte")
 @Getter @Setter
 public class CuotaParte {
     @Id

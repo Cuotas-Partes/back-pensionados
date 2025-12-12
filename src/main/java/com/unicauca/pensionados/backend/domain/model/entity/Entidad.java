@@ -14,7 +14,7 @@ import com.fasterxml.jackson.annotation.JsonManagedReference;
 import com.unicauca.pensionados.backend.domain.model.enums.EstadoEntidad;
 
 @Entity
-@Table(name = "ENTIDAD")
+@Table(name = "entidad")
 @Getter
 @Setter
 public class Entidad {

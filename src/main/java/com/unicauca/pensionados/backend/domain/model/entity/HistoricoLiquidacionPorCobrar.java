@@ -8,7 +8,7 @@ import java.time.LocalDate;
 import java.time.LocalDateTime;
 
 @Entity
-@Table(name = "HISTORICO_LIQUIDACION_POR_COBRAR")
+@Table(name = "historicoLiquidacionPorCobrar")
 @Data
 @Builder
 @NoArgsConstructor

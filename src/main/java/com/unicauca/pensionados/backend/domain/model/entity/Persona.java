@@ -20,7 +20,7 @@ import lombok.NoArgsConstructor;
 import lombok.Setter;
 
 @Entity
-@Table (name = "PERSONA")
+@Table (name = "persona")
 @Inheritance(strategy =InheritanceType.JOINED) // problemas de mutabilidad
 // @Inheritance(strategy = InheritanceType.SINGLE_TABLE)
 @Getter @Setter @NoArgsConstructor
