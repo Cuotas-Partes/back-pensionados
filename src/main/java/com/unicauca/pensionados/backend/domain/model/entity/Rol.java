@@ -49,7 +49,7 @@ public class Rol {
 
     @ElementCollection(fetch = FetchType.EAGER, targetClass = RolAccion.class)
     @Enumerated(EnumType.STRING)
-    @CollectionTable(name = "ROL_ACCION", joinColumns = @JoinColumn(name = "rol_id"))
+    @CollectionTable(name = "rolAccion", joinColumns = @JoinColumn(name = "rol_id"))
     @Column(name = "accion")
     private List<RolAccion> acciones = new ArrayList<>();
 

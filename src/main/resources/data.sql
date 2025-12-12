@@ -10,31 +10,31 @@ SELECT 'INVITADO', TRUE, NOW(), NOW()
 WHERE NOT EXISTS (SELECT 1 FROM rol WHERE nombre = 'INVITADO');
 
 -- Acciones para rol ADMIN (solo si no existen)
-INSERT INTO rol_accion (rol_id, accion) 
+INSERT INTO rolAccion (rol_id, accion) 
 SELECT r.id, 'CREAR' FROM rol r 
 WHERE r.nombre='ADMIN' 
-AND NOT EXISTS (SELECT 1 FROM rol_accion ra WHERE ra.rol_id = r.id AND ra.accion = 'CREAR');
+AND NOT EXISTS (SELECT 1 FROM rolAccion ra WHERE ra.rol_id = r.id AND ra.accion = 'CREAR');
 
-INSERT INTO rol_accion (rol_id, accion) 
+INSERT INTO rolAccion (rol_id, accion) 
 SELECT r.id, 'CONSULTAR' FROM rol r 
 WHERE r.nombre='ADMIN' 
-AND NOT EXISTS (SELECT 1 FROM rol_accion ra WHERE ra.rol_id = r.id AND ra.accion = 'CONSULTAR');
+AND NOT EXISTS (SELECT 1 FROM rolAccion ra WHERE ra.rol_id = r.id AND ra.accion = 'CONSULTAR');
 
-INSERT INTO rol_accion (rol_id, accion) 
+INSERT INTO rolAccion (rol_id, accion) 
 SELECT r.id, 'ACTUALIZAR' FROM rol r 
 WHERE r.nombre='ADMIN' 
-AND NOT EXISTS (SELECT 1 FROM rol_accion ra WHERE ra.rol_id = r.id AND ra.accion = 'ACTUALIZAR');
+AND NOT EXISTS (SELECT 1 FROM rolAccion ra WHERE ra.rol_id = r.id AND ra.accion = 'ACTUALIZAR');
 
-INSERT INTO rol_accion (rol_id, accion) 
+INSERT INTO rolAccion (rol_id, accion) 
 SELECT r.id, 'ELIMINAR' FROM rol r 
 WHERE r.nombre='ADMIN' 
-AND NOT EXISTS (SELECT 1 FROM rol_accion ra WHERE ra.rol_id = r.id AND ra.accion = 'ELIMINAR');
+AND NOT EXISTS (SELECT 1 FROM rolAccion ra WHERE ra.rol_id = r.id AND ra.accion = 'ELIMINAR');
 
 -- Acciones para rol INVITADO (solo si no existen)
-INSERT INTO rol_accion (rol_id, accion) 
+INSERT INTO rolAccion (rol_id, accion) 
 SELECT r.id, 'CONSULTAR' FROM rol r 
 WHERE r.nombre='INVITADO' 
-AND NOT EXISTS (SELECT 1 FROM rol_accion ra WHERE ra.rol_id = r.id AND ra.accion = 'CONSULTAR');
+AND NOT EXISTS (SELECT 1 FROM rolAccion ra WHERE ra.rol_id = r.id AND ra.accion = 'CONSULTAR');
 
 -- Insertar Usuario por Defecto (solo si no existen)
 INSERT INTO usuario (apellido, nombre, password, username, rol_id, createdAt, updatedAt, estado) 
