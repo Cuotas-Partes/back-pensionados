@@ -43,6 +43,7 @@ public class JwtService {
         Map<String, Object> claims = new HashMap<>();
         claims.put("rolId", usuario.getRol().getId());   // 👈 Añades el idRol
         claims.put("rolNombre", usuario.getRol().getNombre()); // opcional
+        claims.put("usuarioId", usuario.getId()); // opcional
         return getToken(claims, usuario);
     }
 

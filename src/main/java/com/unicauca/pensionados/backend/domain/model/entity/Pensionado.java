@@ -11,7 +11,7 @@ import com.unicauca.pensionados.backend.domain.model.enums.EstadoPersona;
 import com.unicauca.pensionados.backend.domain.model.enums.TipoPension;
 
 @Entity
-@Table(name = "pensionados")
+@Table(name = "pensionado")
 @Setter
 @Getter
 public class Pensionado {
@@ -20,7 +20,7 @@ public class Pensionado {
     @Column(name = "idPersona")
     private Long idPersona;
 
-    @Column(name = "cedula", nullable = false, unique = true, columnDefinition = "TEXT")
+    @Column(name = "cedula", nullable = false, unique = true, length = 20)
     private String cedula;
 
     @Column(name = "fecha_expedicion_cedula", nullable = false)
