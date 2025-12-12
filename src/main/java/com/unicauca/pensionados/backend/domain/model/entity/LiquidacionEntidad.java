@@ -27,7 +27,7 @@ public class LiquidacionEntidad {
 
     @JsonBackReference
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "nitEntidad", nullable = false)
+    @JoinColumn(name = "nit", nullable = false)
     private Entidad entidad;
 
     @Column(name = "entityNit", nullable = false)

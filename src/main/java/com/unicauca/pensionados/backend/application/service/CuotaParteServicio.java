@@ -80,12 +80,12 @@ public class CuotaParteServicio implements ICuotaParteServicio {
                 cuotaParte.setTrabajo(trabajo);
             }
             BigDecimal diasDeServicio = BigDecimal.valueOf(trabajo.getDiasDeServicio());
-            BigDecimal totalDiasTrabajo = BigDecimal.valueOf(trabajo.getPensionado().getTotalDiasTrabajo());
+            BigDecimal totalDiasTrabajo = BigDecimal.valueOf(trabajo.getPensionado().getDiasTotalesTrabajados());
             if (totalDiasTrabajo.compareTo(BigDecimal.ZERO) == 0) {
                 throw new ArithmeticException("Total de dias de trabajo no puede ser cero");
             }
             BigDecimal porcentajeCuotaParte = diasDeServicio.divide(totalDiasTrabajo, 4, RoundingMode.HALF_UP);
-            MonetaryAmount valorInicialPension = Money.of(trabajo.getPensionado().getValorInicialPension(), Monetary.getCurrency("COP"));
+            MonetaryAmount valorInicialPension = Money.of(trabajo.getPensionado().getValorPension(), Monetary.getCurrency("COP"));
             MonetaryAmount valorCuotaParteMoney = valorInicialPension.multiply(porcentajeCuotaParte);cuotaParte.setTrabajo(trabajo);
             cuotaParte.setValorCuotaParte(valorCuotaParteMoney.getNumber().numberValue(BigDecimal.class));
             cuotaParte.setPorcentajeCuotaParte(porcentajeCuotaParte);
@@ -94,9 +94,8 @@ public class CuotaParteServicio implements ICuotaParteServicio {
             cuotaParteRepositorio.save(cuotaParte);
             periodoRepositorio.deleteByCuotaParte_IdCuotaParte(cuotaParte.getIdCuotaParte());
 
-
-            LocalDate fechaInicioPensionDate = trabajo.getPensionado().getFechaInicioPension();
-            LocalDate fechaInicioPension =  fechaInicioPensionDate;
+            // TODO: fechaInicioPension ya no está en Pensionado, necesita obtenerse de otra fuente
+            LocalDate fechaInicioPension = LocalDate.now(); // Temporal
 
             periodoServicio.generarYCalcularPeriodos(fechaInicioPension, cuotaParte);
             /* 
@@ -135,14 +134,14 @@ public class CuotaParteServicio implements ICuotaParteServicio {
         if (trabajo != null) {
             CuotaParte cuotaParte = buscarPorTrabajoId(trabajo.getIdTrabajo());
             BigDecimal diasDeServicio = BigDecimal.valueOf(trabajo.getDiasDeServicio());
-            BigDecimal totalDiasTrabajo = BigDecimal.valueOf(trabajo.getPensionado().getTotalDiasTrabajo());
+            BigDecimal totalDiasTrabajo = BigDecimal.valueOf(trabajo.getPensionado().getDiasTotalesTrabajados());
     
             if (totalDiasTrabajo.compareTo(BigDecimal.ZERO) == 0) {
                 throw new ArithmeticException("Total de dias de trabajo no puede ser cero");
             }
     
             BigDecimal porcentajeCuotaParte = diasDeServicio.divide(totalDiasTrabajo, 4, RoundingMode.HALF_UP);
-            MonetaryAmount valorInicialPension = Money.of(trabajo.getPensionado().getValorInicialPension(), Monetary.getCurrency("COP"));
+            MonetaryAmount valorInicialPension = Money.of(trabajo.getPensionado().getValorPension(), Monetary.getCurrency("COP"));
             MonetaryAmount valorCuotaParteMoney = valorInicialPension.multiply(porcentajeCuotaParte);
     
             cuotaParte.setTrabajo(trabajo);
@@ -158,8 +157,8 @@ public class CuotaParteServicio implements ICuotaParteServicio {
             cuotaParteRepositorio.save(cuotaParte);
             periodoRepositorio.deleteByCuotaParte_IdCuotaParte(cuotaParte.getIdCuotaParte());
 
-            LocalDate fechaInicioPensionDate = trabajo.getPensionado().getFechaInicioPension();
-            LocalDate fechaInicioPension = fechaInicioPensionDate;
+            // TODO: fechaInicioPension ya no está en Pensionado
+            LocalDate fechaInicioPension = LocalDate.now(); // Temporal
 
             periodoServicio.generarYCalcularPeriodos(fechaInicioPension, cuotaParte);
         }
@@ -188,27 +187,27 @@ public class CuotaParteServicio implements ICuotaParteServicio {
     
             if (pensionado == null
                 || pensionado.getEntidadJubilacion() == null
-                || !entidadProperties.getNombre().equalsIgnoreCase(pensionado.getEntidadJubilacion().getNombreEntidad())) {
+                || !entidadProperties.getNombre().equalsIgnoreCase(pensionado.getEntidadJubilacion())) {
                 // Ignorar pensionados que no sean de UniCauca
                 continue;
             }
     
             // revisamos la entidad de la CUOTA PARTE para omitir las cuotas de entidad con nit 8911500319L que pertenecen a unicauca
         
-            Long nitEntidadCuota = cuota.getTrabajo().getEntidad().getNitEntidad();
-            if (nitEntidadCuota != null && nitEntidadCuota.equals(entidadProperties.getNit())) {
+            String nitEntidadCuota = cuota.getTrabajo().getEntidad().getNit();
+            if (nitEntidadCuota != null && nitEntidadCuota.equals(String.valueOf(entidadProperties.getNit()))) {
                 // Omitir cuota parte que pertenece a unicauca
                 continue;
             }
     
             Long idPensionado = pensionado.getIdPersona();
-    
+
             PensionadoConCuotaParteDTO dto = mapPensionados.computeIfAbsent(idPensionado, k ->
                 new PensionadoConCuotaParteDTO(
-                    pensionado.getTipoIdentificacion().name(), // Se añade el tipo de ID
-                    pensionado.getNumeroIdentificacion(),      // Se usa el nuevo getter
-                    pensionado.getNombrePersona(),
-                    pensionado.getApellidosPersona(),
+                    "CC", // TODO: TipoIdentificacion ya no existe en Pensionado
+                    Long.valueOf(pensionado.getCedula()),
+                    pensionado.getNombre(),
+                    pensionado.getApellidos(),
                     new ArrayList<>(),
                     BigDecimal.ZERO
                 )
@@ -259,12 +258,12 @@ public class CuotaParteServicio implements ICuotaParteServicio {
     
             if (pensionado == null
                 || pensionado.getEntidadJubilacion() == null
-                || !entidadProperties.getNombre().equalsIgnoreCase(pensionado.getEntidadJubilacion().getNombreEntidad())) {
+                || !entidadProperties.getNombre().equalsIgnoreCase(pensionado.getEntidadJubilacion())) {
                 continue;
             }
     
-            Long nitEntidadCuota = cuota.getTrabajo().getEntidad().getNitEntidad();
-            if (nitEntidadCuota != null && nitEntidadCuota.equals(entidadProperties.getNit())) {
+            String nitEntidadCuota = cuota.getTrabajo().getEntidad().getNit();
+            if (nitEntidadCuota != null && nitEntidadCuota.equals(String.valueOf(entidadProperties.getNit()))) {
                 continue;
             }
     
@@ -288,10 +287,10 @@ public class CuotaParteServicio implements ICuotaParteServicio {
             Long idPensionado = pensionado.getIdPersona();
             PensionadoConCuotaParteDTO dto = mapPensionados.computeIfAbsent(idPensionado, k ->
                 new PensionadoConCuotaParteDTO(
-                    pensionado.getTipoIdentificacion().name(), // Se añade el tipo de ID
-                    pensionado.getNumeroIdentificacion(),      // Se usa el nuevo getter
-                    pensionado.getNombrePersona(),
-                    pensionado.getApellidosPersona(),
+                    "CC", // TODO: TipoIdentificacion ya no existe en Pensionado
+                    Long.parseLong(pensionado.getCedula()),
+                    pensionado.getNombre(),
+                    pensionado.getApellidos(),
                     new ArrayList<>(),
                     BigDecimal.ZERO
                 )
@@ -365,19 +364,19 @@ public class CuotaParteServicio implements ICuotaParteServicio {
 
         List<CuotaParte> cuotasParte = cuotaParteRepositorio.findAll(); // Reemplazar con query más específica si se desea
 
-        Map<Long, EntidadValorCuotaParteDTO> entidadValorMap = new HashMap<>();
+        Map<String, EntidadValorCuotaParteDTO> entidadValorMap = new HashMap<>();
 
         for (CuotaParte cuota : cuotasParte) {
             Pensionado pensionado = cuota.getTrabajo().getPensionado();
 
             if (pensionado == null || !idPensionado.equals(pensionado.getIdPersona())
                     || pensionado.getEntidadJubilacion() == null
-                    || !entidadProperties.getNombre().equalsIgnoreCase(pensionado.getEntidadJubilacion().getNombreEntidad())) {
+                    || !entidadProperties.getNombre().equalsIgnoreCase(pensionado.getEntidadJubilacion())) {
                 continue;
             }
 
-            Long nitEntidad = cuota.getTrabajo().getEntidad().getNitEntidad();
-            if (nitEntidad != null && nitEntidad.equals(entidadProperties.getNit())) {
+            String nitEntidad = cuota.getTrabajo().getEntidad().getNit();
+            if (nitEntidad != null && nitEntidad.equals(String.valueOf(entidadProperties.getNit()))) {
                 continue;
             }
 
@@ -399,8 +398,8 @@ public class CuotaParteServicio implements ICuotaParteServicio {
 
             EntidadValorCuotaParteDTO dto = entidadValorMap.computeIfAbsent(nitEntidad, k ->
                 new EntidadValorCuotaParteDTO(
-                    String.valueOf(nitEntidad),
-                    cuota.getTrabajo().getEntidad().getNombreEntidad(),
+                    nitEntidad,
+                    cuota.getTrabajo().getEntidad().getName(),
                     BigDecimal.ZERO
                 )
             );

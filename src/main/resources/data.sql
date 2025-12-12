@@ -52,37 +52,38 @@ SELECT 'unicauca', 'invitado', '$2a$10$9PhCjFGoYcGm2C4/QlpsSOdt6iEG9e/Srme3WlTDP
 WHERE NOT EXISTS (SELECT 1 FROM usuario WHERE username = 'invitado@unicauca.edu.co');
 
 -- Entidades (solo si no existen)
-INSERT INTO entidad (nitEntidad, nombreEntidad, direccionEntidad, emailEntidad, telefonoEntidad, estadoEntidad)
-SELECT 8911500319, 'Universidad del Cauca', 'Calle 5 No. 4-70 (Popayán - Cauca)', 'rectoria@unicauca.edu.co', 8209900, 'ACTIVA'
-WHERE NOT EXISTS (SELECT 1 FROM entidad WHERE nitEntidad = 8911500319);
+-- Nota: La tabla se llama 'entidad' y usa columnas: nit, name, address, email, phone, responsible_officer, officer_position, estado, created_at, updated_at
+INSERT INTO entidad (nit, name, address, email, phone, responsible_officer, officer_position, estado, created_at, updated_at)
+SELECT '8911500319', 'Universidad del Cauca', 'Calle 5 No. 4-70 (Popayán - Cauca)', 'rectoria@unicauca.edu.co', '8209900', 'Rector', 'Rector', 'ACTIVA', NOW(), NOW()
+WHERE NOT EXISTS (SELECT 1 FROM entidad WHERE nit = '8911500319');
 
-INSERT INTO entidad (nitEntidad, nombreEntidad, direccionEntidad, emailEntidad, telefonoEntidad, estadoEntidad)
-SELECT 9004567281, 'Hospital San José', 'Carrera 10 No. 15-45, Popayán', 'contacto@hsanjose.com', 8200972, 'ACTIVA'
-WHERE NOT EXISTS (SELECT 1 FROM entidad WHERE nitEntidad = 9004567281);
+INSERT INTO entidad (nit, name, address, email, phone, responsible_officer, officer_position, estado, created_at, updated_at)
+SELECT '9004567281', 'Hospital San José', 'Carrera 10 No. 15-45, Popayán', 'contacto@hsanjose.com', '8200972', 'Director', 'Director Administrativo', 'ACTIVA', NOW(), NOW()
+WHERE NOT EXISTS (SELECT 1 FROM entidad WHERE nit = '9004567281');
 
-INSERT INTO entidad (nitEntidad, nombreEntidad, direccionEntidad, emailEntidad, telefonoEntidad, estadoEntidad)
-SELECT 8600123456, 'Alcaldía de Popayán', 'Calle 8 No. 7-30, Popayán', 'alcaldia@popayan.gov.co', 3214965013, 'ACTIVA'
-WHERE NOT EXISTS (SELECT 1 FROM entidad WHERE nitEntidad = 8600123456);
+INSERT INTO entidad (nit, name, address, email, phone, responsible_officer, officer_position, estado, created_at, updated_at)
+SELECT '8600123456', 'Alcaldía de Popayán', 'Calle 8 No. 7-30, Popayán', 'alcaldia@popayan.gov.co', '3214965013', 'Alcalde', 'Alcalde Municipal', 'ACTIVA', NOW(), NOW()
+WHERE NOT EXISTS (SELECT 1 FROM entidad WHERE nit = '8600123456');
 
-INSERT INTO entidad (nitEntidad, nombreEntidad, direccionEntidad, emailEntidad, telefonoEntidad, estadoEntidad)
-SELECT 9001234567, 'Gobernación del Cauca', 'Calle 4 No. 3-52, Popayán', 'info@cauca.gov.co', 3145261209, 'ACTIVA'
-WHERE NOT EXISTS (SELECT 1 FROM entidad WHERE nitEntidad = 9001234567);
+INSERT INTO entidad (nit, name, address, email, phone, responsible_officer, officer_position, estado, created_at, updated_at)
+SELECT '9001234567', 'Gobernación del Cauca', 'Calle 4 No. 3-52, Popayán', 'info@cauca.gov.co', '3145261209', 'Gobernador', 'Gobernador del Cauca', 'ACTIVA', NOW(), NOW()
+WHERE NOT EXISTS (SELECT 1 FROM entidad WHERE nit = '9001234567');
 
-INSERT INTO entidad (nitEntidad, nombreEntidad, direccionEntidad, emailEntidad, telefonoEntidad, estadoEntidad)
-SELECT 8300123123, 'Colegio La Salle', 'Avenida 2 No. 12-40, Popayán', 'secretaria@lasalle.edu.co', 8201548, 'ACTIVA'
-WHERE NOT EXISTS (SELECT 1 FROM entidad WHERE nitEntidad = 8300123123);
+INSERT INTO entidad (nit, name, address, email, phone, responsible_officer, officer_position, estado, created_at, updated_at)
+SELECT '8300123123', 'Colegio La Salle', 'Avenida 2 No. 12-40, Popayán', 'secretaria@lasalle.edu.co', '8201548', 'Rector', 'Rector del Colegio', 'ACTIVA', NOW(), NOW()
+WHERE NOT EXISTS (SELECT 1 FROM entidad WHERE nit = '8300123123');
 
-INSERT INTO entidad (nitEntidad, nombreEntidad, direccionEntidad, emailEntidad, telefonoEntidad, estadoEntidad)
-SELECT 8300159161, 'FONCEP', 'Carrera 30 No. 25-90, Bogotá D.C.', 'atencionalciudadano@foncep.gov.co', 6013358000, 'ACTIVA'
-WHERE NOT EXISTS (SELECT 1 FROM entidad WHERE nitEntidad = 8300159161);
+INSERT INTO entidad (nit, name, address, email, phone, responsible_officer, officer_position, estado, created_at, updated_at)
+SELECT '8300159161', 'FONCEP', 'Carrera 30 No. 25-90, Bogotá D.C.', 'atencionalciudadano@foncep.gov.co', '6013358000', 'Director General', 'Director General', 'ACTIVA', NOW(), NOW()
+WHERE NOT EXISTS (SELECT 1 FROM entidad WHERE nit = '8300159161');
 
-INSERT INTO entidad (nitEntidad, nombreEntidad, direccionEntidad, emailEntidad, telefonoEntidad, estadoEntidad)
-SELECT 8903990011, 'Universidad del Valle', 'Calle 13 No. 100-00, Cali', 'comunicaciones@correounivalle.edu.co', 6023212100, 'ACTIVA'
-WHERE NOT EXISTS (SELECT 1 FROM entidad WHERE nitEntidad = 8903990011);
+INSERT INTO entidad (nit, name, address, email, phone, responsible_officer, officer_position, estado, created_at, updated_at)
+SELECT '8903990011', 'Universidad del Valle', 'Calle 13 No. 100-00, Cali', 'comunicaciones@correounivalle.edu.co', '6023212100', 'Rector', 'Rector', 'ACTIVA', NOW(), NOW()
+WHERE NOT EXISTS (SELECT 1 FROM entidad WHERE nit = '8903990011');
 
-INSERT INTO entidad (nitEntidad, nombreEntidad, direccionEntidad, emailEntidad, telefonoEntidad, estadoEntidad)
-SELECT 8915002154, 'Hospital Universitario de Caldas', 'Calle 48 No. 27A-80, Manizales', 'info@hospitalcaldas.gov.co', 6068782500, 'ACTIVA'
-WHERE NOT EXISTS (SELECT 1 FROM entidad WHERE nitEntidad = 8915002154);
+INSERT INTO entidad (nit, name, address, email, phone, responsible_officer, officer_position, estado, created_at, updated_at)
+SELECT '8915002154', 'Hospital Universitario de Caldas', 'Calle 48 No. 27A-80, Manizales', 'info@hospitalcaldas.gov.co', '6068782500', 'Director', 'Director Médico', 'ACTIVA', NOW(), NOW()
+WHERE NOT EXISTS (SELECT 1 FROM entidad WHERE nit = '8915002154');
 
 -- INSERTAR DATOS IPC (solo si no existen)
 -- Datos IPC 31/12/1955 - 30/4/2025

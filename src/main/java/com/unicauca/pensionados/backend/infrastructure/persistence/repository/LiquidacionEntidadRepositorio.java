@@ -9,8 +9,8 @@ import com.unicauca.pensionados.backend.domain.model.enums.EstadoLiquidacion;
 
 public interface LiquidacionEntidadRepositorio extends JpaRepository<LiquidacionEntidad, Long> {
     
-    List<LiquidacionEntidad> findByEntidadNitEntidad(Long nitEntidad);
-    
+    List<LiquidacionEntidad> findByEntidadNit(String nit);
+
     List<LiquidacionEntidad> findByPeriodoIdPeriodo(Long periodoId);
     
     List<LiquidacionEntidad> findByEstado(EstadoLiquidacion estado);

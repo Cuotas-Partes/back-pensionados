@@ -7,13 +7,13 @@ import java.util.Optional;
 
 public interface EntidadRepositorio extends JpaRepository<Entidad, Long> {
     //Manejo de la tabla Entidad
-    List<Entidad> findByNombreEntidadContainingIgnoreCase(String query);
-    List<Entidad> findByDireccionEntidadContainingIgnoreCase(String query);
-    List<Entidad> findByEmailEntidadContainingIgnoreCase(String query);
-    Optional<Entidad> findByNitEntidad(Long nitEntidad);
+    List<Entidad> findByNameContainingIgnoreCase(String query);
+    List<Entidad> findByAddressContainingIgnoreCase(String query);
+    List<Entidad> findByEmailContainingIgnoreCase(String query);
+    Optional<Entidad> findByNit(String nit);
 
-    Boolean existsByNombreEntidad(String nombreEntidad); //verifica si existe el nombre de la entidad
-    Boolean existsByNitEntidad(Long nitEntidad); //verifica si existe el NIT de la entidad
+    Boolean existsByName(String name); //verifica si existe el nombre de la entidad
+    Boolean existsByNit(String nit); //verifica si existe el NIT de la entidad
     //Listar todas las entidades
-    List<Entidad> findAllByOrderByNitEntidadAsc(); // ordena por NIT ascendente
+    List<Entidad> findAllByOrderByNitAsc(); // ordena por NIT ascendente
 }

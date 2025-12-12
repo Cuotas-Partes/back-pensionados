@@ -40,8 +40,8 @@ public class LiquidacionEntidadServicio implements ILiquidacionEntidadServicio {
 
         LiquidacionEntidad liquidacion = new LiquidacionEntidad();
         liquidacion.setEntidad(entidad);
-        liquidacion.setEntityNit(String.valueOf(entidad.getNitEntidad()));
-        liquidacion.setEntityNombre(entidad.getNombreEntidad());
+        liquidacion.setEntityNit(entidad.getNit());
+        liquidacion.setEntityNombre(entidad.getName());
         liquidacion.setPeriodo(periodo);
         liquidacion.setPeriodoNombre(periodo.getNombrePeriodo());
         liquidacion.setTotalACobrar(peticion.getTotalACobrar());
@@ -68,12 +68,12 @@ public class LiquidacionEntidadServicio implements ILiquidacionEntidadServicio {
                 .orElseThrow(() -> new RecursoNoEncontrado("Liquidación no encontrada"));
 
         // Actualizar entidad si cambió
-        if (!liquidacion.getEntidad().getNitEntidad().equals(peticion.getNitEntidad())) {
+        if (!liquidacion.getEntidad().getNit().equals(peticion.getNitEntidad().toString())) {
             Entidad entidad = entidadRepositorio.findById(peticion.getNitEntidad())
                     .orElseThrow(() -> new RecursoNoEncontrado("Entidad no encontrada"));
             liquidacion.setEntidad(entidad);
-            liquidacion.setEntityNit(String.valueOf(entidad.getNitEntidad()));
-            liquidacion.setEntityNombre(entidad.getNombreEntidad());
+            liquidacion.setEntityNit(entidad.getNit());
+            liquidacion.setEntityNombre(entidad.getName());
         }
 
         // Actualizar periodo si cambió
@@ -129,7 +129,7 @@ public class LiquidacionEntidadServicio implements ILiquidacionEntidadServicio {
     @Override
     @Transactional(readOnly = true)
     public List<LiquidacionEntidadDTORespuesta> obtenerPorEntidad(Long nitEntidad) {
-        return liquidacionRepositorio.findByEntidadNitEntidad(nitEntidad).stream()
+        return liquidacionRepositorio.findByEntidadNit(nitEntidad.toString()).stream()
                 .map(this::mapearARespuesta)
                 .collect(Collectors.toList());
     }
@@ -154,9 +154,9 @@ public class LiquidacionEntidadServicio implements ILiquidacionEntidadServicio {
     private LiquidacionEntidadDTORespuesta mapearARespuesta(LiquidacionEntidad liquidacion) {
         LiquidacionEntidadDTORespuesta respuesta = new LiquidacionEntidadDTORespuesta();
         respuesta.setId(liquidacion.getId());
-        respuesta.setNitEntidad(liquidacion.getEntidad().getNitEntidad());
-        respuesta.setEntityNit(String.valueOf(liquidacion.getEntidad().getNitEntidad()));
-        respuesta.setEntityNombre(liquidacion.getEntidad().getNombreEntidad());
+        respuesta.setNitEntidad(Long.parseLong(liquidacion.getEntidad().getNit()));
+        respuesta.setEntityNit(liquidacion.getEntidad().getNit());
+        respuesta.setEntityNombre(liquidacion.getEntidad().getName());
         respuesta.setPeriodoId(liquidacion.getPeriodo().getIdPeriodo());
         respuesta.setPeriodoNombre(liquidacion.getPeriodo().getNombrePeriodo());
         respuesta.setTotalACobrar(liquidacion.getTotalACobrar());

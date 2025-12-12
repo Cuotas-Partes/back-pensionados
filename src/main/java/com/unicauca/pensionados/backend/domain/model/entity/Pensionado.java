@@ -2,96 +2,100 @@ package com.unicauca.pensionados.backend.domain.model.entity;
 
 import java.math.BigDecimal;
 import java.time.LocalDate;
+import java.time.LocalDateTime;
 
-import java.util.ArrayList;
-import java.util.List;
-
-// import com.unicauca.pensionados.backend.domain.model.entity.HistoricoLiquidacionPorCobrar;
 import jakarta.persistence.*;
-import org.springdoc.core.converters.models.MonetaryAmount;
-
 import lombok.Getter;
 import lombok.Setter;
-import com.fasterxml.jackson.annotation.JsonBackReference;
-import com.fasterxml.jackson.annotation.JsonManagedReference;
 import com.unicauca.pensionados.backend.domain.model.enums.EstadoPersona;
 import com.unicauca.pensionados.backend.domain.model.enums.TipoPension;
 
 @Entity
-@Table (name ="pensionado")
-@PrimaryKeyJoinColumn (name = "idPersona") //tiene la misma PK que Persona
-@Setter @Getter
-public class Pensionado extends Persona{
-    @Column (name = "fechaInicioPension", nullable = true)
-    @Temporal(TemporalType.DATE)
-    private LocalDate fechaInicioPension;
+@Table(name = "pensionados")
+@Setter
+@Getter
+public class Pensionado {
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @Column(name = "idPersona")
+    private Long idPersona;
 
-    @Column (name = "fechaIngreso", nullable = true)
-    @Temporal(TemporalType.DATE)
-    private LocalDate fechaIngreso;
-    
-    @Column (name = "valorInicialPension", nullable = false, precision = 19, scale = 0)
-    private BigDecimal valorInicialPension;
+    @Column(name = "cedula", nullable = false, unique = true, columnDefinition = "TEXT")
+    private String cedula;
 
-    @Column (name = "resolucionPension", nullable =false , length = 50)
-    private String resolucionPension;
-    
-    @Column (name = "totalDiasTrabajo", nullable = true)
-    private Long totalDiasTrabajo;
+    @Column(name = "fecha_expedicion_cedula", nullable = false)
+    private LocalDate fechaExpedicionCedula;
 
-    @Column (name = "aplicarIPCPrimerPeriodo", nullable = false)
-    private boolean aplicarIPCPrimerPeriodo = false;
+    @Column(name = "nombre", nullable = false, columnDefinition = "TEXT")
+    private String nombre;
+
+    @Column(name = "apellidos", nullable = false, columnDefinition = "TEXT")
+    private String apellidos;
+
+    @Column(name = "fecha_nacimiento", nullable = false)
+    private LocalDate fechaNacimiento;
+
+    @Column(name = "telefono", nullable = false, columnDefinition = "TEXT")
+    private String telefono;
+
+    @Column(name = "correo", columnDefinition = "TEXT")
+    private String correo;
+
+    @Column(name = "entidad_jubilacion", nullable = false, columnDefinition = "TEXT")
+    private String entidadJubilacion;
+
+    @Column(name = "entity_nit", nullable = false, columnDefinition = "TEXT")
+    private String entityNit;
+
+    @Column(name = "entity_id", nullable = false, columnDefinition = "TEXT")
+    private String entityId;
+
+    @Column(name = "dias_trabajados_entidad", nullable = false)
+    private Integer diasTrabajadosEntidad;
+
+    @Column(name = "dias_totales_trabajados", nullable = false)
+    private Integer diasTotalesTrabajados;
+
+    @Column(name = "porcentaje_cuota", nullable = false, precision = 19, scale = 2)
+    private BigDecimal porcentajeCuota;
 
     @Enumerated(EnumType.STRING)
-    @Column(name = "estadoPensionado")
-    private EstadoPersona estadoPensionado; // (activo, fallecido, suspendido)
+    @Column(name = "tipo_jubilacion", nullable = false, columnDefinition = "TEXT")
+    private TipoPension tipoJubilacion;
 
-    @Column(name = "fechaFinPension")
-    @Temporal(TemporalType.DATE)
-    private LocalDate fechaFinPension; // (si cesa el pago o se liquida)
+    @Column(name = "valor_pension", nullable = false, precision = 19, scale = 2)
+    private BigDecimal valorPension;
 
-    //relacion entidad de Jubilacion
-    @JsonBackReference //rompe el ciclo infinito de serializacion al mostrar el JSON
-    @ManyToOne
-    @JoinColumn(name = "nitEntidad", nullable = false)
-    private Entidad entidadJubilacion; 
+    @Enumerated(EnumType.STRING)
+    @Column(name = "estado", columnDefinition = "TEXT DEFAULT 'Activo'")
+    private EstadoPersona estado = EstadoPersona.ACTIVO;
 
-    @Column(name = "tipoPension", nullable = false, length = 50)
-    @Enumerated(EnumType.STRING) // guarda el nombre del enum como texto
-    // tipo de pension o jubilacion, no puede ser nulo
-    private TipoPension tipoPension;
+    @Column(name = "fecha_fallecimiento")
+    private LocalDate fechaFallecimiento;
 
-    //relacion 1 a muchos con trabajo
-    @JsonManagedReference
-    @OneToMany (mappedBy = "pensionado", cascade = CascadeType.ALL)
-    private List <Trabajo> trabajos;
+    @Column(name = "pensionado_sustituido", columnDefinition = "TEXT")
+    private String pensionadoSustituido;
 
-    //Relacion con HistoricoLiquidacionPorCobrar - Comentado temporalmente
-    // @OneToMany(mappedBy = "pensionado", cascade = CascadeType.ALL, orphanRemoval = false)
-    // private List<HistoricoLiquidacionPorCobrar> historicos;
+    @Column(name = "tiene_sustituto")
+    private Boolean tieneSustituto = false;
 
-    @JsonManagedReference("pensionado-sucesor")
-    @OneToMany(mappedBy = "pensionado", cascade = CascadeType.ALL, orphanRemoval = true)
-    private List<Sucesor> sucesores;
+    @Column(name = "sustituto_id")
+    private Long sustitutoId;
 
-    // Relación con Resoluciones
-    @JsonManagedReference
-    @OneToMany(mappedBy = "pensionado", cascade = CascadeType.ALL, orphanRemoval = true)
-    private List<Resolucion> resoluciones = new ArrayList<>();
+    @Column(name = "cuotas_pendientes")
+    private Integer cuotasPendientes = 0;
 
-    // Referencia al pensionado sustituto (en caso de fallecimiento)
-    @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "pensionadoSustitutoId")
-    private Pensionado pensionadoSustituto;
+    @Column(name = "total_pendiente", precision = 19, scale = 2)
+    private BigDecimal totalPendiente = BigDecimal.ZERO;
 
-    @Column(name = "correoContacto", length = 100)
-    private String correoContacto;
+    @Column(name = "created_at", nullable = false, updatable = false)
+    private LocalDateTime createdAt = LocalDateTime.now();
 
-    @Column(name = "telefonoContacto", length = 20)
-    private String telefonoContacto;
+    @Column(name = "updated_at")
+    private LocalDateTime updatedAt = LocalDateTime.now();
 
-    //Declaramos atributos de tipo JavaMoney para poder realizar calculos mas precisos
-    @Transient 
-    private MonetaryAmount valorInicialPensionMoney;
-
+    @PreUpdate
+    public void preUpdate() {
+        this.updatedAt = LocalDateTime.now();
+    }
 }

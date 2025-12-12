@@ -38,7 +38,7 @@ public class PagoServicio implements IPagoServicio {
     @Transactional
     public PagoDTORespuesta crear(PagoDTOPeticion peticion) {
         // Validar entidad
-        Entidad entidad = entidadRepositorio.findByNitEntidad(peticion.getNitEntidad())
+        Entidad entidad = entidadRepositorio.findByNit(peticion.getNitEntidad().toString())
                 .orElseThrow(() -> new RecursoNoEncontrado("Entidad no encontrada con NIT: " + peticion.getNitEntidad()));
 
         // Validar pensionado si se proporciona
@@ -58,9 +58,9 @@ public class PagoServicio implements IPagoServicio {
         }
 
         // Validar que no exista un pago duplicado (misma entidad, mismo año, misma fecha)
-        if (pagoRepositorio.existsByEntidadNitEntidadAndAnioAndFechaPago(
-                peticion.getNitEntidad(), 
-                peticion.getAnio(), 
+        if (pagoRepositorio.existsByEntidadNitAndAnioAndFechaPago(
+                peticion.getNitEntidad().toString(),
+                peticion.getAnio(),
                 peticion.getFechaPago())) {
             throw new IllegalArgumentException(
                 "Ya existe un pago registrado para esta entidad en el año " + 
@@ -125,7 +125,7 @@ public class PagoServicio implements IPagoServicio {
                 .orElseThrow(() -> new RecursoNoEncontrado("Pago no encontrado con ID: " + id));
 
         // Validar entidad
-        Entidad entidad = entidadRepositorio.findByNitEntidad(peticion.getNitEntidad())
+        Entidad entidad = entidadRepositorio.findByNit(peticion.getNitEntidad().toString())
                 .orElseThrow(() -> new RecursoNoEncontrado("Entidad no encontrada con NIT: " + peticion.getNitEntidad()));
 
         // Validar pensionado si se proporciona
@@ -145,17 +145,13 @@ public class PagoServicio implements IPagoServicio {
         }
 
         // Validar duplicados (excluyendo el pago actual)
-        if (!pago.getEntidad().getNitEntidad().equals(peticion.getNitEntidad()) 
-                || !pago.getAnio().equals(peticion.getAnio())
-                || !pago.getFechaPago().equals(peticion.getFechaPago())) {
-            if (pagoRepositorio.existsByEntidadNitEntidadAndAnioAndFechaPago(
-                    peticion.getNitEntidad(), 
-                    peticion.getAnio(), 
-                    peticion.getFechaPago())) {
-                throw new IllegalArgumentException(
-                    "Ya existe otro pago registrado para esta entidad en el año " + 
-                    peticion.getAnio() + " con fecha " + peticion.getFechaPago());
-            }
+        if (pagoRepositorio.existsByEntidadNitAndAnioAndFechaPago(
+                peticion.getNitEntidad().toString(),
+                peticion.getAnio(),
+                peticion.getFechaPago())) {
+            throw new IllegalArgumentException(
+                "Ya existe otro pago registrado para esta entidad en el año " +
+                        peticion.getAnio() + " con fecha " + peticion.getFechaPago());
         }
 
         // Actualizar campos
@@ -243,7 +239,7 @@ public class PagoServicio implements IPagoServicio {
     @Transactional(readOnly = true)
     public List<PagoDTORespuesta> buscarConFiltros(FiltroPagoPeticion filtro) {
         List<Pago> pagos = pagoRepositorio.buscarConFiltros(
-                filtro.getNitEntidad(),
+                filtro.getNitEntidad() != null ? filtro.getNitEntidad().toString() : null,
                 filtro.getAnioDesde(),
                 filtro.getAnioHasta(),
                 filtro.getFechaDesde(),
@@ -260,7 +256,7 @@ public class PagoServicio implements IPagoServicio {
     @Override
     @Transactional(readOnly = true)
     public List<PagoDTORespuesta> obtenerPorEntidad(Long nitEntidad) {
-        return pagoRepositorio.findByEntidadNitEntidad(nitEntidad).stream()
+        return pagoRepositorio.findByEntidadNit(nitEntidad.toString()).stream()
                 .map(this::mapearARespuesta)
                 .collect(Collectors.toList());
     }
@@ -276,7 +272,7 @@ public class PagoServicio implements IPagoServicio {
     @Override
     @Transactional(readOnly = true)
     public List<PagoDTORespuesta> obtenerPorEntidadYAnio(Long nitEntidad, Integer anio) {
-        return pagoRepositorio.findByEntidadNitEntidadAndAnio(nitEntidad, anio).stream()
+        return pagoRepositorio.findByEntidadNitAndAnio(nitEntidad.toString(), anio).stream()
                 .map(this::mapearARespuesta)
                 .collect(Collectors.toList());
     }
@@ -350,14 +346,14 @@ public class PagoServicio implements IPagoServicio {
         PagoDTORespuesta respuesta = new PagoDTORespuesta();
         respuesta.setIdPago(pago.getIdPago());
         if (pago.getEntidad() != null) {
-            respuesta.setNitEntidad(pago.getEntidad().getNitEntidad());
-            respuesta.setNombreEntidad(pago.getEntidad().getNombreEntidad());
+            respuesta.setNitEntidad(Long.parseLong(pago.getEntidad().getNit()));
+            respuesta.setNombreEntidad(pago.getEntidad().getName());
         }
         if (pago.getPensionado() != null) {
             respuesta.setIdPensionado(pago.getPensionado().getIdPersona());
             respuesta.setNombrePensionado(
-                    pago.getPensionado().getNombrePersona() + " " + 
-                    pago.getPensionado().getApellidosPersona());
+                    pago.getPensionado().getNombre() + " " +
+                    pago.getPensionado().getApellidos());
         }
         respuesta.setAnio(pago.getAnio());
         respuesta.setValorPagado(pago.getValorPagado());

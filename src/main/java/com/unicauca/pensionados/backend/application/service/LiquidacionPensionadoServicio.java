@@ -40,8 +40,8 @@ public class LiquidacionPensionadoServicio implements ILiquidacionPensionadoServ
 
         LiquidacionPensionado liquidacion = new LiquidacionPensionado();
         liquidacion.setPensionado(pensionado);
-        liquidacion.setPensionadoCedula(String.valueOf(pensionado.getNumeroIdentificacion()));
-        liquidacion.setPensionadoNombre(pensionado.getNombrePersona() + " " + pensionado.getApellidosPersona());
+        liquidacion.setPensionadoCedula(String.valueOf(pensionado.getCedula()));
+        liquidacion.setPensionadoNombre(pensionado.getNombre() + " " + pensionado.getApellidos());
         liquidacion.setPeriodo(periodo);
         liquidacion.setPeriodoNombre(periodo.getNombrePeriodo());
         liquidacion.setTotalAPagar(peticion.getTotalAPagar());
@@ -136,8 +136,8 @@ public class LiquidacionPensionadoServicio implements ILiquidacionPensionadoServ
         LiquidacionPensionadoDTORespuesta respuesta = new LiquidacionPensionadoDTORespuesta();
         respuesta.setId(liquidacion.getId());
         respuesta.setPensionadoId(liquidacion.getPensionado().getIdPersona());
-        respuesta.setPensionadoCedula(String.valueOf(liquidacion.getPensionado().getNumeroIdentificacion()));
-        respuesta.setPensionadoNombre(liquidacion.getPensionado().getNombrePersona() + " " + liquidacion.getPensionado().getApellidosPersona());
+        respuesta.setPensionadoCedula(String.valueOf(liquidacion.getPensionado().getCedula()));
+        respuesta.setPensionadoNombre(liquidacion.getPensionado().getNombre() + " " + liquidacion.getPensionado().getApellidos());
         respuesta.setPeriodoId(liquidacion.getPeriodo().getIdPeriodo());
         respuesta.setPeriodoNombre(liquidacion.getPeriodo().getNombrePeriodo());
         respuesta.setTotalAPagar(liquidacion.getTotalAPagar());

@@ -6,29 +6,22 @@ import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import com.unicauca.pensionados.backend.domain.model.entity.CuotaParte;
 import com.unicauca.pensionados.backend.domain.model.entity.Entidad;
 import com.unicauca.pensionados.backend.domain.model.entity.Pensionado;
 import com.unicauca.pensionados.backend.domain.model.enums.EstadoPersona;
 
-import com.unicauca.pensionados.backend.domain.model.entity.Trabajo;
-import com.unicauca.pensionados.backend.infrastructure.persistence.repository.CuotaParteRepositorio;
 import com.unicauca.pensionados.backend.infrastructure.persistence.repository.EntidadRepositorio;
 import com.unicauca.pensionados.backend.infrastructure.persistence.repository.PensionadoRepositorio;
 import com.unicauca.pensionados.backend.infrastructure.persistence.repository.PersonaRepositorio;
-import com.unicauca.pensionados.backend.infrastructure.persistence.repository.TrabajoRepositorio;
 import com.unicauca.pensionados.backend.application.dto.request.RegistroPensionadoPeticion;
-import com.unicauca.pensionados.backend.application.dto.request.RegistroTrabajoPeticion;
 import com.unicauca.pensionados.backend.application.dto.response.EntidadCuotaParteRespuesta;
 import com.unicauca.pensionados.backend.application.dto.response.PensionadoRespuesta;
 import com.unicauca.pensionados.backend.application.dto.response.SucesorRespuesta;
 import com.unicauca.pensionados.backend.application.dto.response.TrabajoRespuesta;
 
 import jakarta.transaction.Transactional;
-//import java.sql.Date;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Optional;
 import java.util.stream.Collectors;
 
 
@@ -39,22 +32,16 @@ public class PensionadoServicio implements IPensionadoServicio {
     private final PersonaRepositorio personaRepositorio;
     private final PensionadoRepositorio pensionadoRepositorio;
     private final EntidadRepositorio entidadRepositorio;
-    private final TrabajoRepositorio trabajoRepositorio;
-    private final CuotaParteServicio cuotaParteServicio;
     @Autowired
     private ILogCambioServicio logCambioServicio;
     private final String nombreEntidad = "PENSIONADO";
 
     public PensionadoServicio(PersonaRepositorio personaRepositorio,
                               PensionadoRepositorio pensionadoRepositorio,
-                              EntidadRepositorio entidadRepositorio,
-                              TrabajoRepositorio trabajoRepositorio,
-                              CuotaParteServicio cuotaParteServicio) {
+                              EntidadRepositorio entidadRepositorio) {
         this.personaRepositorio = personaRepositorio;
         this.pensionadoRepositorio = pensionadoRepositorio;
         this.entidadRepositorio = entidadRepositorio;
-        this.trabajoRepositorio = trabajoRepositorio;
-        this.cuotaParteServicio = cuotaParteServicio;
     }
 
     
@@ -65,7 +52,7 @@ public class PensionadoServicio implements IPensionadoServicio {
             throw new RuntimeException("Ya existe una persona con ese tipo y número de identificación");
         }
 
-        Entidad entidadJubilacion = entidadRepositorio.findById(request.getNitEntidad())
+        Entidad entidadJubilacion = entidadRepositorio.findByNit(request.getNitEntidad().toString())
                 .orElseThrow(() -> new RuntimeException("La Entidad de jubilación no se encuentra registrada"));
 
         TipoPension tipoPension;
@@ -75,25 +62,25 @@ public class PensionadoServicio implements IPensionadoServicio {
             throw new RuntimeException("Tipo de pension no valido");
         }
 
-
-        // 1. Crear y guardar la entidad Pensionado
+        // Crear y guardar la entidad Pensionado usando los campos correctos
         Pensionado pensionado = new Pensionado();
-        pensionado.setNumeroIdentificacion(request.getNumeroIdentificacion());
-        pensionado.setTipoIdentificacion(request.getTipoIdentificacion());
-        pensionado.setNombrePersona(request.getNombrePersona());
-        pensionado.setApellidosPersona(request.getApellidosPersona());
-        pensionado.setEstadoCivil(request.getEstadoCivil());
-        pensionado.setFechaNacimientoPersona(request.getFechaNacimientoPersona());
-        pensionado.setFechaExpedicionDocumentoIdPersona(request.getFechaExpedicionDocumentoIdPersona());
-        pensionado.setEstadoPersona(request.getEstadoPersona());
-        pensionado.setGeneroPersona(request.getGeneroPersona());
-        pensionado.setFechaDefuncionPersona(request.getFechaDefuncionPersona());
-        pensionado.setFechaInicioPension(request.getFechaInicioPension());
-        pensionado.setValorInicialPension(request.getValorInicialPension());
-        pensionado.setResolucionPension(request.getResolucionPension());
-        pensionado.setEntidadJubilacion(entidadJubilacion);
-        pensionado.setAplicarIPCPrimerPeriodo(request.isAplicarIPCPrimerPeriodo());
-        pensionado.setTipoPension(tipoPension);
+        pensionado.setCedula(request.getNumeroIdentificacion().toString());
+        pensionado.setFechaExpedicionCedula(request.getFechaExpedicionDocumentoIdPersona());
+        pensionado.setNombre(request.getNombrePersona());
+        pensionado.setApellidos(request.getApellidosPersona());
+        pensionado.setFechaNacimiento(request.getFechaNacimientoPersona());
+        pensionado.setTelefono(""); // Campo requerido, podría agregarse al DTO
+        pensionado.setCorreo(""); // Campo requerido, podría agregarse al DTO
+        pensionado.setEntidadJubilacion(entidadJubilacion.getName());
+        pensionado.setEntityNit(entidadJubilacion.getNit());
+        pensionado.setEntityId(entidadJubilacion.getIdEntidad().toString());
+        pensionado.setDiasTrabajadosEntidad(request.getDiasDeServicio() != null ? request.getDiasDeServicio().intValue() : 0);
+        pensionado.setDiasTotalesTrabajados(request.getTotalDiasTrabajo() != null ? request.getTotalDiasTrabajo().intValue() : 0);
+        pensionado.setPorcentajeCuota(java.math.BigDecimal.ZERO);
+        pensionado.setTipoJubilacion(tipoPension);
+        pensionado.setValorPension(request.getValorInicialPension());
+        pensionado.setEstado(request.getEstadoPersona() != null ? request.getEstadoPersona() : EstadoPersona.ACTIVO);
+        pensionado.setFechaFallecimiento(request.getFechaDefuncionPersona());
 
         //Guardar log del registro
         logCambioServicio.registrarCreacion(nombreEntidad, pensionadoRepositorio.save(pensionado));
@@ -111,24 +98,21 @@ public class PensionadoServicio implements IPensionadoServicio {
         Pensionado pensionadoExistente = pensionadoRepositorio.findById(idPersona)
                 .orElseThrow(() -> new RuntimeException("No se encontró el pensionado con ID: " + idPersona));
 
-        Entidad entidadJubilacion = entidadRepositorio.findById(request.getNitEntidad())
+        Entidad entidadJubilacion = entidadRepositorio.findByNit(request.getNitEntidad().toString())
                 .orElseThrow(() -> new RuntimeException("La Entidad de jubilación no se encuentra registrada"));
         Pensionado pensionadoAntiguo = new Pensionado();
         BeanUtils.copyProperties(pensionadoExistente, pensionadoAntiguo);
 
-        pensionadoExistente.setNombrePersona(request.getNombrePersona());
-        pensionadoExistente.setApellidosPersona(request.getApellidosPersona());
-        pensionadoExistente.setEstadoCivil(request.getEstadoCivil());
-        pensionadoExistente.setFechaNacimientoPersona(request.getFechaNacimientoPersona());
-        pensionadoExistente.setFechaExpedicionDocumentoIdPersona(request.getFechaExpedicionDocumentoIdPersona());
-        pensionadoExistente.setEstadoPersona(request.getEstadoPersona());
-        pensionadoExistente.setGeneroPersona(request.getGeneroPersona());
-        pensionadoExistente.setFechaDefuncionPersona(request.getFechaDefuncionPersona());
-        pensionadoExistente.setFechaInicioPension(request.getFechaInicioPension());
-        pensionadoExistente.setValorInicialPension(request.getValorInicialPension());
-        pensionadoExistente.setResolucionPension(request.getResolucionPension());
-        pensionadoExistente.setEntidadJubilacion(entidadJubilacion);
-        pensionadoExistente.setAplicarIPCPrimerPeriodo(request.isAplicarIPCPrimerPeriodo());
+        pensionadoExistente.setNombre(request.getNombrePersona());
+        pensionadoExistente.setApellidos(request.getApellidosPersona());
+        pensionadoExistente.setFechaNacimiento(request.getFechaNacimientoPersona());
+        pensionadoExistente.setFechaExpedicionCedula(request.getFechaExpedicionDocumentoIdPersona());
+        pensionadoExistente.setEstado(request.getEstadoPersona());
+        pensionadoExistente.setFechaFallecimiento(request.getFechaDefuncionPersona());
+        pensionadoExistente.setValorPension(request.getValorInicialPension());
+        pensionadoExistente.setEntidadJubilacion(entidadJubilacion.getName());
+        pensionadoExistente.setEntityNit(entidadJubilacion.getNit());
+        pensionadoExistente.setEntityId(entidadJubilacion.getIdEntidad().toString());
 
         pensionadoExistente = pensionadoRepositorio.save(pensionadoExistente);
         logCambioServicio.registrarActualizacion(nombreEntidad, pensionadoAntiguo, pensionadoExistente);
@@ -141,7 +125,7 @@ public class PensionadoServicio implements IPensionadoServicio {
         logCambioServicio.registrarConsulta(nombreEntidad);
         return pensionados.stream().map(this::convertirAPensionadoRespuesta).collect(Collectors.toList());
     }
-    
+
     @Override
     public PensionadoRespuesta buscarPensionadoPorId(Long id) {
         Pensionado pensionado = pensionadoRepositorio.findById(id)
@@ -149,60 +133,33 @@ public class PensionadoServicio implements IPensionadoServicio {
         logCambioServicio.registrarConsulta(nombreEntidad);
         return convertirAPensionadoRespuesta(pensionado);
     }
-    
-    private PensionadoRespuesta convertirAPensionadoRespuesta(Pensionado pensionado) {
-        List<SucesorRespuesta> sucesoresRespuesta = new ArrayList<>();
-        if (pensionado.getSucesores() != null) {
-            /*
-            sucesoresRespuesta = pensionado.getSucesores().stream()
-                .map(sucesor -> SucesorRespuesta.builder()
-                    .idPersona(sucesor.getIdPersona())
-                    .numeroIdentificacion(sucesor.getNumeroIdentificacion())
-                    .tipoIdentificacion(sucesor.getTipoIdentificacion().name())
-                    .nombrePersona(sucesor.getNombrePersona())
-                    .apellidosPersona(sucesor.getApellidosPersona())
-                    .estadoCivil(sucesor.getEstadoCivil().name())
-                    .fechaNacimientoPersona(sucesor.getFechaNacimientoPersona())
-                    .fechaExpedicionDocumentoIdPersona(sucesor.getFechaExpedicionDocumentoIdPersona())
-                    .estadoPersona(sucesor.getEstadoPersona().name())
-                    .generoPersona(sucesor.getGeneroPersona() != null ? sucesor.getGeneroPersona().name() : null)
-                    .fechaDefuncionPersona(sucesor.getFechaDefuncionPersona())
-                    .fechaInicioSucesion(sucesor.getFechaInicioSucesion())
-                    .porcentajePension(sucesor.getPorcentajePension())
-                    .build())
-                .collect(Collectors.toList());
-                */
-        }
 
-        List<TrabajoRespuesta> trabajosRespuesta = pensionado.getTrabajos().stream()
-                .map(trabajo -> TrabajoRespuesta.builder()
-                        .idTrabajo(trabajo.getIdTrabajo())
-                        .diasDeServicio(trabajo.getDiasDeServicio())
-                        .nitEntidad(trabajo.getEntidad().getNitEntidad())
-                        .idPersona(trabajo.getPensionado().getIdPersona())
-                        .entidadJubilacion(trabajo.getEntidad().getNombreEntidad())
-                        .build())
-                .collect(Collectors.toList());
+    private PensionadoRespuesta convertirAPensionadoRespuesta(Pensionado pensionado) {
+        // Por ahora, no hay relaciones con Sucesores ni Trabajos en la entidad Pensionado
+        // Si en el futuro se agregan, descomentar y ajustar
+        List<SucesorRespuesta> sucesoresRespuesta = new ArrayList<>();
+        List<TrabajoRespuesta> trabajosRespuesta = new ArrayList<>();
 
         return PensionadoRespuesta.builder()
                 .idPersona(pensionado.getIdPersona())
-                .numeroIdentificacion(pensionado.getNumeroIdentificacion())
-                .tipoIdentificacion(pensionado.getTipoIdentificacion())
-                .nombrePersona(pensionado.getNombrePersona())
-                .apellidosPersona(pensionado.getApellidosPersona())
-                .estadoCivil(pensionado.getEstadoCivil().name())
-                .fechaNacimientoPersona(pensionado.getFechaNacimientoPersona())
-                .fechaExpedicionDocumentoIdPersona(pensionado.getFechaExpedicionDocumentoIdPersona())
-                .estadoPersona(pensionado.getEstadoPersona())
-                .generoPersona(pensionado.getGeneroPersona())
-                .fechaInicioPension(pensionado.getFechaInicioPension())
-                .valorInicialPension(pensionado.getValorInicialPension())
-                .resolucionPension(pensionado.getResolucionPension())
-                .nitEntidad(pensionado.getEntidadJubilacion().getNitEntidad())
-                .entidadJubilacion(pensionado.getEntidadJubilacion().getNombreEntidad())
-                .totalDiasTrabajo(pensionado.getTotalDiasTrabajo())
-                .fechaDefuncionPersona(pensionado.getFechaDefuncionPersona())
-                .aplicarIPCPrimerPeriodo(pensionado.isAplicarIPCPrimerPeriodo())
+                .numeroIdentificacion(Long.parseLong(pensionado.getCedula()))
+                .tipoIdentificacion(null) // No existe en la entidad actual
+                .nombrePersona(pensionado.getNombre())
+                .apellidosPersona(pensionado.getApellidos())
+                .estadoCivil(null) // No existe en la entidad actual
+                .fechaNacimientoPersona(pensionado.getFechaNacimiento())
+                .fechaExpedicionDocumentoIdPersona(pensionado.getFechaExpedicionCedula())
+                .estadoPersona(pensionado.getEstado())
+                .generoPersona(null) // No existe en la entidad actual
+                .fechaInicioPension(null) // No existe en la entidad actual
+                .valorInicialPension(pensionado.getValorPension())
+                .resolucionPension(null) // No existe en la entidad actual
+                .nitEntidad(Long.parseLong(pensionado.getEntityNit()))
+                .entidadJubilacion(pensionado.getEntidadJubilacion())
+                .totalDiasTrabajo(Long.valueOf(pensionado.getDiasTotalesTrabajados()))
+                .fechaDefuncionPersona(pensionado.getFechaFallecimiento())
+                .aplicarIPCPrimerPeriodo(false) // No existe en la entidad actual
+                .diasDeServicio(Long.valueOf(pensionado.getDiasTrabajadosEntidad()))
                 .trabajos(trabajosRespuesta)
                 .sucesores(sucesoresRespuesta)
                 .build();
@@ -217,7 +174,7 @@ public class PensionadoServicio implements IPensionadoServicio {
         BeanUtils.copyProperties(pensionado, pensionadoAntiguo);
         
         // Asumiendo que "RETIRADO" o un estado similar existe en tu enum
-        pensionado.setEstadoPersona(EstadoPersona.RETIRADO);
+        pensionado.setEstado(EstadoPersona.RETIRADO);
         pensionado = pensionadoRepositorio.save(pensionado);
         logCambioServicio.registrarActualizacion(nombreEntidad, pensionadoAntiguo, pensionado);
     }
@@ -227,13 +184,13 @@ public class PensionadoServicio implements IPensionadoServicio {
     @Override
     public List<Pensionado> buscarPensionadosPorNombre(String nombre) {
         logCambioServicio.registrarConsulta(nombreEntidad);
-        return pensionadoRepositorio.findByNombrePersonaContainingIgnoreCase(nombre);
+        return pensionadoRepositorio.findByNombreContainingIgnoreCase(nombre);
     }
 
     @Override
     public List<Pensionado> buscarPensionadosPorApellido(String apellido) {
         logCambioServicio.registrarConsulta(nombreEntidad);
-        return pensionadoRepositorio.findByApellidosPersonaContainingIgnoreCase(apellido);
+        return pensionadoRepositorio.findByApellidosContainingIgnoreCase(apellido);
     }
 
     @Override
@@ -242,9 +199,9 @@ public class PensionadoServicio implements IPensionadoServicio {
         if (query == null || query.trim().isEmpty()) {
             return pensionadoRepositorio.findAll();
         }
-        
+
         query = query.trim();
-        
+
         if (query.matches("\\d+")) {
             Long id = Long.parseLong(query);
             return pensionadoRepositorio.findById(id)
@@ -252,12 +209,12 @@ public class PensionadoServicio implements IPensionadoServicio {
                     .orElseGet(ArrayList::new);
         }
 
-        return pensionadoRepositorio.findByNombrePersonaContainingIgnoreCaseOrApellidosPersonaContainingIgnoreCase(query, query);
+        return pensionadoRepositorio.findByNombreContainingIgnoreCaseOrApellidosContainingIgnoreCase(query, query);
     }
 
     /**
      * Desactiva un pensionado por su ID.
-     * 
+     *
      * @param id el ID del pensionado a desactivar
      * @throws RuntimeException si no se encuentra el pensionado
      */
@@ -267,7 +224,7 @@ public class PensionadoServicio implements IPensionadoServicio {
         Pensionado pensionado = pensionadoRepositorio.findById(id)
                 .orElseThrow(() -> new RuntimeException("Pensionado no encontrado con ID: " + id));
         
-        pensionado.setEstadoPersona(EstadoPersona.INACTIVO);
+        pensionado.setEstado(EstadoPersona.INACTIVO);
         pensionadoRepositorio.save(pensionado);
     }
 
@@ -277,69 +234,32 @@ public class PensionadoServicio implements IPensionadoServicio {
         Pensionado pensionado = pensionadoRepositorio.findById(id)
                 .orElseThrow(() -> new RuntimeException("No se encontró el pensionado con ID: " + id));
 
-        Long totalDiasTrabajo = pensionado.getTrabajos().stream()
-                .mapToLong(Trabajo::getDiasDeServicio)
-                .sum();
+        // Por ahora, los valores de trabajo se toman directamente de la entidad Pensionado
+        Long totalDiasTrabajo = Long.valueOf(pensionado.getDiasTotalesTrabajados());
+        Long diasDeServicioJubilacion = Long.valueOf(pensionado.getDiasTrabajadosEntidad());
 
-        Long diasDeServicioJubilacion = pensionado.getTrabajos().stream()
-            .filter(trabajo -> trabajo.getEntidad().getNitEntidad()
-                    .equals(pensionado.getEntidadJubilacion().getNitEntidad()))
-            .mapToLong(Trabajo::getDiasDeServicio)
-            .findFirst()
-            .orElse(0L);
-        /*
-        List<TrabajoRespuesta> trabajos = pensionado.getTrabajos().stream()
-                .map(trabajo -> TrabajoRespuesta.builder()
-                        .idTrabajo(trabajo.getIdTrabajo())
-                        .diasDeServicio(trabajo.getDiasDeServicio())
-                        .nitEntidad(trabajo.getEntidad().getNitEntidad())
-                        .numeroIdPersona(trabajo.getPensionado().getNumeroIdPersona())
-                        .entidadJubilacion(trabajo.getEntidad().getNombreEntidad())
-                        .build())
-                .toList();
-        */
-        // Mapeo de Sucesores
+        // Mapeo de Sucesores - Por ahora vacío ya que no hay relación
         List<SucesorRespuesta> sucesoresRespuesta = new ArrayList<>();
-        if (pensionado.getSucesores() != null) {
-            /*
-            sucesoresRespuesta = pensionado.getSucesores().stream()
-                .map(sucesor -> SucesorRespuesta.builder()
-                    .numeroIdPersona(sucesor.getNumeroIdPersona())
-                    .tipoIdPersona(sucesor.getTipoIdPersona())
-                    .nombrePersona(sucesor.getNombrePersona())
-                    .apellidosPersona(sucesor.getApellidosPersona())
-                    .fechaNacimientoPersona(sucesor.getFechaNacimientoPersona())
-                    .fechaExpedicionDocumentoIdPersona(sucesor.getFechaExpedicionDocumentoIdPersona())
-                    .estadoPersona(sucesor.getEstadoPersona())
-                    .generoPersona(sucesor.getGeneroPersona())
-                    .fechaDefuncionPersona(sucesor.getFechaDefuncionPersona())
-                    .fechaInicioSucesion(sucesor.getFechaInicioSucesion())
-                    .porcentajePension(sucesor.getPorcentajePension())
-                    .build())
-                .collect(Collectors.toList());
-            */
-
-        }
 
         return PensionadoRespuesta.builder()
-                .numeroIdentificacion(pensionado.getNumeroIdentificacion())
-                .tipoIdentificacion(pensionado.getTipoIdentificacion())
-                .nombrePersona(pensionado.getNombrePersona())
-                .apellidosPersona(pensionado.getApellidosPersona())
-                .fechaNacimientoPersona(pensionado.getFechaNacimientoPersona())
-                .fechaExpedicionDocumentoIdPersona(pensionado.getFechaExpedicionDocumentoIdPersona())
-                .estadoPersona(pensionado.getEstadoPersona())
-                .generoPersona(pensionado.getGeneroPersona())           
-                .fechaInicioPension(pensionado.getFechaInicioPension())
-                .valorInicialPension(pensionado.getValorInicialPension())
-                .resolucionPension(pensionado.getResolucionPension())
-                .nitEntidad(pensionado.getEntidadJubilacion().getNitEntidad())
-                .entidadJubilacion(pensionado.getEntidadJubilacion().getNombreEntidad())
+                .numeroIdentificacion(Long.parseLong(pensionado.getCedula()))
+                .tipoIdentificacion(null) // No existe en la entidad
+                .nombrePersona(pensionado.getNombre())
+                .apellidosPersona(pensionado.getApellidos())
+                .fechaNacimientoPersona(pensionado.getFechaNacimiento())
+                .fechaExpedicionDocumentoIdPersona(pensionado.getFechaExpedicionCedula())
+                .estadoPersona(pensionado.getEstado())
+                .generoPersona(null) // No existe en la entidad
+                .fechaInicioPension(null) // No existe en la entidad
+                .valorInicialPension(pensionado.getValorPension())
+                .resolucionPension(null) // No existe en la entidad
+                .nitEntidad(Long.parseLong(pensionado.getEntityNit()))
+                .entidadJubilacion(pensionado.getEntidadJubilacion())
                 .totalDiasTrabajo(totalDiasTrabajo)
-                .fechaDefuncionPersona(pensionado.getFechaDefuncionPersona())
-                .aplicarIPCPrimerPeriodo(pensionado.isAplicarIPCPrimerPeriodo())
+                .fechaDefuncionPersona(pensionado.getFechaFallecimiento())
+                .aplicarIPCPrimerPeriodo(false) // No existe en la entidad
                 .diasDeServicio(diasDeServicioJubilacion)
-                //.trabajos(trabajos)
+                .trabajos(new ArrayList<>()) // Por ahora vacío
                 .sucesores(sucesoresRespuesta)
                 .build();
     }

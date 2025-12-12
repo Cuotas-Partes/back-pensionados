@@ -125,7 +125,7 @@ public class ResolucionServicio implements IResolucionServicio {
         respuesta.setEstado(resolucion.getEstado());
         respuesta.setTipoResolucion(resolucion.getTipoResolucion());
         respuesta.setPensionadoId(resolucion.getPensionado().getIdPersona());
-        respuesta.setPensionadoNombre(resolucion.getPensionado().getNombrePersona() + " " + resolucion.getPensionado().getApellidosPersona());
+        respuesta.setPensionadoNombre(resolucion.getPensionado().getNombre() + " " + resolucion.getPensionado().getApellidos());
         respuesta.setCreatedAt(resolucion.getCreatedAt());
         respuesta.setUpdatedAt(resolucion.getUpdatedAt());
         return respuesta;

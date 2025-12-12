@@ -35,7 +35,7 @@ public class Trabajo {
     @JsonBackReference(value = "entidad-trabajo")
     @ManyToOne
     //@MapsId("nitEntidad")
-    @JoinColumn(name = "nitEntidad", referencedColumnName = "nitEntidad")
+    @JoinColumn(name = "nit", referencedColumnName = "nit")
     private Entidad entidad;
 
 }

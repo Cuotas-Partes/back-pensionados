@@ -52,9 +52,9 @@ public class PeriodoServicio implements IPeriodoServicio {
         int anioActual = fechaActual.getYear();
 
         Pensionado pensionado = cuotaParte.getTrabajo().getPensionado();
-        BigDecimal valorPensionAnterior = pensionado.getValorInicialPension();
-        boolean aplicarIPCPrimerPeriodo = pensionado.isAplicarIPCPrimerPeriodo();
-        BigDecimal porcentajeCuotaParte = cuotaParte.getPorcentajeCuotaParte(); 
+        BigDecimal valorPensionAnterior = pensionado.getValorPension();
+        boolean aplicarIPCPrimerPeriodo = false; // TODO: Este campo no existe en la entidad Pensionado actual
+        BigDecimal porcentajeCuotaParte = cuotaParte.getPorcentajeCuotaParte();
 
         // Obtener los IPC desde el año de inicio
         List<IPC> IPCApartirFechaPension = ipcRepositorio.findByFechaIPCGreaterThanEqual(anioInicio - 1);
@@ -213,6 +213,12 @@ public class PeriodoServicio implements IPeriodoServicio {
             description = "Calcula el valor reajustado de la pensión según el año de inicio de pensión y el año a calcular, aplicando los porcentajes establecidos por la ley."
     )
     public BigDecimal reajuste1993_1997(int anio, Pensionado pensionado, BigDecimal valorPension) {
+        // TODO: fechaInicioPension no existe en la entidad Pensionado actual
+        // Necesita obtenerse de otra fuente o agregarse a la entidad
+        // Temporalmente se retorna el valor sin reajuste
+        return valorPension;
+
+        /* CÓDIGO ORIGINAL COMENTADO - Requiere fechaInicioPension
         Calendar cal = Calendar.getInstance();
         cal.setTime(java.sql.Date.valueOf(pensionado.getFechaInicioPension()));
 
@@ -244,6 +250,7 @@ public class PeriodoServicio implements IPeriodoServicio {
         }
 
         return valorPension;
+        */
     }
 
 }

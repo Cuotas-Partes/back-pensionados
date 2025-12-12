@@ -28,7 +28,7 @@ public class Pago {
 
     @JsonBackReference
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "nitEntidad", referencedColumnName = "nitEntidad", nullable = false)
+    @JoinColumn(name = "nit", referencedColumnName = "nit", nullable = false)
     private Entidad entidad;
 
     @JsonBackReference
@@ -65,7 +65,7 @@ public class Pago {
     // Campos calculados para facilitar consultas
     @Transient
     public Long getNitEntidad() {
-        return entidad != null ? entidad.getNitEntidad() : null;
+        return entidad != null ? Long.valueOf(entidad.getNit()) : null;
     }
 
     @Transient

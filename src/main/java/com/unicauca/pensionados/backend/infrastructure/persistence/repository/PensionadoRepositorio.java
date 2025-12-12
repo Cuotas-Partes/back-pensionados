@@ -9,7 +9,6 @@ import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 
 import com.unicauca.pensionados.backend.domain.model.entity.Pensionado;
-import com.unicauca.pensionados.backend.domain.model.enums.TipoIdentificacion;
 import com.unicauca.pensionados.backend.application.dto.response.EntidadCuotaParteRespuesta;
 
 public interface PensionadoRepositorio extends JpaRepository<Pensionado, Long>{
@@ -17,24 +16,23 @@ public interface PensionadoRepositorio extends JpaRepository<Pensionado, Long>{
         summary = "Buscar pensionados por nombre",
         description = "Este endpoint permite buscar pensionados cuyo nombre contenga una cadena de texto específica, sin distinguir entre mayúsculas y minúsculas."
     )
-    List<Pensionado> findByNombrePersonaContainingIgnoreCase(String query);
+    List<Pensionado> findByNombreContainingIgnoreCase(String query);
     @Operation(
         summary = "Buscar pensionados por apellidos",
         description = "Este endpoint permite buscar pensionados cuyos apellidos contengan una cadena de texto específica, sin distinguir entre mayúsculas y minúsculas."
     )
-    List<Pensionado> findByApellidosPersonaContainingIgnoreCase(String query);
+    List<Pensionado> findByApellidosContainingIgnoreCase(String query);
     @Operation(
         summary = "Buscar pensionados por nombre o apellidos",
         description = "Este endpoint permite buscar pensionados cuyo nombre o apellidos contengan una cadena de texto específica, sin distinguir entre mayúsculas y minúsculas."
     )
-    List<Pensionado> findByNombrePersonaContainingIgnoreCaseOrApellidosPersonaContainingIgnoreCase(String nombre, String apellido);
+    List<Pensionado> findByNombreContainingIgnoreCaseOrApellidosContainingIgnoreCase(String nombre, String apellido);
 
-    // Este método es necesario para que la clase EntidadServicio pueda encontrar
-    // a los pensionados usando su número de documento y su tipo
-    Optional<Pensionado> findByTipoIdentificacionAndNumeroIdentificacion(TipoIdentificacion tipo, Long numero);
+    // Buscar pensionado por cédula (número de identificación)
+    Optional<Pensionado> findByCedula(String cedula);
 
     @Query("SELECT new com.unicauca.pensionados.backend.application.dto.response.EntidadCuotaParteRespuesta(" +
-    "t.entidad.nitEntidad, t.entidad.nombreEntidad, SUM(p.cuotaParteTotalAnio)) " +
+    "t.entidad.nit, t.entidad.name, SUM(p.cuotaParteTotalAnio)) " +
     "FROM Trabajo t " +
     "JOIN t.pensionado pn " +
     "JOIN t.entidad e " +
@@ -43,8 +41,8 @@ public interface PensionadoRepositorio extends JpaRepository<Pensionado, Long>{
 
     // Se cambia 'pn.numeroIdPersona' por 'pn.idPersona' para que coincida con el nuevo modelo.
     "WHERE pn.idPersona = :pensionadoId " +
-    "AND e.nitEntidad != 8911500319L " +
-    "GROUP BY e.nitEntidad, e.nombreEntidad")
+    "AND e.nit != '8911500319' " +
+    "GROUP BY e.nit, e.name")
     List<EntidadCuotaParteRespuesta> findEntidadesYCuotaParteByPensionadoId(@Param("pensionadoId") Long pensionadoId, @Param("unicaucaNit") Long unicaucaNit);
 
 }
