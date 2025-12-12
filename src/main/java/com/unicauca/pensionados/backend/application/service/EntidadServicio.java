@@ -349,7 +349,7 @@ public class EntidadServicio implements IEntidadServicio {
      * 
      * @return una lista de objetos Entidad
      */
-    @Override
+   /* @Override
     public List<EntidadConPensionadosRespuesta> listarTodos() {
         //Registrar log
         logCambioService.registrarConsulta(nombreEntidad);
@@ -409,7 +409,7 @@ public class EntidadServicio implements IEntidadServicio {
                 .pensionados(pensionados)
                 .build();
         }).toList();
-    }
+    }*/
 
     /**
      * Busca una entidad por su NIT.
@@ -426,14 +426,39 @@ public class EntidadServicio implements IEntidadServicio {
 
     }
 
+    @Override
+    public List<Entidad> listarTodos() {
+        return entidadRepository.findAll();
+    }
+
     /**
      * Busca entidades por nombre, NIT o dirección.
      * 
      * @param query el criterio de búsqueda (nombre, NIT o dirección)
      * @return una lista de objetos Entidad
      */
+    @Override
+    public List<Entidad> buscarEntidadesPorCriterio(String query) {
+        logCambioService.registrarConsulta(nombreEntidad);
+        List<Entidad> entidades = new ArrayList<>();
+
+        // Buscar entidades por NIT
+        try {
+            Long nit = Long.parseLong(query);
+            entidadRepository.findByNit(nit.toString()).ifPresent(entidades::add);
+        } catch (NumberFormatException e) {
+            // Si no es un número, buscar por nombre o dirección
+            entidades.addAll(entidadRepository.findByNameContainingIgnoreCase(query));
+            entidades.addAll(entidadRepository.findByAddressContainingIgnoreCase(query));
+        }
+
+        // Eliminar duplicados
+        return entidades.stream().distinct().toList();
+    }
+
+    /*
       @Override
-    public List<EntidadConPensionadosRespuesta> buscarEntidadesPorCriterio(String query) {
+    public List<Entidad> buscarEntidadesPorCriterio(String query) {
         List<Entidad> entidades = new ArrayList<>();
         logCambioService.registrarConsulta(nombreEntidad);
 
@@ -506,7 +531,7 @@ public class EntidadServicio implements IEntidadServicio {
                 .trabajos(trabajos)
                 .build();
         }).toList();
-    }
+    }*/
      
 
     /**

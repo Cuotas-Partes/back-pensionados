@@ -54,7 +54,7 @@ public class EntidadControlador {
             @ApiResponse(responseCode = "400", description = "Error en la solicitud"),
             @ApiResponse(responseCode = "500", description = "Error interno del servidor")
         })
-    public List<EntidadConPensionadosRespuesta> buscarPorCriterio(
+    public List<Entidad> buscarPorCriterio(
         @Parameter(description = "Término de búsqueda (opcional)", example = "Unicauca") 
         @RequestParam(required = false) String query) {
         if (query == null || query.trim().isEmpty()) {
@@ -115,7 +115,7 @@ public class EntidadControlador {
             @ApiResponse(responseCode = "204", description = "No se encontraron entidades"),
             @ApiResponse(responseCode = "500", description = "Error interno del servidor")
         })
-    public List<EntidadConPensionadosRespuesta> listarTodos() {
+    public List<Entidad> listarTodos() {
         try {
             return entidadService.listarTodos();
         } catch (RuntimeException ex) {

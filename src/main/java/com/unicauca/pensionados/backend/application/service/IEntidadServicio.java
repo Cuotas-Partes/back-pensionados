@@ -11,11 +11,11 @@ import org.springframework.stereotype.Service;
 
 
 public interface IEntidadServicio {
-    List<EntidadConPensionadosRespuesta> buscarEntidadesPorCriterio(String query);
+    List<Entidad> buscarEntidadesPorCriterio(String query);
     List<Entidad> buscarEntidadPorNombre(String nombre);
     Entidad buscarPorNit(Long nit);
     //List<Entidad> listarTodos();
-    List<EntidadConPensionadosRespuesta> listarTodos();
+    List<Entidad> listarTodos();
     void registrarEntidad(RegistroEntidadPeticion request);
     void actualizar(Long nid, RegistroEntidadPeticion entidad);
     boolean activarEntidad(Long nid);
