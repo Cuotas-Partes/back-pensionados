@@ -1,5 +1,7 @@
 package com.unicauca.pensionados.backend.application.service;
 
+import com.unicauca.pensionados.backend.application.service.interfaces.ICuotaAnualServicio;
+import com.unicauca.pensionados.backend.application.service.interfaces.ILogCambioServicio;
 import com.unicauca.pensionados.backend.domain.model.entity.CuotaAnual;
 import com.unicauca.pensionados.backend.infrastructure.persistence.repository.CuotaAnualRepositorio;
 import com.unicauca.pensionados.backend.application.dto.response.CuotaAnualDTO;
@@ -12,7 +14,7 @@ import java.util.List;
 import java.util.Optional;
 
 @Service
-public class CuotaAnualServicio implements ICuotaAnualServicio{
+public class CuotaAnualServicio implements ICuotaAnualServicio {
     @Autowired
     private CuotaAnualRepositorio cuotaAnualRepositorio;
     @Autowired

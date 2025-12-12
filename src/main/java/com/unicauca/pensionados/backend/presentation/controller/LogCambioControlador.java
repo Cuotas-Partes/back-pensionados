@@ -1,6 +1,6 @@
 package com.unicauca.pensionados.backend.presentation.controller;
 
-import com.unicauca.pensionados.backend.application.service.ILogCambioServicio;
+import com.unicauca.pensionados.backend.application.service.interfaces.ILogCambioServicio;
 import com.unicauca.pensionados.backend.application.dto.request.LogCambioPeticion;
 import com.unicauca.pensionados.backend.application.dto.response.LogCambioRespuesta;
 import com.unicauca.pensionados.backend.application.dto.response.ResultadoCobroPorPeriodoDTO;
@@ -14,6 +14,7 @@ import java.util.List;
 
 @RestController
 @RequestMapping("/logs")
+@CrossOrigin(origins = "*")
 @Tag(name = "Logs", description = "Gestión de logs")
 public class LogCambioControlador {
     @Autowired

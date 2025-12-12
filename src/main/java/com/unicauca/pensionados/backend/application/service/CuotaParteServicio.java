@@ -12,6 +12,7 @@ import java.util.Objects;
 import javax.money.Monetary;
 import javax.money.MonetaryAmount;
 
+import com.unicauca.pensionados.backend.application.service.interfaces.ICuotaParteServicio;
 import org.javamoney.moneta.Money;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;

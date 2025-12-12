@@ -1,5 +1,7 @@
 package com.unicauca.pensionados.backend.application.service;
 
+import com.unicauca.pensionados.backend.application.service.interfaces.IDTFServicio;
+import com.unicauca.pensionados.backend.application.service.interfaces.ILogCambioServicio;
 import com.unicauca.pensionados.backend.domain.exception.BusinessValidationException;
 import com.unicauca.pensionados.backend.domain.model.entity.DTF;
 import com.unicauca.pensionados.backend.domain.model.entity.LogCambio;

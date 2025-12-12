@@ -1,13 +1,10 @@
-package com.unicauca.pensionados.backend.application.service;
+package com.unicauca.pensionados.backend.application.service.interfaces;
 
 import com.unicauca.pensionados.backend.domain.model.entity.Entidad;
 import com.unicauca.pensionados.backend.application.dto.request.RegistroEntidadPeticion;
 import com.unicauca.pensionados.backend.application.dto.request.RegistroTrabajoPeticion;
-import com.unicauca.pensionados.backend.application.dto.response.EntidadConPensionadosRespuesta;
 
 import java.util.List;
-
-import org.springframework.stereotype.Service;
 
 
 public interface IEntidadServicio {

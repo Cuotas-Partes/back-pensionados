@@ -1,4 +1,4 @@
-package com.unicauca.pensionados.backend.application.service;
+package com.unicauca.pensionados.backend.application.service.interfaces;
 
 import org.springframework.stereotype.Service;
 

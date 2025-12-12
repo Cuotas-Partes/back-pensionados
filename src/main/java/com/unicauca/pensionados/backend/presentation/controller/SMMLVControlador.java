@@ -14,7 +14,7 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
-import com.unicauca.pensionados.backend.application.service.ISMMLVServicio;
+import com.unicauca.pensionados.backend.application.service.interfaces.ISMMLVServicio;
 import com.unicauca.pensionados.backend.application.dto.request.SMMLVDTOPeticion;
 import com.unicauca.pensionados.backend.application.dto.response.SMMLVDTORespuesta;
 

@@ -1,6 +1,7 @@
 package com.unicauca.pensionados.backend.application.service;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.unicauca.pensionados.backend.application.service.interfaces.ILogCambioServicio;
 import com.unicauca.pensionados.backend.domain.model.entity.LogCambio;
 import com.unicauca.pensionados.backend.domain.model.entity.Usuario;
 import com.unicauca.pensionados.backend.infrastructure.persistence.repository.LogCambioRepositorio;

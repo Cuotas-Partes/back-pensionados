@@ -1,6 +1,6 @@
 package com.unicauca.pensionados.backend.presentation.controller;
 
-import com.unicauca.pensionados.backend.application.service.IDTFServicio;
+import com.unicauca.pensionados.backend.application.service.interfaces.IDTFServicio;
 import com.unicauca.pensionados.backend.application.dto.response.DTFDTO;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
@@ -12,6 +12,7 @@ import java.util.Map;
 
 @RestController
 @RequestMapping("/dtf")
+@CrossOrigin(origins = "*")
 public class DTFControlador {
 
     @Autowired

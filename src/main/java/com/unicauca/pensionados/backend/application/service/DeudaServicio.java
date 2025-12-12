@@ -1,4 +1,6 @@
 package com.unicauca.pensionados.backend.application.service;
+import com.unicauca.pensionados.backend.application.service.interfaces.IDeudaServicio;
+import com.unicauca.pensionados.backend.application.service.interfaces.ILogCambioServicio;
 import com.unicauca.pensionados.backend.domain.exception.BusinessValidationException;
 import com.unicauca.pensionados.backend.domain.model.entity.Deuda;
 import com.unicauca.pensionados.backend.infrastructure.persistence.repository.DeudaRepositorio;
@@ -12,7 +14,7 @@ import java.util.List;
 import java.util.Optional;
 
 @Service
-public class DeudaServicio implements IDeudaServicio{
+public class DeudaServicio implements IDeudaServicio {
 
     @Autowired
     private DeudaRepositorio deudaRepositorio;

@@ -14,7 +14,7 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
-import com.unicauca.pensionados.backend.application.service.ILiquidacionEntidadServicio;
+import com.unicauca.pensionados.backend.application.service.interfaces.ILiquidacionEntidadServicio;
 import com.unicauca.pensionados.backend.application.dto.request.LiquidacionEntidadDTOPeticion;
 import com.unicauca.pensionados.backend.application.dto.response.LiquidacionEntidadDTORespuesta;
 

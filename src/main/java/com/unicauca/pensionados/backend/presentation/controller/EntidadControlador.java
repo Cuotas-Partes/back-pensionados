@@ -10,7 +10,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
-import com.unicauca.pensionados.backend.application.service.IEntidadServicio;
+import com.unicauca.pensionados.backend.application.service.interfaces.IEntidadServicio;
 import com.unicauca.pensionados.backend.domain.model.entity.Entidad;
 import com.unicauca.pensionados.backend.application.dto.request.RegistroEntidadPeticion;
 import com.unicauca.pensionados.backend.application.dto.request.RegistroTrabajoPeticion;
@@ -19,6 +19,7 @@ import com.unicauca.pensionados.backend.application.dto.response.EntidadConPensi
 import java.util.List;
 
 @RestController
+@CrossOrigin(origins = "*")
 @RequestMapping("/entidad")
 @Tag(name = "Entidades", description = "Gestión de entidades pensionadas")
 public class EntidadControlador {

@@ -1,7 +1,6 @@
 package com.unicauca.pensionados.backend.presentation.controller;
 
-import com.unicauca.pensionados.backend.application.service.ICuotaAnualServicio;
-import com.unicauca.pensionados.backend.domain.model.entity.CuotaAnual;
+import com.unicauca.pensionados.backend.application.service.interfaces.ICuotaAnualServicio;
 import com.unicauca.pensionados.backend.application.dto.response.CuotaAnualDTO;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
@@ -13,6 +12,7 @@ import java.util.Map;
 
 @RestController
 @RequestMapping("/cuota-anual")
+@CrossOrigin(origins = "*")
 public class CuotaAnualControlador {
 
     @Autowired

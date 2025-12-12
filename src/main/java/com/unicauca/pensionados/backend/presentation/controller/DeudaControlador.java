@@ -1,6 +1,6 @@
 package com.unicauca.pensionados.backend.presentation.controller;
 
-import com.unicauca.pensionados.backend.application.service.IDeudaServicio;
+import com.unicauca.pensionados.backend.application.service.interfaces.IDeudaServicio;
 import com.unicauca.pensionados.backend.domain.model.entity.Deuda;
 import com.unicauca.pensionados.backend.application.dto.response.DeudaDTO;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -12,6 +12,7 @@ import java.util.Map;
 
 @RestController
 @RequestMapping("/deuda")
+@CrossOrigin(origins = "*")
 public class DeudaControlador {
 
     @Autowired

@@ -1,11 +1,8 @@
 package com.unicauca.pensionados.backend.presentation.controller;
 
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
-import com.unicauca.pensionados.backend.application.service.IPensionadoServicio;
-import com.unicauca.pensionados.backend.application.dto.request.FiltroCuotaPartePeticion;
+import com.unicauca.pensionados.backend.application.service.interfaces.IPensionadoServicio;
 import com.unicauca.pensionados.backend.application.dto.request.RegistroPensionadoPeticion;
 import com.unicauca.pensionados.backend.application.dto.response.EntidadCuotaParteRespuesta;
 import com.unicauca.pensionados.backend.application.dto.response.PensionadoRespuesta;
@@ -25,11 +22,6 @@ import com.unicauca.pensionados.backend.domain.model.entity.Pensionado;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.GrantedAuthority;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PatchMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
 
 //IMPORTS PARA EL METODO DE VERIFICACION DE ROL
 import org.springframework.security.core.Authentication;
@@ -37,6 +29,7 @@ import java.util.Collection;
 
 @RestController
 @RequestMapping("/pensionado")
+@CrossOrigin(origins = "*")
 @Tag(name = "Pensionado Management", description = "APIs para la gestión de pensionados")
 public class PensionadoControlador {
     private final IPensionadoServicio pensionadoServicio;

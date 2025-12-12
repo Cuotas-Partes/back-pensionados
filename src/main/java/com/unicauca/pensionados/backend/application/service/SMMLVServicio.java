@@ -8,7 +8,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import com.unicauca.pensionados.backend.domain.exception.RecursoNoEncontrado;
-import com.unicauca.pensionados.backend.application.service.ISMMLVServicio;
+import com.unicauca.pensionados.backend.application.service.interfaces.ISMMLVServicio;
 import com.unicauca.pensionados.backend.domain.model.entity.SMMLVHistorico;
 import com.unicauca.pensionados.backend.infrastructure.persistence.repository.SMMLVHistoricoRepositorio;
 import com.unicauca.pensionados.backend.application.dto.request.SMMLVDTOPeticion;

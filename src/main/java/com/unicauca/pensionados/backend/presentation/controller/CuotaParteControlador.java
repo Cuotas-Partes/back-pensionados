@@ -1,9 +1,6 @@
 package com.unicauca.pensionados.backend.presentation.controller;
 
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
-import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.*;
 
 import com.unicauca.pensionados.backend.application.service.CuotaParteServicio;
 import com.unicauca.pensionados.backend.application.dto.request.FiltroCuotaPartePeticion;
@@ -22,11 +19,10 @@ import java.util.List;
 
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
 
 @RestController
 @RequestMapping("/cuotaParte")
+@CrossOrigin(origins = "*")
 @Tag(name = "Cuota Parte", description = "Controlador para gestionar las cuotas parte de los pensionados")
 public class CuotaParteControlador {
     private final CuotaParteServicio cuotaParteServicio;

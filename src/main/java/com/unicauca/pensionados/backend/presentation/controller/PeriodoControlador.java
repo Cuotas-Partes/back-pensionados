@@ -1,19 +1,18 @@
 package com.unicauca.pensionados.backend.presentation.controller;
 
 import com.unicauca.pensionados.backend.domain.model.entity.Periodo;
-import com.unicauca.pensionados.backend.infrastructure.persistence.repository.PeriodoRepositorio;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
-import com.unicauca.pensionados.backend.application.service.IPeriodoServicio;
+import com.unicauca.pensionados.backend.application.service.interfaces.IPeriodoServicio;
 
 import java.time.LocalDate;
 import java.util.HashMap;
 import java.util.Map;
-import java.util.Optional;
 
 @RestController
 @RequestMapping("/periodo")
+@CrossOrigin(origins = "*")
 public class PeriodoControlador {
 
     @Autowired

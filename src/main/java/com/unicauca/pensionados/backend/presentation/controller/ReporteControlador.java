@@ -13,7 +13,7 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
-import com.unicauca.pensionados.backend.application.service.IReporteServicio;
+import com.unicauca.pensionados.backend.application.service.interfaces.IReporteServicio;
 import com.unicauca.pensionados.backend.application.dto.request.ReporteDTOPeticion;
 import com.unicauca.pensionados.backend.application.dto.response.ReporteDTORespuesta;
 

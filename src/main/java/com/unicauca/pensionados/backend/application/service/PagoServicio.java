@@ -10,7 +10,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import com.unicauca.pensionados.backend.domain.exception.RecursoNoEncontrado;
-import com.unicauca.pensionados.backend.application.service.IPagoServicio;
+import com.unicauca.pensionados.backend.application.service.interfaces.IPagoServicio;
 import com.unicauca.pensionados.backend.domain.model.entity.Entidad;
 import com.unicauca.pensionados.backend.domain.model.entity.Pago;
 import com.unicauca.pensionados.backend.domain.model.entity.Pensionado;

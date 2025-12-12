@@ -1,6 +1,6 @@
 package com.unicauca.pensionados.backend.presentation.controller;
 
-import com.unicauca.pensionados.backend.application.service.IIPCServicio;
+import com.unicauca.pensionados.backend.application.service.interfaces.IIPCServicio;
 import com.unicauca.pensionados.backend.application.dto.request.RegistroIPCPeticion;
 import com.unicauca.pensionados.backend.application.dto.response.IPCRespuestaDTO;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -15,6 +15,7 @@ import java.util.List;
  */
 @RestController
 @RequestMapping("/ipc")
+@CrossOrigin(origins = "*")
 public class IPCControlador {
     @Autowired
     private IIPCServicio ipcServicio;

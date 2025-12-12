@@ -15,7 +15,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
-import com.unicauca.pensionados.backend.application.service.IPagoServicio;
+import com.unicauca.pensionados.backend.application.service.interfaces.IPagoServicio;
 import com.unicauca.pensionados.backend.domain.model.enums.TipoPago;
 import com.unicauca.pensionados.backend.application.dto.request.FiltroPagoPeticion;
 import com.unicauca.pensionados.backend.application.dto.request.PagoDTOPeticion;

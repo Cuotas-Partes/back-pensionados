@@ -1,5 +1,7 @@
 package com.unicauca.pensionados.backend.application.service;
 
+import com.unicauca.pensionados.backend.application.service.interfaces.IEntidadServicio;
+import com.unicauca.pensionados.backend.application.service.interfaces.ILogCambioServicio;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -8,7 +10,6 @@ import com.unicauca.pensionados.backend.domain.model.enums.EstadoEntidad;
 import com.unicauca.pensionados.backend.domain.model.entity.Entidad;
 import com.unicauca.pensionados.backend.domain.model.entity.Pensionado;
 import com.unicauca.pensionados.backend.domain.model.entity.Trabajo;
-import com.unicauca.pensionados.backend.domain.model.enums.TipoIdentificacion;
 import com.unicauca.pensionados.backend.infrastructure.persistence.repository.CuotaParteRepositorio;
 import com.unicauca.pensionados.backend.infrastructure.persistence.repository.EntidadRepositorio;
 import com.unicauca.pensionados.backend.infrastructure.persistence.repository.PensionadoRepositorio;
@@ -16,11 +17,6 @@ import com.unicauca.pensionados.backend.infrastructure.persistence.repository.Pe
 import com.unicauca.pensionados.backend.infrastructure.persistence.repository.TrabajoRepositorio;
 import com.unicauca.pensionados.backend.application.dto.request.RegistroEntidadPeticion;
 import com.unicauca.pensionados.backend.application.dto.request.RegistroTrabajoPeticion;
-import com.unicauca.pensionados.backend.application.dto.response.EntidadConPensionadosRespuesta;
-import com.unicauca.pensionados.backend.application.dto.response.PensionadoRespuesta;
-import com.unicauca.pensionados.backend.application.dto.response.TrabajoRespuesta;
-
-import java.util.Objects;
 
 import java.util.ArrayList;
 import java.util.List;

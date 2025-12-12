@@ -9,7 +9,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import com.unicauca.pensionados.backend.domain.exception.RecursoNoEncontrado;
-import com.unicauca.pensionados.backend.application.service.IReporteServicio;
+import com.unicauca.pensionados.backend.application.service.interfaces.IReporteServicio;
 import com.unicauca.pensionados.backend.domain.model.entity.Reporte;
 import com.unicauca.pensionados.backend.domain.model.entity.Usuario;
 import com.unicauca.pensionados.backend.domain.model.enums.TipoReporte;

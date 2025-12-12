@@ -1,6 +1,8 @@
 package com.unicauca.pensionados.backend.application.service;
 
 
+import com.unicauca.pensionados.backend.application.service.interfaces.ILogCambioServicio;
+import com.unicauca.pensionados.backend.application.service.interfaces.IPensionadoServicio;
 import com.unicauca.pensionados.backend.domain.model.enums.TipoPension;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;

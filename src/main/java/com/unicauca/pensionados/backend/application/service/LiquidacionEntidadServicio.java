@@ -8,7 +8,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import com.unicauca.pensionados.backend.domain.exception.RecursoNoEncontrado;
-import com.unicauca.pensionados.backend.application.service.ILiquidacionEntidadServicio;
+import com.unicauca.pensionados.backend.application.service.interfaces.ILiquidacionEntidadServicio;
 import com.unicauca.pensionados.backend.domain.model.entity.Entidad;
 import com.unicauca.pensionados.backend.domain.model.entity.LiquidacionEntidad;
 import com.unicauca.pensionados.backend.domain.model.entity.Periodo;
