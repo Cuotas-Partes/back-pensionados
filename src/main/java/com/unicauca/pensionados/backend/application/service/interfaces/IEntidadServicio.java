@@ -11,6 +11,7 @@ public interface IEntidadServicio {
     List<Entidad> buscarEntidadesPorCriterio(String query);
     List<Entidad> buscarEntidadPorNombre(String nombre);
     Entidad buscarPorNit(Long nit);
+    Entidad buscarPorId(Long id);
     //List<Entidad> listarTodos();
     List<Entidad> listarTodos();
     void registrarEntidad(RegistroEntidadPeticion request);

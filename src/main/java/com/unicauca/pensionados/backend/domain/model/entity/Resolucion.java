@@ -18,8 +18,6 @@ import lombok.Setter;
 @Table(name = "resolucion")
 @Getter
 @Setter
-@NoArgsConstructor
-@AllArgsConstructor
 public class Resolucion {
     
     @Id

@@ -44,5 +44,11 @@ public interface PensionadoRepositorio extends JpaRepository<Pensionado, Long>{
     "AND e.nit != '8911500319' " +
     "GROUP BY e.nit, e.name")
     List<EntidadCuotaParteRespuesta> findEntidadesYCuotaParteByPensionadoId(@Param("pensionadoId") Long pensionadoId, @Param("unicaucaNit") Long unicaucaNit);
-
+    @Query("""
+        SELECT DISTINCT p
+        FROM Pensionado p
+        LEFT JOIN FETCH p.resoluciones
+        WHERE p.entityId = :entityId
+    """)
+    List<Pensionado> findByEntidadId(@Param("entidadId") Long entidadId);
 }

@@ -3,10 +3,14 @@ package com.unicauca.pensionados.backend.domain.model.entity;
 import java.math.BigDecimal;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
+import java.util.List;
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+import com.fasterxml.jackson.annotation.JsonManagedReference;
 import jakarta.persistence.*;
+import lombok.AllArgsConstructor;
 import lombok.Getter;
+import lombok.NoArgsConstructor;
 import lombok.Setter;
 import com.unicauca.pensionados.backend.domain.model.enums.EstadoPersona;
 import com.unicauca.pensionados.backend.domain.model.enums.TipoPension;
@@ -16,6 +20,8 @@ import com.unicauca.pensionados.backend.domain.model.enums.TipoPension;
 @Setter
 @Getter
 @JsonIgnoreProperties({"hibernateLazyInitializer", "handler"})
+@AllArgsConstructor
+@NoArgsConstructor
 public class Pensionado {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -89,6 +95,10 @@ public class Pensionado {
 
     @Column(name = "total_pendiente", precision = 19, scale = 2)
     private BigDecimal totalPendiente = BigDecimal.ZERO;
+
+    @OneToMany(mappedBy = "pensionado", fetch = FetchType.LAZY, cascade = CascadeType.ALL)
+    @JsonManagedReference
+    private List<Resolucion> resoluciones;
 
     @Column(name = "created_at", nullable = false, updatable = false)
     private LocalDateTime createdAt = LocalDateTime.now();

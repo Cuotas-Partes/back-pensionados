@@ -1,9 +1,12 @@
 package com.unicauca.pensionados.backend.application.service;
 
 
+import com.unicauca.pensionados.backend.application.dto.response.PensionadoDTO;
 import com.unicauca.pensionados.backend.application.service.interfaces.ILogCambioServicio;
 import com.unicauca.pensionados.backend.application.service.interfaces.IPensionadoServicio;
+import com.unicauca.pensionados.backend.domain.model.entity.Resolucion;
 import com.unicauca.pensionados.backend.domain.model.enums.TipoPension;
+import com.unicauca.pensionados.backend.domain.model.mappers.PensionadoMapper;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -16,16 +19,10 @@ import com.unicauca.pensionados.backend.infrastructure.persistence.repository.En
 import com.unicauca.pensionados.backend.infrastructure.persistence.repository.PensionadoRepositorio;
 import com.unicauca.pensionados.backend.infrastructure.persistence.repository.PersonaRepositorio;
 import com.unicauca.pensionados.backend.application.dto.request.RegistroPensionadoPeticion;
-import com.unicauca.pensionados.backend.application.dto.response.EntidadCuotaParteRespuesta;
-import com.unicauca.pensionados.backend.application.dto.response.PensionadoRespuesta;
-import com.unicauca.pensionados.backend.application.dto.response.SucesorRespuesta;
-import com.unicauca.pensionados.backend.application.dto.response.TrabajoRespuesta;
 
 import jakarta.transaction.Transactional;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.stream.Collectors;
-
 
 
 @Service
@@ -127,6 +124,14 @@ public class PensionadoServicio implements IPensionadoServicio {
         return pensionadoRepositorio.findAll();
     }
 
+    @Override
+    public List<PensionadoDTO> listarPensionadoPorEntidad(Long entidadId) {
+        logCambioServicio.registrarConsulta(nombreEntidad);
+        return pensionadoRepositorio.findByEntidadId(entidadId)
+                .stream()
+                .map(PensionadoMapper::toDTO)
+                .toList();
+    }
     @Override
     public Pensionado buscarPensionadoPorId(Long id) {
         logCambioServicio.registrarConsulta(nombreEntidad);

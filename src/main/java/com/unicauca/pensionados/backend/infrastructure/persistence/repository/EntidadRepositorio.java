@@ -11,7 +11,7 @@ public interface EntidadRepositorio extends JpaRepository<Entidad, Long> {
     List<Entidad> findByAddressContainingIgnoreCase(String query);
     List<Entidad> findByEmailContainingIgnoreCase(String query);
     Optional<Entidad> findByNit(String nit);
-
+    Optional<Entidad> findById(Long id);
     Boolean existsByName(String name); //verifica si existe el nombre de la entidad
     Boolean existsByNit(String nit); //verifica si existe el NIT de la entidad
     //Listar todas las entidades

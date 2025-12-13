@@ -423,6 +423,13 @@ public class EntidadServicio implements IEntidadServicio {
     }
 
     @Override
+    public Entidad buscarPorId(Long id) {
+        logCambioService.registrarConsulta(nombreEntidad);
+        return entidadRepository.findById(id)
+            .orElseThrow(() -> new RuntimeException("No se encontró la entidad con ID: " + id));
+    }
+
+    @Override
     public List<Entidad> listarTodos() {
         return entidadRepository.findAll();
     }

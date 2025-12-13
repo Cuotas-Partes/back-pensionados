@@ -28,4 +28,7 @@ public class ResolucionDTORespuesta {
     private String pensionadoNombre;
     private LocalDateTime createdAt;
     private LocalDateTime updatedAt;
+
+    public ResolucionDTORespuesta(Long id, String numeroResolucion, LocalDate fechaResolucion, BigDecimal valorResolucion, EstadoResolucion estado, TipoResolucion tipoResolucion) {
+    }
 }

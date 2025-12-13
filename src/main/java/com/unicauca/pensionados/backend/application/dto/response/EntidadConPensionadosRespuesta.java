@@ -28,7 +28,7 @@ public class EntidadConPensionadosRespuesta {
     private EstadoEntidad estadoEntidad;
 
     @Schema(description = "Lista de pensionados asociados a la entidad")
-    private List<PensionadoRespuesta> pensionados;
+    private List<PensionadoDTO> pensionados;
     @Schema(description = "Lista de trabajos asociados a la entidad")
     private List<TrabajoRespuesta>trabajos;
 }
