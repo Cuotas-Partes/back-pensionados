@@ -81,7 +81,7 @@ public class PensionadoServicio implements IPensionadoServicio {
         pensionado.setPorcentajeCuota(java.math.BigDecimal.ZERO);
         pensionado.setTipoJubilacion(tipoPension);
         pensionado.setValorPension(request.getValorInicialPension());
-        pensionado.setEstado(request.getEstadoPersona() != null ? request.getEstadoPersona() : EstadoPersona.ACTIVO);
+        pensionado.setEstado(request.getEstadoPersona() != null ? request.getEstadoPersona() : EstadoPersona.Activo);
         pensionado.setFechaFallecimiento(request.getFechaDefuncionPersona());
 
         //Guardar log del registro
@@ -122,49 +122,16 @@ public class PensionadoServicio implements IPensionadoServicio {
     }
 
     @Override
-    public List<PensionadoRespuesta> listarPensionados() {
-        List<Pensionado> pensionados = pensionadoRepositorio.findAll();
+    public List<Pensionado> listarPensionados() {
         logCambioServicio.registrarConsulta(nombreEntidad);
-        return pensionados.stream().map(this::convertirAPensionadoRespuesta).collect(Collectors.toList());
+        return pensionadoRepositorio.findAll();
     }
 
     @Override
-    public PensionadoRespuesta buscarPensionadoPorId(Long id) {
-        Pensionado pensionado = pensionadoRepositorio.findById(id)
-                .orElseThrow(() -> new RuntimeException("No se encontró el pensionado con ID: " + id));
+    public Pensionado buscarPensionadoPorId(Long id) {
         logCambioServicio.registrarConsulta(nombreEntidad);
-        return convertirAPensionadoRespuesta(pensionado);
-    }
-
-    private PensionadoRespuesta convertirAPensionadoRespuesta(Pensionado pensionado) {
-        // Por ahora, no hay relaciones con Sucesores ni Trabajos en la entidad Pensionado
-        // Si en el futuro se agregan, descomentar y ajustar
-        List<SucesorRespuesta> sucesoresRespuesta = new ArrayList<>();
-        List<TrabajoRespuesta> trabajosRespuesta = new ArrayList<>();
-
-        return PensionadoRespuesta.builder()
-                .idPersona(pensionado.getIdPersona())
-                .numeroIdentificacion(Long.parseLong(pensionado.getCedula()))
-                .tipoIdentificacion(null) // No existe en la entidad actual
-                .nombrePersona(pensionado.getNombre())
-                .apellidosPersona(pensionado.getApellidos())
-                .estadoCivil(null) // No existe en la entidad actual
-                .fechaNacimientoPersona(pensionado.getFechaNacimiento())
-                .fechaExpedicionDocumentoIdPersona(pensionado.getFechaExpedicionCedula())
-                .estadoPersona(pensionado.getEstado())
-                .generoPersona(null) // No existe en la entidad actual
-                .fechaInicioPension(null) // No existe en la entidad actual
-                .valorInicialPension(pensionado.getValorPension())
-                .resolucionPension(null) // No existe en la entidad actual
-                .nitEntidad(Long.parseLong(pensionado.getEntityNit()))
-                .entidadJubilacion(pensionado.getEntidadJubilacion())
-                .totalDiasTrabajo(Long.valueOf(pensionado.getDiasTotalesTrabajados()))
-                .fechaDefuncionPersona(pensionado.getFechaFallecimiento())
-                .aplicarIPCPrimerPeriodo(false) // No existe en la entidad actual
-                .diasDeServicio(Long.valueOf(pensionado.getDiasTrabajadosEntidad()))
-                .trabajos(trabajosRespuesta)
-                .sucesores(sucesoresRespuesta)
-                .build();
+        return pensionadoRepositorio.findById(id)
+                .orElseThrow(() -> new RuntimeException("No se encontró el pensionado con ID: " + id));
     }
 
     @Transactional
@@ -175,8 +142,7 @@ public class PensionadoServicio implements IPensionadoServicio {
         Pensionado pensionadoAntiguo = new Pensionado();
         BeanUtils.copyProperties(pensionado, pensionadoAntiguo);
         
-        // Asumiendo que "RETIRADO" o un estado similar existe en tu enum
-        pensionado.setEstado(EstadoPersona.RETIRADO);
+        pensionado.setEstado(EstadoPersona.Retirado);
         pensionado = pensionadoRepositorio.save(pensionado);
         logCambioServicio.registrarActualizacion(nombreEntidad, pensionadoAntiguo, pensionado);
     }
@@ -226,52 +192,7 @@ public class PensionadoServicio implements IPensionadoServicio {
         Pensionado pensionado = pensionadoRepositorio.findById(id)
                 .orElseThrow(() -> new RuntimeException("Pensionado no encontrado con ID: " + id));
         
-        pensionado.setEstado(EstadoPersona.INACTIVO);
+        pensionado.setEstado(EstadoPersona.Inactivo);
         pensionadoRepositorio.save(pensionado);
-    }
-
-
-    //@Override
-    public PensionadoRespuesta ConsoltarPensionadoDetallePorId(Long id) {
-        Pensionado pensionado = pensionadoRepositorio.findById(id)
-                .orElseThrow(() -> new RuntimeException("No se encontró el pensionado con ID: " + id));
-
-        // Por ahora, los valores de trabajo se toman directamente de la entidad Pensionado
-        Long totalDiasTrabajo = Long.valueOf(pensionado.getDiasTotalesTrabajados());
-        Long diasDeServicioJubilacion = Long.valueOf(pensionado.getDiasTrabajadosEntidad());
-
-        // Mapeo de Sucesores - Por ahora vacío ya que no hay relación
-        List<SucesorRespuesta> sucesoresRespuesta = new ArrayList<>();
-
-        return PensionadoRespuesta.builder()
-                .numeroIdentificacion(Long.parseLong(pensionado.getCedula()))
-                .tipoIdentificacion(null) // No existe en la entidad
-                .nombrePersona(pensionado.getNombre())
-                .apellidosPersona(pensionado.getApellidos())
-                .fechaNacimientoPersona(pensionado.getFechaNacimiento())
-                .fechaExpedicionDocumentoIdPersona(pensionado.getFechaExpedicionCedula())
-                .estadoPersona(pensionado.getEstado())
-                .generoPersona(null) // No existe en la entidad
-                .fechaInicioPension(null) // No existe en la entidad
-                .valorInicialPension(pensionado.getValorPension())
-                .resolucionPension(null) // No existe en la entidad
-                .nitEntidad(Long.parseLong(pensionado.getEntityNit()))
-                .entidadJubilacion(pensionado.getEntidadJubilacion())
-                .totalDiasTrabajo(totalDiasTrabajo)
-                .fechaDefuncionPersona(pensionado.getFechaFallecimiento())
-                .aplicarIPCPrimerPeriodo(false) // No existe en la entidad
-                .diasDeServicio(diasDeServicioJubilacion)
-                .trabajos(new ArrayList<>()) // Por ahora vacío
-                .sucesores(sucesoresRespuesta)
-                .build();
-    }
-
-    @Override
-    public List<EntidadCuotaParteRespuesta> getEntidadesYCuotaParteByPensionadoId(Long pensionadoId) {
-        // Este método puede requerir una implementación personalizada en el repositorio
-        // si la consulta actual deja de funcionar con los nuevos cambios.
-        // Por ahora, lo mantenemos asumiendo que la consulta subyacente sigue siendo válida.
-        return null;
-        //return pensionadoRepositorio.findEntidadesYCuotaParteByPensionadoId(pensionadoId);
     }
 }

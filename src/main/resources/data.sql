@@ -54,36 +54,57 @@ WHERE NOT EXISTS (SELECT 1 FROM usuario WHERE username = 'invitado@unicauca.edu.
 -- Entidades (solo si no existen)
 -- Nota: La tabla se llama 'entidad' y usa columnas: nit, name, address, email, phone, responsible_officer, officer_position, estado, created_at, updated_at
 INSERT INTO entidad (nit, name, address, email, phone, responsible_officer, officer_position, estado, created_at, updated_at)
-SELECT '8911500319', 'Universidad del Cauca', 'Calle 5 No. 4-70 (Popayán - Cauca)', 'rectoria@unicauca.edu.co', '8209900', 'Rector', 'Rector', 'ACTIVA', NOW(), NOW()
+SELECT '8911500319', 'Universidad del Cauca', 'Calle 5 No. 4-70 (Popayán - Cauca)', 'rectoria@unicauca.edu.co', '8209900', 'Rector', 'Rector', 'Activo', NOW(), NOW()
 WHERE NOT EXISTS (SELECT 1 FROM entidad WHERE nit = '8911500319');
 
 INSERT INTO entidad (nit, name, address, email, phone, responsible_officer, officer_position, estado, created_at, updated_at)
-SELECT '9004567281', 'Hospital San José', 'Carrera 10 No. 15-45, Popayán', 'contacto@hsanjose.com', '8200972', 'Director', 'Director Administrativo', 'ACTIVA', NOW(), NOW()
+SELECT '9004567281', 'Hospital San José', 'Carrera 10 No. 15-45, Popayán', 'contacto@hsanjose.com', '8200972', 'Director', 'Director Administrativo', 'Activo', NOW(), NOW()
 WHERE NOT EXISTS (SELECT 1 FROM entidad WHERE nit = '9004567281');
 
 INSERT INTO entidad (nit, name, address, email, phone, responsible_officer, officer_position, estado, created_at, updated_at)
-SELECT '8600123456', 'Alcaldía de Popayán', 'Calle 8 No. 7-30, Popayán', 'alcaldia@popayan.gov.co', '3214965013', 'Alcalde', 'Alcalde Municipal', 'ACTIVA', NOW(), NOW()
+SELECT '8600123456', 'Alcaldía de Popayán', 'Calle 8 No. 7-30, Popayán', 'alcaldia@popayan.gov.co', '3214965013', 'Alcalde', 'Alcalde Municipal', 'Activo', NOW(), NOW()
 WHERE NOT EXISTS (SELECT 1 FROM entidad WHERE nit = '8600123456');
 
 INSERT INTO entidad (nit, name, address, email, phone, responsible_officer, officer_position, estado, created_at, updated_at)
-SELECT '9001234567', 'Gobernación del Cauca', 'Calle 4 No. 3-52, Popayán', 'info@cauca.gov.co', '3145261209', 'Gobernador', 'Gobernador del Cauca', 'ACTIVA', NOW(), NOW()
+SELECT '9001234567', 'Gobernación del Cauca', 'Calle 4 No. 3-52, Popayán', 'info@cauca.gov.co', '3145261209', 'Gobernador', 'Gobernador del Cauca', 'Activo', NOW(), NOW()
 WHERE NOT EXISTS (SELECT 1 FROM entidad WHERE nit = '9001234567');
 
 INSERT INTO entidad (nit, name, address, email, phone, responsible_officer, officer_position, estado, created_at, updated_at)
-SELECT '8300123123', 'Colegio La Salle', 'Avenida 2 No. 12-40, Popayán', 'secretaria@lasalle.edu.co', '8201548', 'Rector', 'Rector del Colegio', 'ACTIVA', NOW(), NOW()
+SELECT '8300123123', 'Colegio La Salle', 'Avenida 2 No. 12-40, Popayán', 'secretaria@lasalle.edu.co', '8201548', 'Rector', 'Rector del Colegio', 'Activo', NOW(), NOW()
 WHERE NOT EXISTS (SELECT 1 FROM entidad WHERE nit = '8300123123');
 
 INSERT INTO entidad (nit, name, address, email, phone, responsible_officer, officer_position, estado, created_at, updated_at)
-SELECT '8300159161', 'FONCEP', 'Carrera 30 No. 25-90, Bogotá D.C.', 'atencionalciudadano@foncep.gov.co', '6013358000', 'Director General', 'Director General', 'ACTIVA', NOW(), NOW()
+SELECT '8300159161', 'FONCEP', 'Carrera 30 No. 25-90, Bogotá D.C.', 'atencionalciudadano@foncep.gov.co', '6013358000', 'Director General', 'Director General', 'Activo', NOW(), NOW()
 WHERE NOT EXISTS (SELECT 1 FROM entidad WHERE nit = '8300159161');
 
 INSERT INTO entidad (nit, name, address, email, phone, responsible_officer, officer_position, estado, created_at, updated_at)
-SELECT '8903990011', 'Universidad del Valle', 'Calle 13 No. 100-00, Cali', 'comunicaciones@correounivalle.edu.co', '6023212100', 'Rector', 'Rector', 'ACTIVA', NOW(), NOW()
+SELECT '8903990011', 'Universidad del Valle', 'Calle 13 No. 100-00, Cali', 'comunicaciones@correounivalle.edu.co', '6023212100', 'Rector', 'Rector', 'Activo', NOW(), NOW()
 WHERE NOT EXISTS (SELECT 1 FROM entidad WHERE nit = '8903990011');
 
 INSERT INTO entidad (nit, name, address, email, phone, responsible_officer, officer_position, estado, created_at, updated_at)
-SELECT '8915002154', 'Hospital Universitario de Caldas', 'Calle 48 No. 27A-80, Manizales', 'info@hospitalcaldas.gov.co', '6068782500', 'Director', 'Director Médico', 'ACTIVA', NOW(), NOW()
+SELECT '8915002154', 'Hospital Universitario de Caldas', 'Calle 48 No. 27A-80, Manizales', 'info@hospitalcaldas.gov.co', '6068782500', 'Director', 'Director Médico', 'Activo', NOW(), NOW()
 WHERE NOT EXISTS (SELECT 1 FROM entidad WHERE nit = '8915002154');
+
+-- INSERTAR PENSIONADOS DE PRUEBA (solo si no existen)
+INSERT INTO pensionado (cedula, fecha_expedicion_cedula, nombre, apellidos, fecha_nacimiento, telefono, correo, entidad_jubilacion, entity_nit, entity_id, dias_trabajados_entidad, dias_totales_trabajados, porcentaje_cuota, tipo_jubilacion, valor_pension, estado, fecha_fallecimiento, pensionado_sustituido, tiene_sustituto, sustituto_id, cuotas_pendientes, total_pendiente, created_at, updated_at)
+SELECT '10123456', '1975-06-15', 'Carlos', 'Gómez Pérez', '1955-03-20', '3201234567', 'carlos.gomez@email.com', 'Universidad del Cauca', '8911500319', '1', 7300, 7300, 100.00, 'Jubilacion', 2500000.00, 'Activo', NULL, NULL, FALSE, NULL, 0, 0.00, NOW(), NOW()
+WHERE NOT EXISTS (SELECT 1 FROM pensionado WHERE cedula = '10123456');
+
+INSERT INTO pensionado (cedula, fecha_expedicion_cedula, nombre, apellidos, fecha_nacimiento, telefono, correo, entidad_jubilacion, entity_nit, entity_id, dias_trabajados_entidad, dias_totales_trabajados, porcentaje_cuota, tipo_jubilacion, valor_pension, estado, fecha_fallecimiento, pensionado_sustituido, tiene_sustituto, sustituto_id, cuotas_pendientes, total_pendiente, created_at, updated_at)
+SELECT '20234567', '1980-08-22', 'María', 'Rodríguez López', '1960-07-10', '3109876543', 'maria.rodriguez@email.com', 'Hospital San José', '9004567281', '2', 5475, 5475, 100.00, 'Pension', 1800000.00, 'Activo', NULL, NULL, FALSE, NULL, 0, 0.00, NOW(), NOW()
+WHERE NOT EXISTS (SELECT 1 FROM pensionado WHERE cedula = '20234567');
+
+INSERT INTO pensionado (cedula, fecha_expedicion_cedula, nombre, apellidos, fecha_nacimiento, telefono, correo, entidad_jubilacion, entity_nit, entity_id, dias_trabajados_entidad, dias_totales_trabajados, porcentaje_cuota, tipo_jubilacion, valor_pension, estado, fecha_fallecimiento, pensionado_sustituido, tiene_sustituto, sustituto_id, cuotas_pendientes, total_pendiente, created_at, updated_at)
+SELECT '30345678', '1978-04-10', 'Jorge', 'Martínez Castro', '1958-11-05', '3157654321', 'jorge.martinez@email.com', 'Alcaldía de Popayán', '8600123456', '3', 6205, 9855, 62.95, 'Jubilacion', 2200000.00, 'Activo', NULL, NULL, FALSE, NULL, 0, 0.00, NOW(), NOW()
+WHERE NOT EXISTS (SELECT 1 FROM pensionado WHERE cedula = '30345678');
+
+INSERT INTO pensionado (cedula, fecha_expedicion_cedula, nombre, apellidos, fecha_nacimiento, telefono, correo, entidad_jubilacion, entity_nit, entity_id, dias_trabajados_entidad, dias_totales_trabajados, porcentaje_cuota, tipo_jubilacion, valor_pension, estado, fecha_fallecimiento, pensionado_sustituido, tiene_sustituto, sustituto_id, cuotas_pendientes, total_pendiente, created_at, updated_at)
+SELECT '40456789', '1985-12-03', 'Ana', 'Torres Sánchez', '1965-02-28', '3123456789', 'ana.torres@email.com', 'Gobernación del Cauca', '9001234567', '4', 4380, 8760, 50.00, 'Pension', 1500000.00, 'Activo', NULL, NULL, FALSE, NULL, 0, 0.00, NOW(), NOW()
+WHERE NOT EXISTS (SELECT 1 FROM pensionado WHERE cedula = '40456789');
+
+INSERT INTO pensionado (cedula, fecha_expedicion_cedula, nombre, apellidos, fecha_nacimiento, telefono, correo, entidad_jubilacion, entity_nit, entity_id, dias_trabajados_entidad, dias_totales_trabajados, porcentaje_cuota, tipo_jubilacion, valor_pension, estado, fecha_fallecimiento, pensionado_sustituido, tiene_sustituto, sustituto_id, cuotas_pendientes, total_pendiente, created_at, updated_at)
+SELECT '50567890', '1982-09-17', 'Luis', 'Hernández Vega', '1962-05-15', '3189012345', 'luis.hernandez@email.com', 'Universidad del Cauca', '8911500319', '1', 3650, 3650, 100.00, 'Jubilacion', 3200000.00, 'Fallecido', '2023-11-20', NULL, TRUE, NULL, 0, 0.00, NOW(), NOW()
+WHERE NOT EXISTS (SELECT 1 FROM pensionado WHERE cedula = '50567890');
 
 -- INSERTAR DATOS IPC (solo si no existen)
 -- Datos IPC 31/12/1955 - 30/4/2025

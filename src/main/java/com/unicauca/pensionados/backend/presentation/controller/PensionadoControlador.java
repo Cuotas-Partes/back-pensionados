@@ -4,8 +4,7 @@ import org.springframework.web.bind.annotation.*;
 
 import com.unicauca.pensionados.backend.application.service.interfaces.IPensionadoServicio;
 import com.unicauca.pensionados.backend.application.dto.request.RegistroPensionadoPeticion;
-import com.unicauca.pensionados.backend.application.dto.response.EntidadCuotaParteRespuesta;
-import com.unicauca.pensionados.backend.application.dto.response.PensionadoRespuesta;
+import com.unicauca.pensionados.backend.domain.model.entity.Pensionado;
 
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.media.Content;
@@ -16,8 +15,6 @@ import io.swagger.v3.oas.annotations.tags.Tag;
 
 import java.util.List;
 import java.util.stream.Collectors;
-
-import com.unicauca.pensionados.backend.domain.model.entity.Pensionado;
 
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -97,7 +94,7 @@ public class PensionadoControlador {
     @Operation(summary = "Listar todos los pensionados", description = "Obtiene una lista de todos los pensionados registrados en el sistema.")
     @ApiResponses(value = {
             @ApiResponse(responseCode = "200", description = "Lista de pensionados obtenida exitosamente",
-                    content = @Content(mediaType = "application/json", schema = @Schema(implementation = PensionadoRespuesta.class, type = "array"))),
+                    content = @Content(mediaType = "application/json", schema = @Schema(implementation = Pensionado.class, type = "array"))),
             @ApiResponse(responseCode = "400", description = "Error al listar pensionados",
                     content = @Content(mediaType = "text/plain", schema = @Schema(implementation = String.class))),
             @ApiResponse(responseCode = "500", description = "Error interno del servidor",
@@ -105,7 +102,7 @@ public class PensionadoControlador {
     })
     public ResponseEntity<?> listarPensionados() {
         try {
-            List<PensionadoRespuesta> pensionados = pensionadoServicio.listarPensionados();
+            List<Pensionado> pensionados = pensionadoServicio.listarPensionados();
             return ResponseEntity.ok(pensionados);
         } catch (RuntimeException ex) {
             return ResponseEntity.status(HttpStatus.BAD_REQUEST)
@@ -121,15 +118,15 @@ public class PensionadoControlador {
     @Operation(summary = "Buscar pensionado por ID", description = "Busca un pensionado específico utilizando su ID.")
     @ApiResponses(value = {
             @ApiResponse(responseCode = "200", description = "Pensionado encontrado",
-                    content = @Content(mediaType = "application/json", schema = @Schema(implementation = PensionadoRespuesta.class))),
+                    content = @Content(mediaType = "application/json", schema = @Schema(implementation = Pensionado.class))),
             @ApiResponse(responseCode = "404", description = "Pensionado no encontrado",
                     content = @Content(mediaType = "text/plain", schema = @Schema(implementation = String.class)))
     })
     public ResponseEntity<?> buscarPensionadoPorId(
             @io.swagger.v3.oas.annotations.Parameter(description = "ID del pensionado a buscar", required = true) @PathVariable Long id) {
         try {
-            PensionadoRespuesta pensionadoDTO = pensionadoServicio.buscarPensionadoPorId(id);
-            return ResponseEntity.ok(pensionadoDTO);
+            Pensionado pensionado = pensionadoServicio.buscarPensionadoPorId(id);
+            return ResponseEntity.ok(pensionado);
         } catch (RuntimeException ex) {
             return ResponseEntity.status(HttpStatus.NOT_FOUND)
                     .body("Error: " + ex.getMessage());
@@ -237,24 +234,6 @@ public class PensionadoControlador {
         }
     }
 
-    @GetMapping("/{pensionadoId}/entidades-cuotaparte")
-    @Operation(summary = "Obtener entidades y cuotas parte por ID de pensionado",
-               description = "Recupera una lista de entidades y sus respectivas cuotas parte asociadas a un pensionado específico, identificado por su ID.")
-    @ApiResponses(value = {
-            @ApiResponse(responseCode = "200", description = "Entidades y cuotas parte obtenidas exitosamente",
-                    content = @Content(mediaType = "application/json", 
-                                       schema = @Schema(implementation = EntidadCuotaParteRespuesta.class, type = "array"))),
-            @ApiResponse(responseCode = "404", description = "Pensionado no encontrado o sin entidades asociadas", // Assuming the service might return empty or handle not found
-                    content = @Content(mediaType = "application/json", schema = @Schema(type = "array", implementation = EntidadCuotaParteRespuesta.class))),
-            @ApiResponse(responseCode = "500", description = "Error interno del servidor",
-                    content = @Content(mediaType = "text/plain", schema = @Schema(implementation = String.class))) // Assuming error message as plain text
-    })
-    public ResponseEntity<List<EntidadCuotaParteRespuesta>> getEntidadesYCuotaParteByPensionadoId(
-            @io.swagger.v3.oas.annotations.Parameter(description = "ID del pensionado para consultar sus entidades y cuotas parte", required = true)
-            @PathVariable Long pensionadoId) {
-        List<EntidadCuotaParteRespuesta> response = pensionadoServicio.getEntidadesYCuotaParteByPensionadoId(pensionadoId);
-        return ResponseEntity.ok(response);
-    }
 
     //NUEVO METOD IMPLEMENTADO
     //VERIFICA EL ROL DEL USUARIO PARA SABER SUS PERMISOS

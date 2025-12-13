@@ -5,6 +5,8 @@ import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.Setter;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.unicauca.pensionados.backend.domain.model.enums.EstadoEntidad;
 
@@ -12,6 +14,7 @@ import com.unicauca.pensionados.backend.domain.model.enums.EstadoEntidad;
 @Table(name = "entidad")
 @Getter
 @Setter
+@JsonIgnoreProperties({"hibernateLazyInitializer", "handler"})
 public class Entidad {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -41,7 +44,7 @@ public class Entidad {
 
     @Enumerated(EnumType.STRING)
     @Column(name = "estado", length = 50)
-    private EstadoEntidad estado = EstadoEntidad.ACTIVA;
+    private EstadoEntidad estado = EstadoEntidad.Activo;
 
     @Column(name = "created_at", nullable = false, updatable = false)
     private LocalDateTime createdAt = LocalDateTime.now();
@@ -54,12 +57,8 @@ public class Entidad {
         this.updatedAt = LocalDateTime.now();
     }
 
+    @JsonIgnore
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "idPersonaEncargado", nullable = true)
     private Persona encargado;
-
-    @JsonInclude(JsonInclude.Include.NON_NULL)
-    public Persona getEncargado() {
-        return encargado; // sin reemplazar por persona vacía
-    }
 }

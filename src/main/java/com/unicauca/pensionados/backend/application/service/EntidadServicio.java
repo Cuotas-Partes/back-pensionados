@@ -547,7 +547,7 @@ public class EntidadServicio implements IEntidadServicio {
             Entidad entidadAntigua = new Entidad();
             BeanUtils.copyProperties(entidad, entidadAntigua);
 
-            entidad.setEstado(EstadoEntidad.ACTIVA);
+            entidad.setEstado(EstadoEntidad.Activo);
 
             logCambioService.registrarActualizacion(
                     nombreEntidad,
@@ -578,7 +578,7 @@ public class EntidadServicio implements IEntidadServicio {
             Entidad  entidadAntigua = new Entidad();
             BeanUtils.copyProperties(entidad, entidadAntigua);
 
-            entidad.setEstado(EstadoEntidad.NO_ACTIVA);
+            entidad.setEstado(EstadoEntidad.NoActivo);
 
             logCambioService.registrarActualizacion(nombreEntidad, entidadAntigua,entidadRepository.save(entidad));
             return true;

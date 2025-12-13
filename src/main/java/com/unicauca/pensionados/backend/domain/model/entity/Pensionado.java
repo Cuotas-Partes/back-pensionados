@@ -4,6 +4,7 @@ import java.math.BigDecimal;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.Setter;
@@ -14,6 +15,7 @@ import com.unicauca.pensionados.backend.domain.model.enums.TipoPension;
 @Table(name = "pensionado")
 @Setter
 @Getter
+@JsonIgnoreProperties({"hibernateLazyInitializer", "handler"})
 public class Pensionado {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -68,7 +70,7 @@ public class Pensionado {
 
     @Enumerated(EnumType.STRING)
     @Column(name = "estado", length = 50)
-    private EstadoPersona estado = EstadoPersona.ACTIVO;
+    private EstadoPersona estado = EstadoPersona.Activo;
 
     @Column(name = "fecha_fallecimiento")
     private LocalDate fechaFallecimiento;

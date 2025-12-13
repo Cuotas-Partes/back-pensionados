@@ -1,22 +1,18 @@
 package com.unicauca.pensionados.backend.application.service.interfaces;
 
 import com.unicauca.pensionados.backend.application.dto.request.RegistroPensionadoPeticion;
-import com.unicauca.pensionados.backend.application.dto.response.EntidadCuotaParteRespuesta;
-import com.unicauca.pensionados.backend.application.dto.response.PensionadoRespuesta;
-
-import java.util.List;
 import com.unicauca.pensionados.backend.domain.model.entity.Pensionado;
 
+import java.util.List;
+
 public interface IPensionadoServicio {
-    void registrarPensionado (RegistroPensionadoPeticion request);
-    void actualizarPensionado (Long id, RegistroPensionadoPeticion request);
-    List<PensionadoRespuesta> listarPensionados();
+    void registrarPensionado(RegistroPensionadoPeticion request);
+    void actualizarPensionado(Long id, RegistroPensionadoPeticion request);
+    List<Pensionado> listarPensionados();
     List<Pensionado> buscarPensionadosPorNombre(String nombre);
     List<Pensionado> buscarPensionadosPorApellido(String apellido);
     List<Pensionado> buscarPensionadosPorCriterio(String query);
-    PensionadoRespuesta buscarPensionadoPorId(Long id);
+    Pensionado buscarPensionadoPorId(Long id);
     void desactivarPensionado(Long id);
-    List<EntidadCuotaParteRespuesta> getEntidadesYCuotaParteByPensionadoId(Long pensionadoId);
-
 
 }

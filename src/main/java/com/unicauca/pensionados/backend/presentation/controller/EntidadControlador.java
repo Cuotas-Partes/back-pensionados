@@ -14,7 +14,6 @@ import com.unicauca.pensionados.backend.application.service.interfaces.IEntidadS
 import com.unicauca.pensionados.backend.domain.model.entity.Entidad;
 import com.unicauca.pensionados.backend.application.dto.request.RegistroEntidadPeticion;
 import com.unicauca.pensionados.backend.application.dto.request.RegistroTrabajoPeticion;
-import com.unicauca.pensionados.backend.application.dto.response.EntidadConPensionadosRespuesta;
 
 import java.util.List;
 
@@ -50,7 +49,7 @@ public class EntidadControlador {
         responses = {
             @ApiResponse(responseCode = "200", description = "Lista de entidades encontradas", 
                 content = @Content(mediaType = "application/json", 
-                schema = @Schema(implementation = EntidadConPensionadosRespuesta.class))),
+                schema = @Schema(implementation = Entidad.class))),
             @ApiResponse(responseCode = "204", description = "No se encontraron entidades"),
             @ApiResponse(responseCode = "400", description = "Error en la solicitud"),
             @ApiResponse(responseCode = "500", description = "Error interno del servidor")
@@ -112,7 +111,7 @@ public class EntidadControlador {
         responses = {
             @ApiResponse(responseCode = "200", description = "Lista de entidades encontradas", 
                 content = @Content(mediaType = "application/json", 
-                schema = @Schema(implementation = EntidadConPensionadosRespuesta.class))),
+                schema = @Schema(implementation = Entidad.class))),
             @ApiResponse(responseCode = "204", description = "No se encontraron entidades"),
             @ApiResponse(responseCode = "500", description = "Error interno del servidor")
         })

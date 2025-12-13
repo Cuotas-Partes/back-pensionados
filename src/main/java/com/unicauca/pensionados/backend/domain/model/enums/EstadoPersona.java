@@ -5,9 +5,9 @@ package com.unicauca.pensionados.backend.domain.model.enums;
  * Consolidado de EstadoPersona y EstadoPensionado.
  */
 public enum EstadoPersona {
-    ACTIVO,
-    SUSPENDIDO,
-    RETIRADO,
-    FALLECIDO,
-    INACTIVO
+    Activo,
+    Suspendido,
+    Retirado,
+    Fallecido,
+    Inactivo
 }
