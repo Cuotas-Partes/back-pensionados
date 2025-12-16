@@ -134,96 +134,126 @@ SELECT '50678901', '1976-02-14', 'Roberto', 'Díaz Castro', '1948-11-03', '31456
 -- ============================================
 
 -- Resoluciones para Pensionado 1 (Juan - cedula 1234567892)
-INSERT INTO resolucion (numeroResolucion, fechaResolucion, valorResolucion, estado, tipoResolucion, pensionado_id, createdAt)
-SELECT 'RES-2020-001', '2020-01-15', 3000000.00, 'VIGENTE', 'PENSION_INICIAL', p.idPersona, NOW()
+INSERT INTO resolucion (numeroResolucion, fechaResolucion, valorResolucion, estado, tipoResolucion, pensionado_id, datos_especificos, createdAt)
+SELECT 'RES-2020-001', '2020-01-15', 3000000.00, 'VIGENTE', 'PENSION_INICIAL', p.idPersona,
+       JSON_OBJECT('tipoPension', 'VEJEZ', 'entidadJubilacion', 'Universidad del Cauca', 'diasTrabajados', 8500, 'porcentajeCuota', 75.50),
+       NOW()
 FROM pensionado p
 WHERE p.cedula = '1234567892'
   AND NOT EXISTS (SELECT 1 FROM resolucion WHERE numeroResolucion = 'RES-2020-001');
 
-INSERT INTO resolucion (numeroResolucion, fechaResolucion, valorResolucion, estado, tipoResolucion, pensionado_id, createdAt)
-SELECT 'RES-2023-014', '2023-05-10', 3500000.00, 'VIGENTE', 'AJUSTE_PENSION', p.idPersona, NOW()
+INSERT INTO resolucion (numeroResolucion, fechaResolucion, valorResolucion, estado, tipoResolucion, pensionado_id, datos_especificos, createdAt)
+SELECT 'RES-2023-014', '2023-05-10', 3500000.00, 'VIGENTE', 'AJUSTE_PENSION', p.idPersona,
+       JSON_OBJECT('valorAnterior', 3000000.00, 'valorNuevo', 3500000.00, 'incremento', 500000.00, 'porcentajeIncremento', 16.67, 'motivo', 'Ajuste por IPC'),
+       NOW()
 FROM pensionado p
 WHERE p.cedula = '1234567892'
   AND NOT EXISTS (SELECT 1 FROM resolucion WHERE numeroResolucion = 'RES-2023-014');
 
-INSERT INTO resolucion (numeroResolucion, fechaResolucion, valorResolucion, estado, tipoResolucion, pensionado_id, createdAt)
-SELECT 'RES-2023-015', '2023-06-01', 1750000.00, 'VIGENTE', 'NOMBRAMIENTO_SUSTITUTO', p.idPersona, NOW()
+INSERT INTO resolucion (numeroResolucion, fechaResolucion, valorResolucion, estado, tipoResolucion, pensionado_id, datos_especificos, createdAt)
+SELECT 'RES-2023-015', '2023-06-01', 1750000.00, 'VIGENTE', 'NOMBRAMIENTO_SUSTITUTO', p.idPersona,
+       JSON_OBJECT('nombreSustituto', 'María Pérez Gómez', 'cedulaSustituto', '987654321', 'porcentajeSustituto', 50.00, 'parentesco', 'Cónyuge'),
+       NOW()
 FROM pensionado p
 WHERE p.cedula = '1234567892'
   AND NOT EXISTS (SELECT 1 FROM resolucion WHERE numeroResolucion = 'RES-2023-015');
 
 -- Resoluciones para Pensionado 2 (Carlos - cedula 10234567)
-INSERT INTO resolucion (numeroResolucion, fechaResolucion, valorResolucion, estado, tipoResolucion, pensionado_id, createdAt)
-SELECT 'RES-2020-002', '2020-01-15', 4000000.00, 'VIGENTE', 'PENSION_INICIAL', p.idPersona, NOW()
+INSERT INTO resolucion (numeroResolucion, fechaResolucion, valorResolucion, estado, tipoResolucion, pensionado_id, datos_especificos, createdAt)
+SELECT 'RES-2020-002', '2020-01-15', 4000000.00, 'VIGENTE', 'PENSION_INICIAL', p.idPersona,
+       JSON_OBJECT('tipoPension', 'VEJEZ', 'entidadJubilacion', 'Universidad del Cauca', 'diasTrabajados', 10950, 'porcentajeCuota', 85.50),
+       NOW()
 FROM pensionado p
 WHERE p.cedula = '10234567'
   AND NOT EXISTS (SELECT 1 FROM resolucion WHERE numeroResolucion = 'RES-2020-002');
 
-INSERT INTO resolucion (numeroResolucion, fechaResolucion, valorResolucion, estado, tipoResolucion, pensionado_id, createdAt)
-SELECT 'RES-2021-045', '2021-06-10', 4500000.00, 'VIGENTE', 'AUMENTO_PENSION', p.idPersona, NOW()
+INSERT INTO resolucion (numeroResolucion, fechaResolucion, valorResolucion, estado, tipoResolucion, pensionado_id, datos_especificos, createdAt)
+SELECT 'RES-2021-045', '2021-06-10', 4500000.00, 'VIGENTE', 'AUMENTO_PENSION', p.idPersona,
+       JSON_OBJECT('valorAnterior', 4000000.00, 'valorNuevo', 4500000.00, 'incremento', 500000.00, 'porcentajeIncremento', 12.50, 'motivo', 'Ajuste por IPC anual'),
+       NOW()
 FROM pensionado p
 WHERE p.cedula = '10234567'
   AND NOT EXISTS (SELECT 1 FROM resolucion WHERE numeroResolucion = 'RES-2021-045');
 
-INSERT INTO resolucion (numeroResolucion, fechaResolucion, valorResolucion, estado, tipoResolucion, pensionado_id, createdAt)
-SELECT 'RES-2023-078', '2023-06-01', 2250000.00, 'VIGENTE', 'NOMBRAMIENTO_SUSTITUTO', p.idPersona, NOW()
+INSERT INTO resolucion (numeroResolucion, fechaResolucion, valorResolucion, estado, tipoResolucion, pensionado_id, datos_especificos, createdAt)
+SELECT 'RES-2023-078', '2023-06-01', 2250000.00, 'VIGENTE', 'NOMBRAMIENTO_SUSTITUTO', p.idPersona,
+       JSON_OBJECT('nombreSustituto', 'Gloria Patricia Rodríguez de López', 'cedulaSustituto', '1098765432', 'porcentajeSustituto', 50.00, 'parentesco', 'Cónyuge', 'motivoSustitucion', 'Fallecimiento del pensionado'),
+       NOW()
 FROM pensionado p
 WHERE p.cedula = '10234567'
   AND NOT EXISTS (SELECT 1 FROM resolucion WHERE numeroResolucion = 'RES-2023-078');
 
-INSERT INTO resolucion (numeroResolucion, fechaResolucion, valorResolucion, estado, tipoResolucion, pensionado_id, createdAt)
-SELECT 'RES-2023-079', '2023-06-01', 2250000.00, 'VIGENTE', 'NOMBRAMIENTO_SUSTITUTO', p.idPersona, NOW()
+INSERT INTO resolucion (numeroResolucion, fechaResolucion, valorResolucion, estado, tipoResolucion, pensionado_id, datos_especificos, createdAt)
+SELECT 'RES-2023-079', '2023-06-01', 2250000.00, 'VIGENTE', 'NOMBRAMIENTO_SUSTITUTO', p.idPersona,
+       JSON_OBJECT('nombreSustituto', 'Diana Carolina Rodríguez Jiménez', 'cedulaSustituto', '1087654321', 'porcentajeSustituto', 50.00, 'parentesco', 'Hija', 'motivoSustitucion', 'Fallecimiento del pensionado'),
+       NOW()
 FROM pensionado p
 WHERE p.cedula = '10234567'
   AND NOT EXISTS (SELECT 1 FROM resolucion WHERE numeroResolucion = 'RES-2023-079');
 
 -- Resoluciones para Pensionado 3 (María - cedula 20345678)
-INSERT INTO resolucion (numeroResolucion, fechaResolucion, valorResolucion, estado, tipoResolucion, pensionado_id, createdAt)
-SELECT 'RES-2018-032', '2018-03-20', 4800000.00, 'VIGENTE', 'PENSION_INICIAL', p.idPersona, NOW()
+INSERT INTO resolucion (numeroResolucion, fechaResolucion, valorResolucion, estado, tipoResolucion, pensionado_id, datos_especificos, createdAt)
+SELECT 'RES-2018-032', '2018-03-20', 4800000.00, 'VIGENTE', 'PENSION_INICIAL', p.idPersona,
+       JSON_OBJECT('tipoPension', 'VEJEZ', 'entidadJubilacion', 'Universidad del Cauca', 'diasTrabajados', 11680, 'porcentajeCuota', 100.00),
+       NOW()
 FROM pensionado p
 WHERE p.cedula = '20345678'
   AND NOT EXISTS (SELECT 1 FROM resolucion WHERE numeroResolucion = 'RES-2018-032');
 
-INSERT INTO resolucion (numeroResolucion, fechaResolucion, valorResolucion, estado, tipoResolucion, pensionado_id, createdAt)
-SELECT 'RES-2022-104', '2022-01-15', 5200000.00, 'VIGENTE', 'AUMENTO_PENSION', p.idPersona, NOW()
+INSERT INTO resolucion (numeroResolucion, fechaResolucion, valorResolucion, estado, tipoResolucion, pensionado_id, datos_especificos, createdAt)
+SELECT 'RES-2022-104', '2022-01-15', 5200000.00, 'VIGENTE', 'AUMENTO_PENSION', p.idPersona,
+       JSON_OBJECT('valorAnterior', 4800000.00, 'valorNuevo', 5200000.00, 'incremento', 400000.00, 'porcentajeIncremento', 8.33, 'motivo', 'Ajuste por IPC acumulado'),
+       NOW()
 FROM pensionado p
 WHERE p.cedula = '20345678'
   AND NOT EXISTS (SELECT 1 FROM resolucion WHERE numeroResolucion = 'RES-2022-104');
 
 -- Resoluciones para Pensionado 4 (Jorge - cedula 30456789)
-INSERT INTO resolucion (numeroResolucion, fechaResolucion, valorResolucion, estado, tipoResolucion, pensionado_id, createdAt)
-SELECT 'RES-2019-067', '2019-06-10', 3500000.00, 'VIGENTE', 'PENSION_INICIAL', p.idPersona, NOW()
+INSERT INTO resolucion (numeroResolucion, fechaResolucion, valorResolucion, estado, tipoResolucion, pensionado_id, datos_especificos, createdAt)
+SELECT 'RES-2019-067', '2019-06-10', 3500000.00, 'VIGENTE', 'PENSION_INICIAL', p.idPersona,
+       JSON_OBJECT('tipoPension', 'VEJEZ', 'entidadJubilacion', 'Universidad del Cauca', 'diasTrabajados', 9125, 'porcentajeCuota', 69.45),
+       NOW()
 FROM pensionado p
 WHERE p.cedula = '30456789'
   AND NOT EXISTS (SELECT 1 FROM resolucion WHERE numeroResolucion = 'RES-2019-067');
 
-INSERT INTO resolucion (numeroResolucion, fechaResolucion, valorResolucion, estado, tipoResolucion, pensionado_id, createdAt)
-SELECT 'RES-2020-112', '2020-12-01', 3800000.00, 'VIGENTE', 'AUMENTO_PENSION', p.idPersona, NOW()
+INSERT INTO resolucion (numeroResolucion, fechaResolucion, valorResolucion, estado, tipoResolucion, pensionado_id, datos_especificos, createdAt)
+SELECT 'RES-2020-112', '2020-12-01', 3800000.00, 'VIGENTE', 'AUMENTO_PENSION', p.idPersona,
+       JSON_OBJECT('valorAnterior', 3500000.00, 'valorNuevo', 3800000.00, 'incremento', 300000.00, 'porcentajeIncremento', 8.57, 'motivo', 'Ajuste anual por IPC'),
+       NOW()
 FROM pensionado p
 WHERE p.cedula = '30456789'
   AND NOT EXISTS (SELECT 1 FROM resolucion WHERE numeroResolucion = 'RES-2020-112');
 
-INSERT INTO resolucion (numeroResolucion, fechaResolucion, valorResolucion, estado, tipoResolucion, pensionado_id, createdAt)
-SELECT 'RES-2024-055', '2024-03-15', 3800000.00, 'VIGENTE', 'NOMBRAMIENTO_SUSTITUTO', p.idPersona, NOW()
+INSERT INTO resolucion (numeroResolucion, fechaResolucion, valorResolucion, estado, tipoResolucion, pensionado_id, datos_especificos, createdAt)
+SELECT 'RES-2024-055', '2024-03-15', 3800000.00, 'VIGENTE', 'NOMBRAMIENTO_SUSTITUTO', p.idPersona,
+       JSON_OBJECT('nombreSustituto', 'Luz Marina Sánchez de Ramírez', 'cedulaSustituto', '52876543', 'porcentajeSustituto', 100.00, 'parentesco', 'Cónyuge', 'motivoSustitucion', 'Fallecimiento del pensionado'),
+       NOW()
 FROM pensionado p
 WHERE p.cedula = '30456789'
   AND NOT EXISTS (SELECT 1 FROM resolucion WHERE numeroResolucion = 'RES-2024-055');
 
 -- Resoluciones para Pensionado 5 (Roberto - cedula 50678901)
-INSERT INTO resolucion (numeroResolucion, fechaResolucion, valorResolucion, estado, tipoResolucion, pensionado_id, createdAt)
-SELECT 'RES-2017-024', '2017-09-01', 5000000.00, 'VIGENTE', 'PENSION_INICIAL', p.idPersona, NOW()
+INSERT INTO resolucion (numeroResolucion, fechaResolucion, valorResolucion, estado, tipoResolucion, pensionado_id, datos_especificos, createdAt)
+SELECT 'RES-2017-024', '2017-09-01', 5000000.00, 'VIGENTE', 'PENSION_INICIAL', p.idPersona,
+       JSON_OBJECT('tipoPension', 'VEJEZ', 'entidadJubilacion', 'Universidad del Cauca', 'diasTrabajados', 12410, 'porcentajeCuota', 100.00),
+       NOW()
 FROM pensionado p
 WHERE p.cedula = '50678901'
   AND NOT EXISTS (SELECT 1 FROM resolucion WHERE numeroResolucion = 'RES-2017-024');
 
-INSERT INTO resolucion (numeroResolucion, fechaResolucion, valorResolucion, estado, tipoResolucion, pensionado_id, createdAt)
-SELECT 'RES-2019-156', '2019-11-15', 5500000.00, 'VIGENTE', 'AUMENTO_PENSION', p.idPersona, NOW()
+INSERT INTO resolucion (numeroResolucion, fechaResolucion, valorResolucion, estado, tipoResolucion, pensionado_id, datos_especificos, createdAt)
+SELECT 'RES-2019-156', '2019-11-15', 5500000.00, 'VIGENTE', 'AUMENTO_PENSION', p.idPersona,
+       JSON_OBJECT('valorAnterior', 5000000.00, 'valorNuevo', 5500000.00, 'incremento', 500000.00, 'porcentajeIncremento', 10.00, 'motivo', 'Ajuste por IPC acumulado'),
+       NOW()
 FROM pensionado p
 WHERE p.cedula = '50678901'
   AND NOT EXISTS (SELECT 1 FROM resolucion WHERE numeroResolucion = 'RES-2019-156');
 
-INSERT INTO resolucion (numeroResolucion, fechaResolucion, valorResolucion, estado, tipoResolucion, pensionado_id, createdAt)
-SELECT 'RES-2022-095', '2022-09-10', 5500000.00, 'VIGENTE', 'NOMBRAMIENTO_SUSTITUTO', p.idPersona, NOW()
+INSERT INTO resolucion (numeroResolucion, fechaResolucion, valorResolucion, estado, tipoResolucion, pensionado_id, datos_especificos, createdAt)
+SELECT 'RES-2022-095', '2022-09-10', 5500000.00, 'VIGENTE', 'NOMBRAMIENTO_SUSTITUTO', p.idPersona,
+       JSON_OBJECT('nombreSustituto', 'Teresa Díaz de González', 'cedulaSustituto', '41765432', 'porcentajeSustituto', 100.00, 'parentesco', 'Cónyuge', 'motivoSustitucion', 'Fallecimiento del pensionado'),
+       NOW()
 FROM pensionado p
 WHERE p.cedula = '50678901'
   AND NOT EXISTS (SELECT 1 FROM resolucion WHERE numeroResolucion = 'RES-2022-095');
@@ -233,10 +263,11 @@ WHERE p.cedula = '50678901'
 -- ============================================
 
 -- Sustituto 1: María Pérez Gómez (ya existe la persona)
-INSERT INTO sucesor (idPersona, numero_documento, nombre_completo, telefono, estado, fecha_inicio, porcentaje_pension, pensionado_sustituido_id, resolucion_nombramiento_id)
+INSERT INTO sucesor (idPersona, numero_documento, tipo_identificacion, nombre_completo, telefono, estado, fecha_inicio, porcentaje_pension, pensionado_sustituido_id, resolucion_nombramiento_id)
 SELECT
     per.idPersona,
-    '987654321',
+    987654321,
+    'CEDULA_CIUDADANIA',
     'María Pérez Gómez',
     '3101234567',
     'ACTIVO',
@@ -248,17 +279,18 @@ FROM pensionado p
          CROSS JOIN persona per
 WHERE p.cedula = '1234567892'
   AND per.numeroIdentificacion = 123456789
-  AND NOT EXISTS (SELECT 1 FROM sucesor WHERE numero_documento = '987654321');
+  AND NOT EXISTS (SELECT 1 FROM sucesor WHERE numero_documento = 987654321);
 
 -- Sustituto 2: Gloria Patricia (necesita crear persona primero)
 INSERT INTO persona (numeroIdentificacion, tipoIdentificacion, nombrePersona, apellidosPersona, estadoCivil, fechaNacimientoPersona, fechaExpedicionDocumentoIdPersona, estadoPersona, generoPersona)
-SELECT 1098765432, 'CEDULA_CIUDADANIA', 'Gloria Patricia', 'Rodríguez López', 'CASADO', '1975-08-15', '1993-06-10', 'Activo', 'FEMENINO'
+SELECT 1098765432, 'CEDULA_CIUDADANIA', 'Gloria Patricia', 'Rodríguez López', 'CASADO', '1975-08-15', '1993-06-10', 'ACTIVO', 'FEMENINO'
     WHERE NOT EXISTS (SELECT 1 FROM persona WHERE numeroIdentificacion = 1098765432);
 
-INSERT INTO sucesor (idPersona, numero_documento, nombre_completo, telefono, estado, fecha_inicio, porcentaje_pension, pensionado_sustituido_id, resolucion_nombramiento_id)
+INSERT INTO sucesor (idPersona, numero_documento, tipo_identificacion, nombre_completo, telefono, estado, fecha_inicio, porcentaje_pension, pensionado_sustituido_id, resolucion_nombramiento_id)
 SELECT
     per.idPersona,
-    '1098765432',
+    1098765432,
+    'CEDULA_CIUDADANIA',
     'Gloria Patricia Rodríguez de López',
     '3209876543',
     'ACTIVO',
@@ -270,17 +302,18 @@ FROM pensionado p
          CROSS JOIN persona per
 WHERE p.cedula = '10234567'
   AND per.numeroIdentificacion = 1098765432
-  AND NOT EXISTS (SELECT 1 FROM sucesor WHERE numero_documento = '1098765432');
+  AND NOT EXISTS (SELECT 1 FROM sucesor WHERE numero_documento = 1098765432);
 
 -- Sustituto 3: Diana Carolina
 INSERT INTO persona (numeroIdentificacion, tipoIdentificacion, nombrePersona, apellidosPersona, estadoCivil, fechaNacimientoPersona, fechaExpedicionDocumentoIdPersona, estadoPersona, generoPersona)
-SELECT 1087654321, 'CEDULA_CIUDADANIA', 'Diana Carolina', 'Rodríguez Jiménez', 'SOLTERO', '1995-02-20', '2013-05-15', 'Activo', 'FEMENINO'
+SELECT 1087654321, 'CEDULA_CIUDADANIA', 'Diana Carolina', 'Rodríguez Jiménez', 'SOLTERO', '1995-02-20', '2013-05-15', 'ACTIVO', 'FEMENINO'
     WHERE NOT EXISTS (SELECT 1 FROM persona WHERE numeroIdentificacion = 1087654321);
 
-INSERT INTO sucesor (idPersona, numero_documento, nombre_completo, telefono, estado, fecha_inicio, porcentaje_pension, pensionado_sustituido_id, resolucion_nombramiento_id)
+INSERT INTO sucesor (idPersona, numero_documento, tipo_identificacion, nombre_completo, telefono, estado, fecha_inicio, porcentaje_pension, pensionado_sustituido_id, resolucion_nombramiento_id)
 SELECT
     per.idPersona,
-    '1087654321',
+    1087654321,
+    'CEDULA_CIUDADANIA',
     'Diana Carolina Rodríguez Jiménez',
     '3158765432',
     'ACTIVO',
@@ -292,17 +325,18 @@ FROM pensionado p
          CROSS JOIN persona per
 WHERE p.cedula = '10234567'
   AND per.numeroIdentificacion = 1087654321
-  AND NOT EXISTS (SELECT 1 FROM sucesor WHERE numero_documento = '1087654321');
+  AND NOT EXISTS (SELECT 1 FROM sucesor WHERE numero_documento = 1087654321);
 
 -- Sustituto 4: Luz Marina
 INSERT INTO persona (numeroIdentificacion, tipoIdentificacion, nombrePersona, apellidosPersona, estadoCivil, fechaNacimientoPersona, fechaExpedicionDocumentoIdPersona, estadoPersona, generoPersona)
-SELECT 52876543, 'CEDULA_CIUDADANIA', 'Luz Marina', 'Sánchez Ramírez', 'CASADO', '1960-11-30', '1978-07-20', 'Activo', 'FEMENINO'
+SELECT 52876543, 'CEDULA_CIUDADANIA', 'Luz Marina', 'Sánchez Ramírez', 'CASADO', '1960-11-30', '1978-07-20', 'ACTIVO', 'FEMENINO'
     WHERE NOT EXISTS (SELECT 1 FROM persona WHERE numeroIdentificacion = 52876543);
 
-INSERT INTO sucesor (idPersona, numero_documento, nombre_completo, telefono, estado, fecha_inicio, porcentaje_pension, pensionado_sustituido_id, resolucion_nombramiento_id)
+INSERT INTO sucesor (idPersona, numero_documento, tipo_identificacion, nombre_completo, telefono, estado, fecha_inicio, porcentaje_pension, pensionado_sustituido_id, resolucion_nombramiento_id)
 SELECT
     per.idPersona,
-    '52876543',
+    52876543,
+    'CEDULA_CIUDADANIA',
     'Luz Marina Sánchez de Ramírez',
     '3167654321',
     'ACTIVO',
@@ -314,17 +348,18 @@ FROM pensionado p
          CROSS JOIN persona per
 WHERE p.cedula = '30456789'
   AND per.numeroIdentificacion = 52876543
-  AND NOT EXISTS (SELECT 1 FROM sucesor WHERE numero_documento = '52876543');
+  AND NOT EXISTS (SELECT 1 FROM sucesor WHERE numero_documento = 52876543);
 
 -- Sustituto 5: Teresa (fallecida)
 INSERT INTO persona (numeroIdentificacion, tipoIdentificacion, nombrePersona, apellidosPersona, estadoCivil, fechaNacimientoPersona, fechaExpedicionDocumentoIdPersona, estadoPersona, generoPersona)
-SELECT 41765432, 'CEDULA_CIUDADANIA', 'Teresa', 'Díaz González', 'VIUDO', '1952-06-10', '1970-03-15', 'Fallecido', 'FEMENINO'
+SELECT 41765432, 'CEDULA_CIUDADANIA', 'Teresa', 'Díaz González', 'VIUDO', '1952-06-10', '1970-03-15', 'FALLECIDO', 'FEMENINO'
     WHERE NOT EXISTS (SELECT 1 FROM persona WHERE numeroIdentificacion = 41765432);
 
-INSERT INTO sucesor (idPersona, numero_documento, nombre_completo, telefono, estado, fecha_inicio, fecha_fin, porcentaje_pension, pensionado_sustituido_id, resolucion_nombramiento_id)
+INSERT INTO sucesor (idPersona, numero_documento, tipo_identificacion, nombre_completo, telefono, estado, fecha_inicio, fecha_fin, porcentaje_pension, pensionado_sustituido_id, resolucion_nombramiento_id)
 SELECT
     per.idPersona,
-    '41765432',
+    41765432,
+    'CEDULA_CIUDADANIA',
     'Teresa Díaz de González',
     '3145432109',
     'FALLECIDO',
@@ -337,4 +372,169 @@ FROM pensionado p
          CROSS JOIN persona per
 WHERE p.cedula = '50678901'
   AND per.numeroIdentificacion = 41765432
-  AND NOT EXISTS (SELECT 1 FROM sucesor WHERE numero_documento = '41765432');
+  AND NOT EXISTS (SELECT 1 FROM sucesor WHERE numero_documento = 41765432);
+
+-- ============================================
+-- IPC (Índice de Precios al Consumidor)
+-- ============================================
+INSERT INTO ipc (year, ipc, resolution, resolution_date, estado, resolution_details, createdAt, updatedAt)
+SELECT 2018, 3.18, 'Resolución DANE 001-2019', '2019-01-15', 'ACTIVO', 'IPC año 2018 según DANE', NOW(), NOW()
+    WHERE NOT EXISTS (SELECT 1 FROM ipc WHERE year = 2018);
+
+INSERT INTO ipc (year, ipc, resolution, resolution_date, estado, resolution_details, createdAt, updatedAt)
+SELECT 2019, 3.80, 'Resolución DANE 001-2020', '2020-01-15', 'ACTIVO', 'IPC año 2019 según DANE', NOW(), NOW()
+    WHERE NOT EXISTS (SELECT 1 FROM ipc WHERE year = 2019);
+
+INSERT INTO ipc (year, ipc, resolution, resolution_date, estado, resolution_details, createdAt, updatedAt)
+SELECT 2020, 1.61, 'Resolución DANE 001-2021', '2021-01-15', 'ACTIVO', 'IPC año 2020 según DANE', NOW(), NOW()
+    WHERE NOT EXISTS (SELECT 1 FROM ipc WHERE year = 2020);
+
+INSERT INTO ipc (year, ipc, resolution, resolution_date, estado, resolution_details, createdAt, updatedAt)
+SELECT 2021, 5.62, 'Resolución DANE 001-2022', '2022-01-15', 'ACTIVO', 'IPC año 2021 según DANE', NOW(), NOW()
+    WHERE NOT EXISTS (SELECT 1 FROM ipc WHERE year = 2021);
+
+INSERT INTO ipc (year, ipc, resolution, resolution_date, estado, resolution_details, createdAt, updatedAt)
+SELECT 2022, 13.12, 'Resolución DANE 001-2023', '2023-01-15', 'ACTIVO', 'IPC año 2022 según DANE', NOW(), NOW()
+    WHERE NOT EXISTS (SELECT 1 FROM ipc WHERE year = 2022);
+
+INSERT INTO ipc (year, ipc, resolution, resolution_date, estado, resolution_details, createdAt, updatedAt)
+SELECT 2023, 9.28, 'Resolución DANE 001-2024', '2024-01-15', 'ACTIVO', 'IPC año 2023 según DANE', NOW(), NOW()
+    WHERE NOT EXISTS (SELECT 1 FROM ipc WHERE year = 2023);
+
+INSERT INTO ipc (year, ipc, resolution, resolution_date, estado, resolution_details, createdAt, updatedAt)
+SELECT 2024, 5.81, 'Resolución DANE 001-2025', '2025-01-15', 'ACTIVO', 'IPC año 2024 según DANE', NOW(), NOW()
+    WHERE NOT EXISTS (SELECT 1 FROM ipc WHERE year = 2024);
+
+-- ============================================
+-- DTF (Depósito a Término Fijo)
+-- ============================================
+INSERT INTO dtf (periodo, valor, estado, createdAt, updatedAt)
+SELECT '2023-01', 12.50, TRUE, NOW(), NOW()
+    WHERE NOT EXISTS (SELECT 1 FROM dtf WHERE periodo = '2023-01');
+
+INSERT INTO dtf (periodo, valor, estado, createdAt, updatedAt)
+SELECT '2023-02', 12.75, TRUE, NOW(), NOW()
+    WHERE NOT EXISTS (SELECT 1 FROM dtf WHERE periodo = '2023-02');
+
+INSERT INTO dtf (periodo, valor, estado, createdAt, updatedAt)
+SELECT '2023-03', 12.80, TRUE, NOW(), NOW()
+    WHERE NOT EXISTS (SELECT 1 FROM dtf WHERE periodo = '2023-03');
+
+INSERT INTO dtf (periodo, valor, estado, createdAt, updatedAt)
+SELECT '2023-04', 12.90, TRUE, NOW(), NOW()
+    WHERE NOT EXISTS (SELECT 1 FROM dtf WHERE periodo = '2023-04');
+
+INSERT INTO dtf (periodo, valor, estado, createdAt, updatedAt)
+SELECT '2023-05', 13.00, TRUE, NOW(), NOW()
+    WHERE NOT EXISTS (SELECT 1 FROM dtf WHERE periodo = '2023-05');
+
+INSERT INTO dtf (periodo, valor, estado, createdAt, updatedAt)
+SELECT '2023-06', 13.10, TRUE, NOW(), NOW()
+    WHERE NOT EXISTS (SELECT 1 FROM dtf WHERE periodo = '2023-06');
+
+INSERT INTO dtf (periodo, valor, estado, createdAt, updatedAt)
+SELECT '2023-07', 13.15, TRUE, NOW(), NOW()
+    WHERE NOT EXISTS (SELECT 1 FROM dtf WHERE periodo = '2023-07');
+
+INSERT INTO dtf (periodo, valor, estado, createdAt, updatedAt)
+SELECT '2023-08', 13.20, TRUE, NOW(), NOW()
+    WHERE NOT EXISTS (SELECT 1 FROM dtf WHERE periodo = '2023-08');
+
+INSERT INTO dtf (periodo, valor, estado, createdAt, updatedAt)
+SELECT '2023-09', 13.05, TRUE, NOW(), NOW()
+    WHERE NOT EXISTS (SELECT 1 FROM dtf WHERE periodo = '2023-09');
+
+INSERT INTO dtf (periodo, valor, estado, createdAt, updatedAt)
+SELECT '2023-10', 12.95, TRUE, NOW(), NOW()
+    WHERE NOT EXISTS (SELECT 1 FROM dtf WHERE periodo = '2023-10');
+
+INSERT INTO dtf (periodo, valor, estado, createdAt, updatedAt)
+SELECT '2023-11', 12.85, TRUE, NOW(), NOW()
+    WHERE NOT EXISTS (SELECT 1 FROM dtf WHERE periodo = '2023-11');
+
+INSERT INTO dtf (periodo, valor, estado, createdAt, updatedAt)
+SELECT '2023-12', 12.80, TRUE, NOW(), NOW()
+    WHERE NOT EXISTS (SELECT 1 FROM dtf WHERE periodo = '2023-12');
+
+INSERT INTO dtf (periodo, valor, estado, createdAt, updatedAt)
+SELECT '2024-01', 12.60, TRUE, NOW(), NOW()
+    WHERE NOT EXISTS (SELECT 1 FROM dtf WHERE periodo = '2024-01');
+
+INSERT INTO dtf (periodo, valor, estado, createdAt, updatedAt)
+SELECT '2024-02', 12.45, TRUE, NOW(), NOW()
+    WHERE NOT EXISTS (SELECT 1 FROM dtf WHERE periodo = '2024-02');
+
+INSERT INTO dtf (periodo, valor, estado, createdAt, updatedAt)
+SELECT '2024-03', 12.30, TRUE, NOW(), NOW()
+    WHERE NOT EXISTS (SELECT 1 FROM dtf WHERE periodo = '2024-03');
+
+INSERT INTO dtf (periodo, valor, estado, createdAt, updatedAt)
+SELECT '2024-04', 12.15, TRUE, NOW(), NOW()
+    WHERE NOT EXISTS (SELECT 1 FROM dtf WHERE periodo = '2024-04');
+
+INSERT INTO dtf (periodo, valor, estado, createdAt, updatedAt)
+SELECT '2024-05', 12.00, TRUE, NOW(), NOW()
+    WHERE NOT EXISTS (SELECT 1 FROM dtf WHERE periodo = '2024-05');
+
+INSERT INTO dtf (periodo, valor, estado, createdAt, updatedAt)
+SELECT '2024-06', 11.85, TRUE, NOW(), NOW()
+    WHERE NOT EXISTS (SELECT 1 FROM dtf WHERE periodo = '2024-06');
+
+INSERT INTO dtf (periodo, valor, estado, createdAt, updatedAt)
+SELECT '2024-07', 11.70, TRUE, NOW(), NOW()
+    WHERE NOT EXISTS (SELECT 1 FROM dtf WHERE periodo = '2024-07');
+
+INSERT INTO dtf (periodo, valor, estado, createdAt, updatedAt)
+SELECT '2024-08', 11.60, TRUE, NOW(), NOW()
+    WHERE NOT EXISTS (SELECT 1 FROM dtf WHERE periodo = '2024-08');
+
+INSERT INTO dtf (periodo, valor, estado, createdAt, updatedAt)
+SELECT '2024-09', 11.50, TRUE, NOW(), NOW()
+    WHERE NOT EXISTS (SELECT 1 FROM dtf WHERE periodo = '2024-09');
+
+INSERT INTO dtf (periodo, valor, estado, createdAt, updatedAt)
+SELECT '2024-10', 11.40, TRUE, NOW(), NOW()
+    WHERE NOT EXISTS (SELECT 1 FROM dtf WHERE periodo = '2024-10');
+
+INSERT INTO dtf (periodo, valor, estado, createdAt, updatedAt)
+SELECT '2024-11', 11.30, TRUE, NOW(), NOW()
+    WHERE NOT EXISTS (SELECT 1 FROM dtf WHERE periodo = '2024-11');
+
+INSERT INTO dtf (periodo, valor, estado, createdAt, updatedAt)
+SELECT '2024-12', 11.25, TRUE, NOW(), NOW()
+    WHERE NOT EXISTS (SELECT 1 FROM dtf WHERE periodo = '2024-12');
+
+-- ============================================
+-- SMMLV Histórico (Salario Mínimo Mensual Legal Vigente)
+-- ============================================
+INSERT INTO smmlvHistorico (ano, valor, estado, createdAt, updatedAt)
+SELECT 2018, 781242.00, TRUE, NOW(), NOW()
+    WHERE NOT EXISTS (SELECT 1 FROM smmlvHistorico WHERE ano = 2018);
+
+INSERT INTO smmlvHistorico (ano, valor, estado, createdAt, updatedAt)
+SELECT 2019, 828116.00, TRUE, NOW(), NOW()
+    WHERE NOT EXISTS (SELECT 1 FROM smmlvHistorico WHERE ano = 2019);
+
+INSERT INTO smmlvHistorico (ano, valor, estado, createdAt, updatedAt)
+SELECT 2020, 877803.00, TRUE, NOW(), NOW()
+    WHERE NOT EXISTS (SELECT 1 FROM smmlvHistorico WHERE ano = 2020);
+
+INSERT INTO smmlvHistorico (ano, valor, estado, createdAt, updatedAt)
+SELECT 2021, 908526.00, TRUE, NOW(), NOW()
+    WHERE NOT EXISTS (SELECT 1 FROM smmlvHistorico WHERE ano = 2021);
+
+INSERT INTO smmlvHistorico (ano, valor, estado, createdAt, updatedAt)
+SELECT 2022, 1000000.00, TRUE, NOW(), NOW()
+    WHERE NOT EXISTS (SELECT 1 FROM smmlvHistorico WHERE ano = 2022);
+
+INSERT INTO smmlvHistorico (ano, valor, estado, createdAt, updatedAt)
+SELECT 2023, 1160000.00, TRUE, NOW(), NOW()
+    WHERE NOT EXISTS (SELECT 1 FROM smmlvHistorico WHERE ano = 2023);
+
+INSERT INTO smmlvHistorico (ano, valor, estado, createdAt, updatedAt)
+SELECT 2024, 1300000.00, TRUE, NOW(), NOW()
+    WHERE NOT EXISTS (SELECT 1 FROM smmlvHistorico WHERE ano = 2024);
+
+INSERT INTO smmlvHistorico (ano, valor, estado, createdAt, updatedAt)
+SELECT 2025, 1423500.00, TRUE, NOW(), NOW()
+    WHERE NOT EXISTS (SELECT 1 FROM smmlvHistorico WHERE ano = 2025);
