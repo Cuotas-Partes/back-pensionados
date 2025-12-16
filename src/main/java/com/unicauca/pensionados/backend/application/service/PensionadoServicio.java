@@ -122,9 +122,13 @@ public class PensionadoServicio implements IPensionadoServicio {
     }
 
     @Override
-    public List<Pensionado> listarPensionados() {
+    public List<PensionadoDTO> listarPensionados() {
         logCambioServicio.registrarConsulta(nombreEntidad);
-        return pensionadoRepositorio.findAll();
+        pensionadoRepositorio.findAll();
+        return pensionadoRepositorio.findAll()
+                .stream()
+                .map(PensionadoMapper::toDTO)
+                .toList();
     }
 
     @Override

@@ -11,7 +11,7 @@ public interface IPensionadoServicio {
     void actualizarPensionado(Long id, RegistroPensionadoPeticion request);
     void eliminarPensionado(Long id);
 
-    List<Pensionado> listarPensionados();
+    List<PensionadoDTO> listarPensionados();
     List<PensionadoDTO> listarPensionadoPorEntidad(Long entidadId);
     List<Pensionado> buscarPensionadosPorNombre(String nombre);
     List<Pensionado> buscarPensionadosPorApellido(String apellido);

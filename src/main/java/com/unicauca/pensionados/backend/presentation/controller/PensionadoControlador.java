@@ -74,7 +74,7 @@ public class PensionadoControlador {
     })
     public ResponseEntity<?> listarPensionados() {
         try {
-            List<Pensionado> pensionados = pensionadoServicio.listarPensionados();
+            List<PensionadoDTO> pensionados = pensionadoServicio.listarPensionados();
             return ResponseEntity.ok(pensionados);
         } catch (RuntimeException ex) {
             return ResponseEntity.status(HttpStatus.BAD_REQUEST)
