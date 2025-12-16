@@ -32,7 +32,6 @@ public class PensionadoMapper {
                 p.getEstado(),
                 p.getFechaFallecimiento(),
                 p.getTieneSustituto(),
-                p.getSustitutoId(),
                 p.getCuotasPendientes(),
                 p.getTotalPendiente(),
                 p.getCreatedAt(),

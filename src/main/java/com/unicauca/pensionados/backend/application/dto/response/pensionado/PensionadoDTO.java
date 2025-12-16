@@ -42,7 +42,6 @@ public class PensionadoDTO{
     private LocalDate fechaFallecimiento;
     private String pensionadoSustituido;
     private Boolean tieneSustituto = false;
-    private Long sustitutoId;
     private Integer cuotasPendientes = 0;
     private BigDecimal totalPendiente = BigDecimal.ZERO;
     private LocalDateTime createdAt = LocalDateTime.now();
@@ -50,7 +49,7 @@ public class PensionadoDTO{
     private List<ResolucionResponseDTO> resoluciones;
     private List<SucesorRespuesta> sustitutos;
 
-    public PensionadoDTO(Long idPersona, String cedula, LocalDate fechaExpedicionCedula, String nombre, String apellidos, LocalDate fechaNacimiento, String telefono, String correo, String entidadJubilacion, String entityNit, Long entityId, Integer diasTrabajadosEntidad, Integer diasTotalesTrabajados, BigDecimal porcentajeCuota, TipoPension tipoJubilacion, BigDecimal valorPension, EstadoPersona estado, LocalDate fechaFallecimiento, Boolean tieneSustituto, Long sustitutoId, Integer cuotasPendientes, BigDecimal totalPendiente, LocalDateTime createdAt, LocalDateTime updatedAt, List<ResolucionResponseDTO> resoluciones, List<SucesorRespuesta> sustitutos) {
+    public PensionadoDTO(Long idPersona, String cedula, LocalDate fechaExpedicionCedula, String nombre, String apellidos, LocalDate fechaNacimiento, String telefono, String correo, String entidadJubilacion, String entityNit, Long entityId, Integer diasTrabajadosEntidad, Integer diasTotalesTrabajados, BigDecimal porcentajeCuota, TipoPension tipoJubilacion, BigDecimal valorPension, EstadoPersona estado, LocalDate fechaFallecimiento, Boolean tieneSustituto, Integer cuotasPendientes, BigDecimal totalPendiente, LocalDateTime createdAt, LocalDateTime updatedAt, List<ResolucionResponseDTO> resoluciones, List<SucesorRespuesta> sustitutos) {
         this.idPersona = idPersona;
         this.cedula = cedula;
         this.fechaExpedicionCedula = fechaExpedicionCedula;
@@ -70,7 +69,6 @@ public class PensionadoDTO{
         this.estado = estado;
         this.fechaFallecimiento = fechaFallecimiento;
         this.tieneSustituto = tieneSustituto;
-        this.sustitutoId = sustitutoId;
         this.cuotasPendientes = cuotasPendientes;
         this.totalPendiente = totalPendiente;
         this.createdAt = createdAt;
