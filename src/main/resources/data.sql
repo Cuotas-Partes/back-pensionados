@@ -97,7 +97,7 @@ SELECT '8915002154', 'Hospital Universitario de Caldas', 'Calle 48 No. 27A-80, M
 -- PERSONAS (solo si no existen)
 -- ============================================
 INSERT INTO persona (numeroIdentificacion, tipoIdentificacion, nombrePersona, apellidosPersona, estadoCivil, fechaNacimientoPersona, fechaExpedicionDocumentoIdPersona, estadoPersona, generoPersona, discapacidad)
-SELECT 123456789, 'CEDULA_CIUDADANIA', 'Juan', 'Pérez', 'SOLTERO', '1980-05-10', '2000-01-01', 'ACTIVO', 'MASCULINO', NULL
+SELECT 123456789, 'CEDULA_CIUDADANIA', 'Juan', 'Pérez', 'SOLTERO', '1980-05-10', '2000-01-01', 'Activo', 'MASCULINO', NULL
     WHERE NOT EXISTS (SELECT 1 FROM persona WHERE numeroIdentificacion = 123456789);
 
 -- ============================================
@@ -105,28 +105,28 @@ SELECT 123456789, 'CEDULA_CIUDADANIA', 'Juan', 'Pérez', 'SOLTERO', '1980-05-10'
 -- ============================================
 
 -- Pensionado 1: Con resoluciones y sustituto
-INSERT INTO pensionado (cedula, fecha_expedicion_cedula, nombre, apellidos, fecha_nacimiento, telefono, correo, entidad_jubilacion, entity_nit, entity_id, dias_trabajados_entidad, dias_totales_trabajados, porcentaje_cuota, tipo_jubilacion, valor_pension, estado, tiene_sustituto, created_at, updated_at)
-SELECT '1234567892', '1995-06-10', 'Juan', 'Pérez Gómez', '1960-03-15', '3124567890', 'juan.perez@email.com', 'Universidad del Cauca', '8911500319', 1, 8500, 12000, 75.50, 'VEJEZ', 3500000.00, 'Activo', true, NOW(), NOW()
+INSERT INTO pensionado (cedula, fecha_expedicion_cedula, nombre, apellidos, fecha_nacimiento, telefono, correo, entidad_jubilacion, entity_nit, entity_id, dias_trabajados_entidad, dias_totales_trabajados, porcentaje_cuota, tipo_jubilacion, valor_pension, estado, tiene_sustituto, cuotas_pendientes, total_pendiente, created_at, updated_at)
+SELECT '1234567892', '1995-06-10', 'Juan', 'Pérez Gómez', '1960-03-15', '3124567890', 'juan.perez@email.com', 'Universidad del Cauca', '8911500319', 1, 8500, 12000, 75.50, 'Vejez', 3500000.00, 'Activo', true, 0, 0.00, NOW(), NOW()
     WHERE NOT EXISTS (SELECT 1 FROM pensionado WHERE cedula = '1234567892');
 
 -- Pensionado 2: Fallecido con 2 sustitutos activos
-INSERT INTO pensionado (cedula, fecha_expedicion_cedula, nombre, apellidos, fecha_nacimiento, telefono, correo, entidad_jubilacion, entity_nit, entity_id, dias_trabajados_entidad, dias_totales_trabajados, porcentaje_cuota, tipo_jubilacion, valor_pension, estado, fecha_fallecimiento, tiene_sustituto, created_at, updated_at)
-SELECT '10234567', '1975-03-15', 'Carlos Alberto', 'Rodríguez Gómez', '1950-08-20', '3201234567', 'carlos.rodriguez@email.com', 'Universidad del Cauca', '8911500319', 1, 10950, 12775, 85.50, 'VEJEZ', 4500000.00, 'Fallecido', '2023-05-10', TRUE, '2020-01-15 10:30:00', '2023-05-10 14:20:00'
+INSERT INTO pensionado (cedula, fecha_expedicion_cedula, nombre, apellidos, fecha_nacimiento, telefono, correo, entidad_jubilacion, entity_nit, entity_id, dias_trabajados_entidad, dias_totales_trabajados, porcentaje_cuota, tipo_jubilacion, valor_pension, estado, fecha_fallecimiento, tiene_sustituto, cuotas_pendientes, total_pendiente, created_at, updated_at)
+SELECT '10234567', '1975-03-15', 'Carlos Alberto', 'Rodríguez Gómez', '1950-08-20', '3201234567', 'carlos.rodriguez@email.com', 'Universidad del Cauca', '8911500319', 1, 10950, 12775, 85.50, 'Vejez', 4500000.00, 'Fallecido', '2023-05-10', TRUE, 0, 0.00, '2020-01-15 10:30:00', '2023-05-10 14:20:00'
     WHERE NOT EXISTS (SELECT 1 FROM pensionado WHERE cedula = '10234567');
 
 -- Pensionado 3: Activo sin sustitutos
-INSERT INTO pensionado (cedula, fecha_expedicion_cedula, nombre, apellidos, fecha_nacimiento, telefono, correo, entidad_jubilacion, entity_nit, entity_id, dias_trabajados_entidad, dias_totales_trabajados, porcentaje_cuota, tipo_jubilacion, valor_pension, estado, tiene_sustituto, created_at, updated_at)
-SELECT '20345678', '1980-06-22', 'María Elena', 'Pérez Martínez', '1955-12-10', '3109876543', 'maria.perez@email.com', 'Universidad del Cauca', '8911500319', 1, 11680, 11680, 100.00, 'VEJEZ', 5200000.00, 'Activo', FALSE, '2018-03-20 09:15:00', '2024-12-01 16:45:00'
+INSERT INTO pensionado (cedula, fecha_expedicion_cedula, nombre, apellidos, fecha_nacimiento, telefono, correo, entidad_jubilacion, entity_nit, entity_id, dias_trabajados_entidad, dias_totales_trabajados, porcentaje_cuota, tipo_jubilacion, valor_pension, estado, tiene_sustituto, cuotas_pendientes, total_pendiente, created_at, updated_at)
+SELECT '20345678', '1980-06-22', 'María Elena', 'Pérez Martínez', '1955-12-10', '3109876543', 'maria.perez@email.com', 'Universidad del Cauca', '8911500319', 1, 11680, 11680, 100.00, 'Vejez', 5200000.00, 'Activo', FALSE, 0, 0.00, '2018-03-20 09:15:00', '2024-12-01 16:45:00'
     WHERE NOT EXISTS (SELECT 1 FROM pensionado WHERE cedula = '20345678');
 
 -- Pensionado 4: Fallecido con 1 sustituto activo
-INSERT INTO pensionado (cedula, fecha_expedicion_cedula, nombre, apellidos, fecha_nacimiento, telefono, correo, entidad_jubilacion, entity_nit, entity_id, dias_trabajados_entidad, dias_totales_trabajados, porcentaje_cuota, tipo_jubilacion, valor_pension, estado, fecha_fallecimiento, tiene_sustituto, created_at, updated_at)
-SELECT '30456789', '1978-09-10', 'Jorge Luis', 'Sánchez Rojas', '1952-04-25', '3157654321', 'jorge.sanchez@email.com', 'Universidad del Cauca', '8911500319', 1, 9125, 13140, 69.45, 'VEJEZ', 3800000.00, 'Fallecido', '2024-02-18', TRUE, '2019-06-10 11:00:00', '2024-02-18 10:30:00'
+INSERT INTO pensionado (cedula, fecha_expedicion_cedula, nombre, apellidos, fecha_nacimiento, telefono, correo, entidad_jubilacion, entity_nit, entity_id, dias_trabajados_entidad, dias_totales_trabajados, porcentaje_cuota, tipo_jubilacion, valor_pension, estado, fecha_fallecimiento, tiene_sustituto, cuotas_pendientes, total_pendiente, created_at, updated_at)
+SELECT '30456789', '1978-09-10', 'Jorge Luis', 'Sánchez Rojas', '1952-04-25', '3157654321', 'jorge.sanchez@email.com', 'Universidad del Cauca', '8911500319', 1, 9125, 13140, 69.45, 'Vejez', 3800000.00, 'Fallecido', '2024-02-18', TRUE, 0, 0.00, '2019-06-10 11:00:00', '2024-02-18 10:30:00'
     WHERE NOT EXISTS (SELECT 1 FROM pensionado WHERE cedula = '30456789');
 
 -- Pensionado 5: Fallecido con sustituto que también falleció
-INSERT INTO pensionado (cedula, fecha_expedicion_cedula, nombre, apellidos, fecha_nacimiento, telefono, correo, entidad_jubilacion, entity_nit, entity_id, dias_trabajados_entidad, dias_totales_trabajados, porcentaje_cuota, tipo_jubilacion, valor_pension, estado, fecha_fallecimiento, tiene_sustituto, created_at, updated_at)
-SELECT '50678901', '1976-02-14', 'Roberto', 'Díaz Castro', '1948-11-03', '3145678901', 'roberto.diaz@email.com', 'Universidad del Cauca', '8911500319', 1, 12410, 12410, 100.00, 'VEJEZ', 5500000.00, 'Fallecido', '2022-08-15', TRUE, '2017-09-01 10:00:00', '2022-08-15 15:45:00'
+INSERT INTO pensionado (cedula, fecha_expedicion_cedula, nombre, apellidos, fecha_nacimiento, telefono, correo, entidad_jubilacion, entity_nit, entity_id, dias_trabajados_entidad, dias_totales_trabajados, porcentaje_cuota, tipo_jubilacion, valor_pension, estado, fecha_fallecimiento, tiene_sustituto, cuotas_pendientes, total_pendiente, created_at, updated_at)
+SELECT '50678901', '1976-02-14', 'Roberto', 'Díaz Castro', '1948-11-03', '3145678901', 'roberto.diaz@email.com', 'Universidad del Cauca', '8911500319', 1, 12410, 12410, 100.00, 'Vejez', 5500000.00, 'Fallecido', '2022-08-15', TRUE, 0, 0.00, '2017-09-01 10:00:00', '2022-08-15 15:45:00'
     WHERE NOT EXISTS (SELECT 1 FROM pensionado WHERE cedula = '50678901');
 
 -- ============================================
@@ -270,7 +270,7 @@ SELECT
     'CEDULA_CIUDADANIA',
     'María Pérez Gómez',
     '3101234567',
-    'ACTIVO',
+    'Activo',
     '2023-06-01',
     50.00,
     p.idPersona,
@@ -283,7 +283,7 @@ WHERE p.cedula = '1234567892'
 
 -- Sustituto 2: Gloria Patricia (necesita crear persona primero)
 INSERT INTO persona (numeroIdentificacion, tipoIdentificacion, nombrePersona, apellidosPersona, estadoCivil, fechaNacimientoPersona, fechaExpedicionDocumentoIdPersona, estadoPersona, generoPersona)
-SELECT 1098765432, 'CEDULA_CIUDADANIA', 'Gloria Patricia', 'Rodríguez López', 'CASADO', '1975-08-15', '1993-06-10', 'ACTIVO', 'FEMENINO'
+SELECT 1098765432, 'CEDULA_CIUDADANIA', 'Gloria Patricia', 'Rodríguez López', 'CASADO', '1975-08-15', '1993-06-10', 'Activo', 'FEMENINO'
     WHERE NOT EXISTS (SELECT 1 FROM persona WHERE numeroIdentificacion = 1098765432);
 
 INSERT INTO sucesor (idPersona, numero_documento, tipo_identificacion, nombre_completo, telefono, estado, fecha_inicio, porcentaje_pension, pensionado_sustituido_id, resolucion_nombramiento_id)
@@ -293,7 +293,7 @@ SELECT
     'CEDULA_CIUDADANIA',
     'Gloria Patricia Rodríguez de López',
     '3209876543',
-    'ACTIVO',
+    'Activo',
     '2023-06-01',
     50.00,
     p.idPersona,
@@ -306,7 +306,7 @@ WHERE p.cedula = '10234567'
 
 -- Sustituto 3: Diana Carolina
 INSERT INTO persona (numeroIdentificacion, tipoIdentificacion, nombrePersona, apellidosPersona, estadoCivil, fechaNacimientoPersona, fechaExpedicionDocumentoIdPersona, estadoPersona, generoPersona)
-SELECT 1087654321, 'CEDULA_CIUDADANIA', 'Diana Carolina', 'Rodríguez Jiménez', 'SOLTERO', '1995-02-20', '2013-05-15', 'ACTIVO', 'FEMENINO'
+SELECT 1087654321, 'CEDULA_CIUDADANIA', 'Diana Carolina', 'Rodríguez Jiménez', 'SOLTERO', '1995-02-20', '2013-05-15', 'Activo', 'FEMENINO'
     WHERE NOT EXISTS (SELECT 1 FROM persona WHERE numeroIdentificacion = 1087654321);
 
 INSERT INTO sucesor (idPersona, numero_documento, tipo_identificacion, nombre_completo, telefono, estado, fecha_inicio, porcentaje_pension, pensionado_sustituido_id, resolucion_nombramiento_id)
@@ -316,7 +316,7 @@ SELECT
     'CEDULA_CIUDADANIA',
     'Diana Carolina Rodríguez Jiménez',
     '3158765432',
-    'ACTIVO',
+    'Activo',
     '2023-06-01',
     50.00,
     p.idPersona,
@@ -329,7 +329,7 @@ WHERE p.cedula = '10234567'
 
 -- Sustituto 4: Luz Marina
 INSERT INTO persona (numeroIdentificacion, tipoIdentificacion, nombrePersona, apellidosPersona, estadoCivil, fechaNacimientoPersona, fechaExpedicionDocumentoIdPersona, estadoPersona, generoPersona)
-SELECT 52876543, 'CEDULA_CIUDADANIA', 'Luz Marina', 'Sánchez Ramírez', 'CASADO', '1960-11-30', '1978-07-20', 'ACTIVO', 'FEMENINO'
+SELECT 52876543, 'CEDULA_CIUDADANIA', 'Luz Marina', 'Sánchez Ramírez', 'CASADO', '1960-11-30', '1978-07-20', 'Activo', 'FEMENINO'
     WHERE NOT EXISTS (SELECT 1 FROM persona WHERE numeroIdentificacion = 52876543);
 
 INSERT INTO sucesor (idPersona, numero_documento, tipo_identificacion, nombre_completo, telefono, estado, fecha_inicio, porcentaje_pension, pensionado_sustituido_id, resolucion_nombramiento_id)
@@ -339,7 +339,7 @@ SELECT
     'CEDULA_CIUDADANIA',
     'Luz Marina Sánchez de Ramírez',
     '3167654321',
-    'ACTIVO',
+    'Activo',
     '2024-03-15',
     100.00,
     p.idPersona,
@@ -352,7 +352,7 @@ WHERE p.cedula = '30456789'
 
 -- Sustituto 5: Teresa (fallecida)
 INSERT INTO persona (numeroIdentificacion, tipoIdentificacion, nombrePersona, apellidosPersona, estadoCivil, fechaNacimientoPersona, fechaExpedicionDocumentoIdPersona, estadoPersona, generoPersona)
-SELECT 41765432, 'CEDULA_CIUDADANIA', 'Teresa', 'Díaz González', 'VIUDO', '1952-06-10', '1970-03-15', 'FALLECIDO', 'FEMENINO'
+SELECT 41765432, 'CEDULA_CIUDADANIA', 'Teresa', 'Díaz González', 'VIUDO', '1952-06-10', '1970-03-15', 'Fallecido', 'FEMENINO'
     WHERE NOT EXISTS (SELECT 1 FROM persona WHERE numeroIdentificacion = 41765432);
 
 INSERT INTO sucesor (idPersona, numero_documento, tipo_identificacion, nombre_completo, telefono, estado, fecha_inicio, fecha_fin, porcentaje_pension, pensionado_sustituido_id, resolucion_nombramiento_id)
@@ -362,7 +362,7 @@ SELECT
     'CEDULA_CIUDADANIA',
     'Teresa Díaz de González',
     '3145432109',
-    'FALLECIDO',
+    'Fallecido',
     '2022-09-10',
     '2024-11-05',
     100.00,
@@ -378,31 +378,31 @@ WHERE p.cedula = '50678901'
 -- IPC (Índice de Precios al Consumidor)
 -- ============================================
 INSERT INTO ipc (year, ipc, resolution, resolution_date, estado, resolution_details, createdAt, updatedAt)
-SELECT 2018, 3.18, 'Resolución DANE 001-2019', '2019-01-15', 'ACTIVO', 'IPC año 2018 según DANE', NOW(), NOW()
+SELECT 2018, 3.18, 'Resolución DANE 001-2019', '2019-01-15', TRUE, 'IPC año 2018 según DANE', NOW(), NOW()
     WHERE NOT EXISTS (SELECT 1 FROM ipc WHERE year = 2018);
 
 INSERT INTO ipc (year, ipc, resolution, resolution_date, estado, resolution_details, createdAt, updatedAt)
-SELECT 2019, 3.80, 'Resolución DANE 001-2020', '2020-01-15', 'ACTIVO', 'IPC año 2019 según DANE', NOW(), NOW()
+SELECT 2019, 3.80, 'Resolución DANE 001-2020', '2020-01-15', TRUE, 'IPC año 2019 según DANE', NOW(), NOW()
     WHERE NOT EXISTS (SELECT 1 FROM ipc WHERE year = 2019);
 
 INSERT INTO ipc (year, ipc, resolution, resolution_date, estado, resolution_details, createdAt, updatedAt)
-SELECT 2020, 1.61, 'Resolución DANE 001-2021', '2021-01-15', 'ACTIVO', 'IPC año 2020 según DANE', NOW(), NOW()
+SELECT 2020, 1.61, 'Resolución DANE 001-2021', '2021-01-15', TRUE, 'IPC año 2020 según DANE', NOW(), NOW()
     WHERE NOT EXISTS (SELECT 1 FROM ipc WHERE year = 2020);
 
 INSERT INTO ipc (year, ipc, resolution, resolution_date, estado, resolution_details, createdAt, updatedAt)
-SELECT 2021, 5.62, 'Resolución DANE 001-2022', '2022-01-15', 'ACTIVO', 'IPC año 2021 según DANE', NOW(), NOW()
+SELECT 2021, 5.62, 'Resolución DANE 001-2022', '2022-01-15', TRUE, 'IPC año 2021 según DANE', NOW(), NOW()
     WHERE NOT EXISTS (SELECT 1 FROM ipc WHERE year = 2021);
 
 INSERT INTO ipc (year, ipc, resolution, resolution_date, estado, resolution_details, createdAt, updatedAt)
-SELECT 2022, 13.12, 'Resolución DANE 001-2023', '2023-01-15', 'ACTIVO', 'IPC año 2022 según DANE', NOW(), NOW()
+SELECT 2022, 13.12, 'Resolución DANE 001-2023', '2023-01-15', TRUE, 'IPC año 2022 según DANE', NOW(), NOW()
     WHERE NOT EXISTS (SELECT 1 FROM ipc WHERE year = 2022);
 
 INSERT INTO ipc (year, ipc, resolution, resolution_date, estado, resolution_details, createdAt, updatedAt)
-SELECT 2023, 9.28, 'Resolución DANE 001-2024', '2024-01-15', 'ACTIVO', 'IPC año 2023 según DANE', NOW(), NOW()
+SELECT 2023, 9.28, 'Resolución DANE 001-2024', '2024-01-15', TRUE, 'IPC año 2023 según DANE', NOW(), NOW()
     WHERE NOT EXISTS (SELECT 1 FROM ipc WHERE year = 2023);
 
 INSERT INTO ipc (year, ipc, resolution, resolution_date, estado, resolution_details, createdAt, updatedAt)
-SELECT 2024, 5.81, 'Resolución DANE 001-2025', '2025-01-15', 'ACTIVO', 'IPC año 2024 según DANE', NOW(), NOW()
+SELECT 2024, 5.81, 'Resolución DANE 001-2025', '2025-01-15', TRUE, 'IPC año 2024 según DANE', NOW(), NOW()
     WHERE NOT EXISTS (SELECT 1 FROM ipc WHERE year = 2024);
 
 -- ============================================
