@@ -1,22 +1,15 @@
 package com.unicauca.pensionados.backend.presentation.controller;
 
 import org.springframework.http.ResponseEntity;
-import org.springframework.security.authentication.AuthenticationManager;
-import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
-import org.springframework.security.core.Authentication;
-import org.springframework.security.core.userdetails.UserDetails;
-import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.web.bind.annotation.*;
 //import com.unicauca.pensionados.backend.infrastructure.security.jwtTokenProvider;
-import lombok.Getter;
 import lombok.RequiredArgsConstructor;
-import lombok.Setter;
 
 import com.unicauca.pensionados.backend.infrastructure.security.config.AuthService;
-import com.unicauca.pensionados.backend.application.dto.request.LoginPeticion;
-import com.unicauca.pensionados.backend.application.dto.request.RegistroPeticion;
-import com.unicauca.pensionados.backend.application.dto.response.AuthRespuesta;
+import com.unicauca.pensionados.backend.application.dto.request.auth.LoginPeticion;
+import com.unicauca.pensionados.backend.application.dto.request.auth.RegistroPeticion;
+import com.unicauca.pensionados.backend.application.dto.response.auth.AuthRespuesta;
 
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;

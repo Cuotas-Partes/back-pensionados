@@ -1,11 +1,10 @@
 package com.unicauca.pensionados.backend.domain.model.entity;
 
 import java.math.BigDecimal;
+import java.time.LocalDate;
 
-import jakarta.persistence.Column;
-import jakarta.persistence.Entity;
-import jakarta.persistence.Id;
-import jakarta.persistence.Table;
+import com.unicauca.pensionados.backend.domain.model.enums.EstadoIPC;
+import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.Setter;
 
@@ -14,9 +13,31 @@ import lombok.Setter;
 @Getter @Setter
 public class IPC {
     @Id
-    @Column (name = "fechaIPC", nullable = false)
-    private Integer fechaIPC;
-    
-    @Column (name = "valorIPC", nullable = false, precision = 5, scale = 2)
-    private BigDecimal valorIPC;
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    private Long id;
+
+    @Column(name = "year", nullable = false)
+    private Integer year;
+
+    @Column(name = "ipc", nullable = false, precision = 10, scale = 4)
+    private BigDecimal ipc;
+
+    @Column(name = "resolution", nullable = false, length = 100)
+    private String resolution;
+
+    @Column(name = "resolution_date", nullable = false)
+    private LocalDate resolutionDate;
+
+    @Column(name="estado", nullable = false)
+    private EstadoIPC estado = EstadoIPC.ACTIVO;
+
+    @Column(name = "resolution_details", columnDefinition = "TEXT")
+    private String resolutionDetails;
+
+    @Column(name = "createdAt", nullable = false)
+    private LocalDate createdAt = LocalDate.now();
+
+    @Column(name = "updatedAt")
+    private LocalDate updatedAt;
+
 }

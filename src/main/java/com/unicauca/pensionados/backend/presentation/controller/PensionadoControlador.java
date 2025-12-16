@@ -1,10 +1,12 @@
 package com.unicauca.pensionados.backend.presentation.controller;
 
-import org.springframework.web.bind.annotation.*;
-
+import com.unicauca.pensionados.backend.application.dto.request.pensionado.RegistroPensionadoPeticion;
+import com.unicauca.pensionados.backend.application.dto.response.pensionado.PensionadoDTO;
 import com.unicauca.pensionados.backend.application.service.interfaces.IPensionadoServicio;
-import com.unicauca.pensionados.backend.application.dto.request.RegistroPensionadoPeticion;
 import com.unicauca.pensionados.backend.domain.model.entity.Pensionado;
+import io.swagger.v3.oas.annotations.Parameter;
+import jakarta.validation.Valid;
+import org.springframework.web.bind.annotation.*;
 
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.media.Content;
@@ -35,59 +37,29 @@ public class PensionadoControlador {
         this.pensionadoServicio = pensionadoServicio;
     }
 
-    @PostMapping("/registrar")
-    @Operation(summary = "Registrar un nuevo pensionado", description = "Registra un nuevo pensionado en el sistema.")
-    @ApiResponses(value = {
-            @ApiResponse(responseCode = "200", description = "Pensionado registrado exitosamente",
-                    content = @Content(mediaType = "text/plain", schema = @Schema(implementation = String.class))),
-            @ApiResponse(responseCode = "400", description = "Error al registrar pensionado",
-                    content = @Content(mediaType = "text/plain", schema = @Schema(implementation = String.class))),
-            @ApiResponse(responseCode = "500", description = "Error interno del servidor",
-                    content = @Content(mediaType = "text/plain", schema = @Schema(implementation = String.class)))
-    })
-    public ResponseEntity<?> registrarPensionado(@io.swagger.v3.oas.annotations.parameters.RequestBody(description = "Datos del pensionado a registrar", required = true,
-            content = @Content(schema = @Schema(implementation = RegistroPensionadoPeticion.class))) @RequestBody RegistroPensionadoPeticion peticion) {
-        try{
-            pensionadoServicio.registrarPensionado(peticion);
-        return ResponseEntity.ok("Pensionado registrado exitosamente");
-        } catch (RuntimeException ex) {
-            
-            return ResponseEntity.status(HttpStatus.BAD_REQUEST)
-                    .body("Error al registrar pensionado: " + ex.getMessage());
-        } catch (Exception ex) {
-            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
-                    .body("Error interno del servidor: " + ex.getMessage());
-        }
-        
+    @PostMapping
+    @Operation(summary = "Registrar un nuevo pensionado", description = "Registra un nuevo pensionado (incluye resoluciones y sustitutos).")
+    public ResponseEntity<?> registrarPensionado(@Valid @RequestBody RegistroPensionadoPeticion peticion) {
+        pensionadoServicio.registrarPensionado(peticion);
+        return ResponseEntity.status(HttpStatus.CREATED).body("Pensionado registrado exitosamente");
     }
 
-    @PostMapping("/actualizar/{id}")
-    @Operation(summary = "Actualizar un pensionado existente", description = "Actualiza los datos de un pensionado existente identificado por su ID.")
-    @ApiResponses(value = {
-            @ApiResponse(responseCode = "200", description = "Pensionado actualizado exitosamente",
-                    content = @Content(mediaType = "text/plain", schema = @Schema(implementation = String.class))),
-            @ApiResponse(responseCode = "400", description = "Error al actualizar pensionado",
-                    content = @Content(mediaType = "text/plain", schema = @Schema(implementation = String.class))),
-            @ApiResponse(responseCode = "404", description = "Pensionado no encontrado",
-                    content = @Content(mediaType = "text/plain", schema = @Schema(implementation = String.class))), 
-            @ApiResponse(responseCode = "500", description = "Error interno del servidor",
-                    content = @Content(mediaType = "text/plain", schema = @Schema(implementation = String.class)))
-    })
+    @PutMapping("/{id}")
+    @Operation(summary = "Actualizar un pensionado", description = "Actualiza un pensionado (reemplaza resoluciones y sustitutos enviados en el body).")
     public ResponseEntity<?> actualizarPensionado(
-            @io.swagger.v3.oas.annotations.Parameter(description = "ID del pensionado a actualizar", required = true) @PathVariable Long id,
-            @io.swagger.v3.oas.annotations.parameters.RequestBody(description = "Nuevos datos del pensionado", required = true,
-                    content = @Content(schema = @Schema(implementation = RegistroPensionadoPeticion.class))) @RequestBody RegistroPensionadoPeticion peticion) {
-        try{
-            pensionadoServicio.actualizarPensionado(id, peticion);
-            return ResponseEntity.ok("Pensionado actualizado exitosamente");
-        } catch (RuntimeException ex) {
-            
-            return ResponseEntity.status(HttpStatus.BAD_REQUEST)
-                    .body("Error al actualzar pensionado: " + ex.getMessage());
-        } catch (Exception ex) {
-            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
-                    .body("Error interno del servidor: " + ex.getMessage());
-        }
+            @Parameter(description = "ID del pensionado", required = true) @PathVariable Long id,
+            @Valid @RequestBody RegistroPensionadoPeticion peticion) {
+        pensionadoServicio.actualizarPensionado(id, peticion);
+        return ResponseEntity.ok("Pensionado actualizado exitosamente");
+    }
+
+    @DeleteMapping("/{id}")
+    @Operation(summary = "Eliminar (lógico) un pensionado", description = "Realiza eliminación lógica: desactiva el pensionado para no romper referencias (pagos/liquidaciones).")
+    public ResponseEntity<?> eliminarPensionado(
+            @Parameter(description = "ID del pensionado", required = true) @PathVariable Long id) {
+        // DELETE reutiliza la misma lógica que PATCH /desactivar/{id}
+        pensionadoServicio.desactivarPensionado(id);
+        return ResponseEntity.noContent().build();
     }
 
     @GetMapping("/listar")
@@ -112,7 +84,40 @@ public class PensionadoControlador {
                     .body("Error interno del servidor: " + ex.getMessage());
         }
     }
-    
+
+    @Operation(
+            summary = "Listar pensionados por entidad",
+            description = "Obtiene la lista de todos los pensionados asociados a una entidad específica, incluyendo sus resoluciones"
+    )
+    @ApiResponses(value = {
+            @ApiResponse(
+                    responseCode = "200",
+                    description = "Lista de pensionados obtenida exitosamente",
+                    content = @Content(
+                            mediaType = "application/json",
+                            schema = @Schema(implementation = PensionadoDTO.class)
+                    )
+            ),
+            @ApiResponse(
+                    responseCode = "404",
+                    description = "Entidad no encontrada",
+                    content = @Content
+            ),
+            @ApiResponse(
+                    responseCode = "500",
+                    description = "Error interno del servidor",
+                    content = @Content
+            )
+    })
+    @GetMapping("/entidad/{entidadId}")
+    public ResponseEntity<List<PensionadoDTO>> listarPensionadosPorEntidad(
+            @Parameter(description = "ID de la entidad", required = true, example = "1")
+            @PathVariable Long entidadId
+    ) {
+        List<PensionadoDTO> pensionados = pensionadoServicio.listarPensionadoPorEntidad(entidadId);
+        return ResponseEntity.ok(pensionados);
+    }
+
  
     @GetMapping("/buscar/id/{id}")
     @Operation(summary = "Buscar pensionado por ID", description = "Busca un pensionado específico utilizando su ID.")

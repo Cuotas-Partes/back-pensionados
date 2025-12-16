@@ -2,24 +2,24 @@ package com.unicauca.pensionados.backend.application.service.interfaces;
 
 import java.util.List;
 
-import com.unicauca.pensionados.backend.application.dto.request.ResolucionDTOPeticion;
-import com.unicauca.pensionados.backend.application.dto.response.ResolucionDTORespuesta;
+import com.unicauca.pensionados.backend.application.dto.request.resolucion.ResolucionDTOPeticion;
+import com.unicauca.pensionados.backend.application.dto.response.resolucion.ResolucionResponseDTO;
 
 public interface IResolucionServicio {
     
-    ResolucionDTORespuesta crear(ResolucionDTOPeticion peticion);
+    ResolucionResponseDTO crear(ResolucionDTOPeticion peticion);
     
-    ResolucionDTORespuesta actualizar(Long id, ResolucionDTOPeticion peticion);
+    ResolucionResponseDTO actualizar(Long id, ResolucionDTOPeticion peticion);
     
     void eliminar(Long id);
     
-    ResolucionDTORespuesta obtenerPorId(Long id);
+    ResolucionResponseDTO obtenerPorId(Long id);
     
-    List<ResolucionDTORespuesta> obtenerTodas();
+    List<ResolucionResponseDTO> obtenerTodas();
     
-    List<ResolucionDTORespuesta> obtenerPorPensionado(Long pensionadoId);
+    List<ResolucionResponseDTO> obtenerPorPensionado(Long pensionadoId);
     
-    List<ResolucionDTORespuesta> obtenerPorEstado(String estado);
+    List<ResolucionResponseDTO> obtenerPorEstado(String estado);
     
-    ResolucionDTORespuesta obtenerPorNumero(String numeroResolucion);
+    ResolucionResponseDTO obtenerPorNumero(String numeroResolucion);
 }

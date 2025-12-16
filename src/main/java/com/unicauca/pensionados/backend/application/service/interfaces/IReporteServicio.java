@@ -2,7 +2,7 @@ package com.unicauca.pensionados.backend.application.service.interfaces;
 
 import java.util.List;
 
-import com.unicauca.pensionados.backend.application.dto.request.ReporteDTOPeticion;
+import com.unicauca.pensionados.backend.application.dto.request.reporte.ReporteDTOPeticion;
 import com.unicauca.pensionados.backend.application.dto.response.ReporteDTORespuesta;
 
 public interface IReporteServicio {

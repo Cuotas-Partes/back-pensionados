@@ -16,8 +16,8 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.unicauca.pensionados.backend.application.service.interfaces.IResolucionServicio;
-import com.unicauca.pensionados.backend.application.dto.request.ResolucionDTOPeticion;
-import com.unicauca.pensionados.backend.application.dto.response.ResolucionDTORespuesta;
+import com.unicauca.pensionados.backend.application.dto.request.resolucion.ResolucionDTOPeticion;
+import com.unicauca.pensionados.backend.application.dto.response.resolucion.ResolucionResponseDTO;
 
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
@@ -35,17 +35,17 @@ public class ResolucionControlador {
 
     @PostMapping
     @Operation(summary = "Crear una nueva resolución")
-    public ResponseEntity<ResolucionDTORespuesta> crear(@Valid @RequestBody ResolucionDTOPeticion peticion) {
-        ResolucionDTORespuesta respuesta = resolucionServicio.crear(peticion);
+    public ResponseEntity<ResolucionResponseDTO> crear(@Valid @RequestBody ResolucionDTOPeticion peticion) {
+        ResolucionResponseDTO respuesta = resolucionServicio.crear(peticion);
         return ResponseEntity.status(HttpStatus.CREATED).body(respuesta);
     }
 
     @PutMapping("/{id}")
     @Operation(summary = "Actualizar una resolución existente")
-    public ResponseEntity<ResolucionDTORespuesta> actualizar(
+    public ResponseEntity<ResolucionResponseDTO> actualizar(
             @PathVariable Long id,
             @Valid @RequestBody ResolucionDTOPeticion peticion) {
-        ResolucionDTORespuesta respuesta = resolucionServicio.actualizar(id, peticion);
+        ResolucionResponseDTO respuesta = resolucionServicio.actualizar(id, peticion);
         return ResponseEntity.ok(respuesta);
     }
 
@@ -58,36 +58,36 @@ public class ResolucionControlador {
 
     @GetMapping("/{id}")
     @Operation(summary = "Obtener una resolución por ID")
-    public ResponseEntity<ResolucionDTORespuesta> obtenerPorId(@PathVariable Long id) {
-        ResolucionDTORespuesta respuesta = resolucionServicio.obtenerPorId(id);
+    public ResponseEntity<ResolucionResponseDTO> obtenerPorId(@PathVariable Long id) {
+        ResolucionResponseDTO respuesta = resolucionServicio.obtenerPorId(id);
         return ResponseEntity.ok(respuesta);
     }
 
     @GetMapping
     @Operation(summary = "Obtener todas las resoluciones")
-    public ResponseEntity<List<ResolucionDTORespuesta>> obtenerTodas() {
-        List<ResolucionDTORespuesta> resoluciones = resolucionServicio.obtenerTodas();
+    public ResponseEntity<List<ResolucionResponseDTO>> obtenerTodas() {
+        List<ResolucionResponseDTO> resoluciones = resolucionServicio.obtenerTodas();
         return ResponseEntity.ok(resoluciones);
     }
 
     @GetMapping("/pensionado/{pensionadoId}")
     @Operation(summary = "Obtener resoluciones por pensionado")
-    public ResponseEntity<List<ResolucionDTORespuesta>> obtenerPorPensionado(@PathVariable Long pensionadoId) {
-        List<ResolucionDTORespuesta> resoluciones = resolucionServicio.obtenerPorPensionado(pensionadoId);
+    public ResponseEntity<List<ResolucionResponseDTO>> obtenerPorPensionado(@PathVariable Long pensionadoId) {
+        List<ResolucionResponseDTO> resoluciones = resolucionServicio.obtenerPorPensionado(pensionadoId);
         return ResponseEntity.ok(resoluciones);
     }
 
     @GetMapping("/estado/{estado}")
     @Operation(summary = "Obtener resoluciones por estado")
-    public ResponseEntity<List<ResolucionDTORespuesta>> obtenerPorEstado(@PathVariable String estado) {
-        List<ResolucionDTORespuesta> resoluciones = resolucionServicio.obtenerPorEstado(estado);
+    public ResponseEntity<List<ResolucionResponseDTO>> obtenerPorEstado(@PathVariable String estado) {
+        List<ResolucionResponseDTO> resoluciones = resolucionServicio.obtenerPorEstado(estado);
         return ResponseEntity.ok(resoluciones);
     }
 
     @GetMapping("/numero")
     @Operation(summary = "Obtener resolución por número")
-    public ResponseEntity<ResolucionDTORespuesta> obtenerPorNumero(@RequestParam String numeroResolucion) {
-        ResolucionDTORespuesta respuesta = resolucionServicio.obtenerPorNumero(numeroResolucion);
+    public ResponseEntity<ResolucionResponseDTO> obtenerPorNumero(@RequestParam String numeroResolucion) {
+        ResolucionResponseDTO respuesta = resolucionServicio.obtenerPorNumero(numeroResolucion);
         return ResponseEntity.ok(respuesta);
     }
 }

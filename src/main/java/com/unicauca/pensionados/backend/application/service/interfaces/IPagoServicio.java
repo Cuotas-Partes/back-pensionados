@@ -2,10 +2,8 @@ package com.unicauca.pensionados.backend.application.service.interfaces;
 
 import java.util.List;
 
-import com.unicauca.pensionados.backend.application.dto.request.FiltroPagoPeticion;
-import com.unicauca.pensionados.backend.application.dto.request.PagoDTOPeticion;
-import com.unicauca.pensionados.backend.application.dto.response.PagoDTORespuesta;
-import com.unicauca.pensionados.backend.application.dto.response.ResumenPagoDTORespuesta;
+import com.unicauca.pensionados.backend.application.dto.request.filtro.FiltroPagoPeticion;
+import com.unicauca.pensionados.backend.application.dto.request.pago.PagoDTOPeticion;
 
 public interface IPagoServicio {
     

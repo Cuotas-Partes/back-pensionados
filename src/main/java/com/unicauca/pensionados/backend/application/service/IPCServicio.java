@@ -5,13 +5,17 @@ import com.unicauca.pensionados.backend.application.service.interfaces.ILogCambi
 import com.unicauca.pensionados.backend.domain.exception.BusinessValidationException;
 import com.unicauca.pensionados.backend.domain.model.entity.IPC;
 import com.unicauca.pensionados.backend.domain.model.entity.LogCambio;
+import com.unicauca.pensionados.backend.domain.model.enums.EstadoIPC;
+import com.unicauca.pensionados.backend.domain.model.mappers.ipc.IpcMapper;
 import com.unicauca.pensionados.backend.infrastructure.persistence.repository.IPCRepositorio;
-import com.unicauca.pensionados.backend.application.dto.response.IPCRespuestaDTO;
-import com.unicauca.pensionados.backend.application.dto.request.RegistroIPCPeticion;
+import com.unicauca.pensionados.backend.application.dto.response.ipc.IPCRespuestaDTO;
+import com.unicauca.pensionados.backend.application.dto.request.ipc.RegistroIPCPeticion;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.math.BigDecimal;
+import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.Year;
 import java.util.List;
@@ -35,14 +39,9 @@ public class IPCServicio implements IIPCServicio {
      */
     @Override
     public List<IPCRespuestaDTO> listarIPC() {
-        List<IPC> lista = ipcRepositorio.findAll();
+        List<IPC> lista = ipcRepositorio.findByActivoTrue();
         logCambioServicio.registrarConsulta(nombreEntidad);
-        return lista.stream().map(ipc -> {
-            IPCRespuestaDTO dto = new IPCRespuestaDTO();
-            dto.setFechaIPC(ipc.getFechaIPC());
-            dto.setValorIPC(ipc.getValorIPC());
-            return dto;
-        }).toList();
+        return lista.stream().map(IpcMapper::toIpcDTO).toList();
     }
 
     /**
@@ -57,13 +56,11 @@ public class IPCServicio implements IIPCServicio {
             throw new RuntimeException("No se puede consultar el IPC de años futuros");
         }
         IPC ipc = ipcRepositorio.findById(anio).orElse(null);
-        if (ipc == null) return null;
-        
-        IPCRespuestaDTO dto = new IPCRespuestaDTO();
-        dto.setFechaIPC(ipc.getFechaIPC());
-        dto.setValorIPC(ipc.getValorIPC());
+        if (ipc == null) {
+            throw new RuntimeException("No existe un registro de IPC para el año " + anio);
+        }
         logCambioServicio.registrarConsulta(nombreEntidad);
-        return dto;
+        return IpcMapper.toIpcDTO(ipc);
     }
 
     /**
@@ -74,41 +71,11 @@ public class IPCServicio implements IIPCServicio {
      */
     @Override
     public void registrarIPC(RegistroIPCPeticion peticion) {
-        int anioActual = Year.now().getValue();
+        validarPeticion(peticion);
+        validarNoDuplicado(peticion.getYear());
+        validarSecuencia(peticion.getYear());
 
-        if (peticion.getFechaIPC() == null || peticion.getValorIPC() == null) {
-            throw new RuntimeException("Los campos fechaIPC y valorIPC son obligatorios");
-        }
-
-        if (peticion.getFechaIPC() != anioActual) {
-            throw new RuntimeException("El año del IPC a registrar debe ser el año actual");
-        }
-
-        // Validar primero si ya existe un IPC para el año
-        Optional<IPC> existente = ipcRepositorio.findByFechaIPC(peticion.getFechaIPC());
-        if (existente.isPresent()) {
-            LogCambio logCambio = new LogCambio();
-            logCambio.setEntidad("IPC");
-            logCambio.setAccion(LogCambio.Accion.CREAR);
-            logCambio.setValorNuevo("Intento de crear IPC para el año " + peticion.getFechaIPC() + " duplicado");
-            logCambio.setFecha(LocalDateTime.now());
-            throw new BusinessValidationException("Ya existe un registro de IPC para el año " + peticion.getFechaIPC());
-        }
-
-        // Obtener todos los IPCs registrados
-        List<IPC> ipcList = ipcRepositorio.findAll();
-
-        // Validar que el año a registrar sea el siguiente al último registrado
-        if (!ipcList.isEmpty()) {
-            int maxAnio = ipcList.stream().mapToInt(IPC::getFechaIPC).max().orElse(anioActual - 1);
-            if (peticion.getFechaIPC() != maxAnio + 1) {
-                throw new RuntimeException("Debe registrar primero el IPC del año inmediatamente anterior (último registrado: " + maxAnio + ")");
-            }
-        }
-
-        IPC ipc = new IPC();
-        ipc.setFechaIPC(peticion.getFechaIPC());
-        ipc.setValorIPC(peticion.getValorIPC());
+        IPC ipc = construirIPC(peticion);
         ipc = ipcRepositorio.save(ipc);
         logCambioServicio.registrarCreacion(nombreEntidad, ipc);
     }
@@ -117,49 +84,117 @@ public class IPCServicio implements IIPCServicio {
 
     /**
      * Actualiza el valor del IPC para el año dado.
-     * @param anio Año del IPC a actualizar.
+     * @param peticion Año del IPC a actualizar.
      * @param peticion DTO con el nuevo valor del IPC.
      * @throws RuntimeException si el valor es nulo, el año no es válido o el IPC no existe.
      */
     @Override
-    public void actualizarIPC(Integer anio, RegistroIPCPeticion peticion) {
-        int anioActual = Year.now().getValue();
-        if (peticion.getValorIPC() == null) {
-            throw new RuntimeException("El campo valorIPC es obligatorio");
+    public void actualizarIPC(Long id, RegistroIPCPeticion peticion) {
+
+        if (id == null) {
+            throw new BusinessValidationException("El id del IPC es obligatorio para actualizar");
         }
-        // Solo se puede editar el IPC del año actual, el inmediatamente anterior o de años futuros
-        /*if (anio < anioActual - 1) {
-            throw new RuntimeException("Solo se puede actualizar el IPC de un año anterior al actual en adelante (desde " + (anioActual - 1) + ")");
-        }*/
-        Optional<IPC> existente = ipcRepositorio.findById(anio);
-        if (existente.isEmpty()) {
-            throw new RuntimeException("No existe un IPC registrado para el año especificado");
-        }
-        IPC ipcExistente = existente.get();
-        IPC ipcAntiguo = new IPC();
-        BeanUtils.copyProperties(ipcExistente, ipcAntiguo);
-        if(ipcExistente.getFechaIPC() != anioActual) {
-            throw new RuntimeException("No se puede actualizar el IPC de un año anterior al actual");
-        }
-        ipcExistente.setValorIPC(peticion.getValorIPC());
-        ipcExistente = ipcRepositorio.save(ipcExistente);
-        logCambioServicio.registrarActualizacion(nombreEntidad, ipcAntiguo, ipcExistente);
+
+        IPC ipc = ipcRepositorio.findById(Math.toIntExact(id))
+                .orElseThrow(() -> new BusinessValidationException(
+                        "No existe un IPC con id " + id
+                ));
+        validarActualizacion(ipc, peticion);
+        actualizarCampos(ipc, peticion);
+
+        ipcRepositorio.save(ipc);
+        logCambioServicio.registrarActualizacion(nombreEntidad, ipc, ipc);
     }
+
 
     /**
      * Elimina el registro de IPC para el año dado.
      * Solo se permite eliminar el IPC del año actual o posteriores.
-     * @param anio Año del IPC a eliminar.
+     * @param id Año del IPC a eliminar.
      * @throws RuntimeException si el año es anterior al actual.
      */
     @Override
-    public void eliminarIPC(Integer anio) {
-        int anioActual = Year.now().getValue();
-        if (anio < anioActual) {
-            throw new RuntimeException("No se puede eliminar IPC de años anteriores al actual");
-        }
-        IPC ipc = ipcRepositorio.findById(anio).orElseThrow(()->new RuntimeException("No se encontro el IPC"));
-        ipcRepositorio.deleteById(anio);
+    public void eliminarIPC(Integer id) {
+
+        IPC ipc = ipcRepositorio.findByIdAndActivoTrue(Long.valueOf(id))
+                .orElseThrow(() -> new BusinessValidationException(
+                        "No existe un IPC activo con id " + id
+                ));
+
+        ipc.setEstado(EstadoIPC.INACTIVO);
+        ipc.setUpdatedAt(LocalDate.now());
+
+        ipcRepositorio.save(ipc);
         logCambioServicio.registrarEliminacion(nombreEntidad, ipc);
     }
+
+
+
+
+    private IPC construirIPC(RegistroIPCPeticion peticion) {
+        IPC ipc = new IPC();
+        ipc.setYear(peticion.getYear());
+        ipc.setIpc(peticion.getIpc());
+        ipc.setResolution(peticion.getResolution());
+        ipc.setResolutionDate(peticion.getResolutionDate());
+        ipc.setResolutionDetails(peticion.getResolutionDetails());
+        ipc.setUpdatedAt(LocalDate.now());
+        return ipc;
+    }
+
+    private void validarPeticion(RegistroIPCPeticion peticion) {
+        int anioActual = Year.now().getValue();
+
+        if (peticion.getYear() == null || peticion.getIpc() == null) {
+            throw new BusinessValidationException(
+                    "Los campos year e ipc son obligatorios"
+            );
+        }
+
+        if (!peticion.getYear().equals(anioActual)) {
+            throw new BusinessValidationException(
+                    "El IPC solo puede registrarse para el año actual"
+            );
+        }
+    }
+
+
+    private void validarNoDuplicado(Integer anio) {
+        if (ipcRepositorio.findByFechaIPC(anio)) {
+            throw new BusinessValidationException(
+                    "Ya existe un registro de IPC para el año " + anio
+            );
+        }
+    }
+    private void validarSecuencia(Integer anio) {
+        Integer ultimoAnio = ipcRepositorio.obtenerUltimoAnioRegistrado();
+
+        if (ultimoAnio != null && anio != ultimoAnio + 1) {
+            throw new BusinessValidationException(
+                    "Debe registrar primero el IPC del año " + ultimoAnio
+            );
+        }
+    }
+
+    private void validarActualizacion(IPC existente, RegistroIPCPeticion peticion) {
+
+        if (peticion.getIpc() == null) {
+            throw new BusinessValidationException("El valor del IPC es obligatorio");
+        }
+
+        // Regla de negocio: el año no se puede modificar
+        if (peticion.getYear() != null &&
+                !peticion.getYear().equals(existente.getYear())) {
+            throw new BusinessValidationException("No está permitido modificar el año del IPC");
+        }
+    }
+    private void actualizarCampos(IPC ipc, RegistroIPCPeticion peticion) {
+        ipc.setIpc(peticion.getIpc());
+        ipc.setResolution(peticion.getResolution());
+        ipc.setResolutionDate(peticion.getResolutionDate());
+        ipc.setResolutionDetails(peticion.getResolutionDetails());
+        ipc.setUpdatedAt(LocalDate.now());
+    }
+
+
 }

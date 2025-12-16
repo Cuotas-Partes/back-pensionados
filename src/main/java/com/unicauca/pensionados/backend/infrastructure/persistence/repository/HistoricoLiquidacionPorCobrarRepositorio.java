@@ -1,6 +1,5 @@
 package com.unicauca.pensionados.backend.infrastructure.persistence.repository;
 
-import com.unicauca.pensionados.backend.domain.model.entity.HistoricoLiquidacionPorCobrar;
 import com.unicauca.pensionados.backend.domain.model.entity.Pensionado;
 import org.springframework.data.jpa.repository.JpaRepository;
 

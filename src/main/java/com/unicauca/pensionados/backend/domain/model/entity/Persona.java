@@ -8,10 +8,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 // Importar los nuevos enumeradores
-import com.unicauca.pensionados.backend.domain.model.enums.EstadoCivil;
-import com.unicauca.pensionados.backend.domain.model.enums.EstadoPersona;
-import com.unicauca.pensionados.backend.domain.model.enums.Genero;
-import com.unicauca.pensionados.backend.domain.model.enums.TipoIdentificacion;
+import com.unicauca.pensionados.backend.domain.model.enums.*;
 
 import jakarta.persistence.*;
 
@@ -55,7 +52,7 @@ public abstract class Persona {
 
     @Enumerated(EnumType.STRING)
     @Column (name = "estadoPersona", nullable = false, length = 50)
-    private EstadoPersona estadoPersona; // Campo cambiado a tipo Enum
+    private EstadoSustituto estadoPersona; // Campo cambiado a tipo Enum
 
     @Enumerated(EnumType.STRING)
     @Column (name = "generoPersona", length = 50)

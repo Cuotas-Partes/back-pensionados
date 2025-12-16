@@ -6,7 +6,6 @@ import java.util.Optional;
 
 import com.unicauca.pensionados.backend.domain.model.entity.Entidad;
 import com.unicauca.pensionados.backend.domain.model.entity.Pensionado;
-import com.unicauca.pensionados.backend.domain.model.entity.Trabajo;
 //import com.unicauca.pensionados.backend.domain.model.entity.Trabajo.TrabajoId;
 
 public interface TrabajoRepositorio extends JpaRepository<Trabajo, Long> {

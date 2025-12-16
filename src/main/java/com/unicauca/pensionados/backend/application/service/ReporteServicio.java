@@ -15,7 +15,7 @@ import com.unicauca.pensionados.backend.domain.model.entity.Usuario;
 import com.unicauca.pensionados.backend.domain.model.enums.TipoReporte;
 import com.unicauca.pensionados.backend.infrastructure.persistence.repository.ReporteRepositorio;
 import com.unicauca.pensionados.backend.infrastructure.persistence.repository.UsuarioRepositorio;
-import com.unicauca.pensionados.backend.application.dto.request.ReporteDTOPeticion;
+import com.unicauca.pensionados.backend.application.dto.request.reporte.ReporteDTOPeticion;
 import com.unicauca.pensionados.backend.application.dto.response.ReporteDTORespuesta;
 
 import lombok.RequiredArgsConstructor;

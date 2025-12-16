@@ -1,6 +1,6 @@
 package com.unicauca.pensionados.backend.application.service.interfaces;
 
-import com.unicauca.pensionados.backend.application.dto.request.RegistroSucesorPeticion;
+import com.unicauca.pensionados.backend.application.dto.request.sucesor.RegistroSucesorPeticion;
 import java.util.List;
 
 public interface ISucesorServicio {

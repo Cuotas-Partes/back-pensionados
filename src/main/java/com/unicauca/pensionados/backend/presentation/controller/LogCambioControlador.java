@@ -1,9 +1,9 @@
 package com.unicauca.pensionados.backend.presentation.controller;
 
 import com.unicauca.pensionados.backend.application.service.interfaces.ILogCambioServicio;
-import com.unicauca.pensionados.backend.application.dto.request.LogCambioPeticion;
+import com.unicauca.pensionados.backend.application.dto.request.logs.LogCambioPeticion;
 import com.unicauca.pensionados.backend.application.dto.response.LogCambioRespuesta;
-import com.unicauca.pensionados.backend.application.dto.response.ResultadoCobroPorPeriodoDTO;
+import com.unicauca.pensionados.backend.application.dto.response.cobro.ResultadoCobroPorPeriodoDTO;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.tags.Tag;

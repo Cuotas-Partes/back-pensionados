@@ -15,8 +15,8 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.unicauca.pensionados.backend.application.service.interfaces.ISMMLVServicio;
-import com.unicauca.pensionados.backend.application.dto.request.SMMLVDTOPeticion;
-import com.unicauca.pensionados.backend.application.dto.response.SMMLVDTORespuesta;
+import com.unicauca.pensionados.backend.application.dto.request.smmlv.SMMLVDTOPeticion;
+import com.unicauca.pensionados.backend.application.dto.response.smmlv.SMMLVDTORespuesta;
 
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
@@ -35,7 +35,7 @@ public class SMMLVControlador {
     @PostMapping
     @Operation(summary = "Crear un nuevo registro de SMMLV")
     public ResponseEntity<SMMLVDTORespuesta> crear(@Valid @RequestBody SMMLVDTOPeticion peticion) {
-        SMMLVDTORespuesta respuesta = smmlvServicio.crear(peticion);
+        SMMLVDTORespuesta respuesta = smmlvServicio.registrarSMMLV(peticion);
         return ResponseEntity.status(HttpStatus.CREATED).body(respuesta);
     }
 
@@ -44,14 +44,14 @@ public class SMMLVControlador {
     public ResponseEntity<SMMLVDTORespuesta> actualizar(
             @PathVariable Long id,
             @Valid @RequestBody SMMLVDTOPeticion peticion) {
-        SMMLVDTORespuesta respuesta = smmlvServicio.actualizar(id, peticion);
+        SMMLVDTORespuesta respuesta = smmlvServicio.actualizarSMMLV(id, peticion);
         return ResponseEntity.ok(respuesta);
     }
 
     @DeleteMapping("/{id}")
     @Operation(summary = "Eliminar un registro de SMMLV")
     public ResponseEntity<Void> eliminar(@PathVariable Long id) {
-        smmlvServicio.eliminar(id);
+        smmlvServicio.eliminarSMMLV(id);
         return ResponseEntity.noContent().build();
     }
 
@@ -72,7 +72,7 @@ public class SMMLVControlador {
     @GetMapping
     @Operation(summary = "Obtener todos los registros de SMMLV")
     public ResponseEntity<List<SMMLVDTORespuesta>> obtenerTodos() {
-        List<SMMLVDTORespuesta> smmlvList = smmlvServicio.obtenerTodos();
+        List<SMMLVDTORespuesta> smmlvList = smmlvServicio.listarSMMLV();
         return ResponseEntity.ok(smmlvList);
     }
 }

@@ -1,29 +1,31 @@
 package com.unicauca.pensionados.backend.application.service;
 
+import com.unicauca.pensionados.backend.application.dto.request.entidad.RegistroEntidadPeticion;
+import com.unicauca.pensionados.backend.application.dto.request.RegistroTrabajoPeticion;
 import com.unicauca.pensionados.backend.application.service.interfaces.IEntidadServicio;
 import com.unicauca.pensionados.backend.application.service.interfaces.ILogCambioServicio;
-import org.springframework.beans.BeanUtils;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Service;
-
-import com.unicauca.pensionados.backend.domain.model.enums.EstadoEntidad;
+import com.unicauca.pensionados.backend.domain.exception.BusinessValidationException;
+import com.unicauca.pensionados.backend.domain.exception.RecursoNoEncontrado;
 import com.unicauca.pensionados.backend.domain.model.entity.Entidad;
 import com.unicauca.pensionados.backend.domain.model.entity.Pensionado;
-import com.unicauca.pensionados.backend.domain.model.entity.Trabajo;
+import com.unicauca.pensionados.backend.domain.model.entity.Persona;
+import com.unicauca.pensionados.backend.domain.model.enums.EstadoEntidad;
 import com.unicauca.pensionados.backend.infrastructure.persistence.repository.CuotaParteRepositorio;
 import com.unicauca.pensionados.backend.infrastructure.persistence.repository.EntidadRepositorio;
 import com.unicauca.pensionados.backend.infrastructure.persistence.repository.PensionadoRepositorio;
 import com.unicauca.pensionados.backend.infrastructure.persistence.repository.PeriodoRepositorio;
+import com.unicauca.pensionados.backend.infrastructure.persistence.repository.PersonaRepositorio;
 import com.unicauca.pensionados.backend.infrastructure.persistence.repository.TrabajoRepositorio;
-import com.unicauca.pensionados.backend.application.dto.request.RegistroEntidadPeticion;
-import com.unicauca.pensionados.backend.application.dto.request.RegistroTrabajoPeticion;
+import jakarta.transaction.Transactional;
+import org.springframework.beans.BeanUtils;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Optional;
 import java.util.Map;
+import java.util.Optional;
 import java.util.stream.Collectors;
-import jakarta.transaction.Transactional;
 
 @Service
 public class EntidadServicio implements IEntidadServicio {
@@ -32,6 +34,10 @@ public class EntidadServicio implements IEntidadServicio {
 
     @Autowired
     private EntidadRepositorio entidadRepository;
+    @Autowired
+    private PersonaRepositorio personaRepositorio;
+
+    // TODO: esto debería moverse a un servicio separado (Trabajos/CuotasPartes) para no mezclar responsabilidades.
     @Autowired
     private PensionadoRepositorio pensionadoRepositorio;
     @Autowired
@@ -42,6 +48,7 @@ public class EntidadServicio implements IEntidadServicio {
     private CuotaParteRepositorio cuotaParteRepositorio;
     @Autowired
     private PeriodoRepositorio periodoRepositorio;
+
     @Autowired
     private ILogCambioServicio logCambioService;
 
@@ -55,55 +62,32 @@ public class EntidadServicio implements IEntidadServicio {
     @Transactional
     @Override
     public void registrarEntidad(RegistroEntidadPeticion request) {
-        if (entidadRepository.existsByNit(request.getNitEntidad().toString())) {
-            throw new RuntimeException("Ya existe una entidad con el NIT: " + request.getNitEntidad());
+        if (entidadRepository.existsByNit(request.getNit())) {
+            throw new BusinessValidationException("Ya existe una entidad con el NIT: " + request.getNit());
         }
 
-        if (entidadRepository.existsByName(request.getNombreEntidad())) {
-            throw new RuntimeException("Ya existe una entidad con el nombre: " + request.getNombreEntidad());
+        if (entidadRepository.existsByName(request.getName())) {
+            throw new BusinessValidationException("Ya existe una entidad con el nombre: " + request.getName());
         }
 
         Entidad entidad = new Entidad();
-        entidad.setNit(request.getNitEntidad().toString());
-        entidad.setName(request.getNombreEntidad());
-        entidad.setAddress(request.getDireccionEntidad());
-        entidad.setPhone(request.getTelefonoEntidad().toString());
-        entidad.setEmail(request.getEmailEntidad());
-        entidad.setEstado(request.getEstadoEntidad());
+        entidad.setNit(request.getNit());
+        entidad.setName(request.getName());
+        entidad.setAddress(request.getAddress());
+        entidad.setPhone(request.getPhone());
+        entidad.setEmail(request.getEmail());
+        entidad.setResponsibleOfficer(request.getResponsibleOfficer());
+        entidad.setOfficerPosition(request.getOfficerPosition());
+        entidad.setEstado(request.getEstado() != null ? request.getEstado() : EstadoEntidad.Activo);
 
-        //Guardar log
-        logCambioService.registrarCreacion(nombreEntidad,entidadRepository.save(entidad));
-
-
-        if (request.getTrabajos() != null && !request.getTrabajos().isEmpty()) {
-            for (RegistroTrabajoPeticion registroTrabajoPeticion : request.getTrabajos()) {
-                // Se busca al pensionado por su número de identificación (cédula)
-                Pensionado pensionado = pensionadoRepositorio.findByCedula(
-                    registroTrabajoPeticion.getNumeroIdentificacion().toString())
-                    .orElseThrow(() -> new RuntimeException(
-                        "El pensionado con cédula " + registroTrabajoPeticion.getNumeroIdentificacion() +
-                        " no está registrado"));
-
-                Trabajo trabajo = new Trabajo();
-
-               //trabajo.setId(trabajoId);
-                trabajo.setDiasDeServicio(registroTrabajoPeticion.getDiasDeServicio());
-                trabajo.setEntidad(entidad);
-                trabajo.setPensionado(pensionado);
-                trabajoRepositorio.save(trabajo);
-                Long totalDiasTrabajo = trabajoRepositorio.findByPensionado(pensionado)
-                    .stream()
-                    .mapToLong(Trabajo::getDiasDeServicio)
-                    .sum();
-                pensionado.setDiasTotalesTrabajados(totalDiasTrabajo.intValue());
-                pensionadoRepositorio.save(pensionado);
-
-                cuotaParteServicio.registrarCuotaParte(trabajo);
-
-                cuotaParteServicio.recalcularCuotasPartesPorPensionado(pensionado);
-                
-            }
+        if (request.getIdPersonaEncargado() != null) {
+            Persona encargado = personaRepositorio.findById(request.getIdPersonaEncargado())
+                    .orElseThrow(() -> new RecursoNoEncontrado(
+                            "No se encontró la Persona encargada con ID: " + request.getIdPersonaEncargado()));
+            entidad.setEncargado(encargado);
         }
+
+        logCambioService.registrarCreacion(nombreEntidad, entidadRepository.save(entidad));
     }
 
 
@@ -128,7 +112,7 @@ public class EntidadServicio implements IEntidadServicio {
      * Actualiza una entidad existente en la base de datos.
      * 
      * @param idEntidad el NIT de la entidad a actualizar
-     * @param entidad los nuevos datos de la entidad
+     * @param request los nuevos datos de la entidad
      * @throws RuntimeException si no se encuentra la entidad
      * @throws Exception si ocurre un error al actualizar la entidad
      * Se comenta codigo ya que la informacion que se debe actualizar es solo administrativa
@@ -136,72 +120,44 @@ public class EntidadServicio implements IEntidadServicio {
      */
     @Transactional
     @Override
-    public void actualizar(Long idEntidad, RegistroEntidadPeticion entidad) {
-    Entidad entidadExistente = entidadRepository.findById(idEntidad)
-        .orElseThrow(() -> new RuntimeException("No se encontró la entidad con ID: " + idEntidad));
+    public void actualizar(Long idEntidad, RegistroEntidadPeticion request) {
+        Entidad entidadExistente = entidadRepository.findById(idEntidad)
+                .orElseThrow(() -> new RecursoNoEncontrado("No se encontró la entidad con ID: " + idEntidad));
 
-    if (entidadRepository.existsByName(entidad.getNombreEntidad())
-        && !entidadExistente.getName().equals(entidad.getNombreEntidad())) {
-        throw new RuntimeException("Ya existe una entidad con el nombre: " + entidad.getNombreEntidad());
-    }
-
-    Entidad entidadAntigua = new Entidad();
-    BeanUtils.copyProperties(entidadExistente, entidadAntigua);
-
-    entidadExistente.setName(entidad.getNombreEntidad());
-    entidadExistente.setAddress(entidad.getDireccionEntidad());
-    entidadExistente.setPhone(entidad.getTelefonoEntidad().toString());
-    entidadExistente.setEmail(entidad.getEmailEntidad());
-    entidadExistente.setEstado(entidad.getEstadoEntidad());
-    /** Se comenta este codigo, ya que la actualizacion de una entidad no debe modificar trabajos o cuotas partes
-    if (entidad.getTrabajos() != null) {
-        List<Trabajo> trabajosActuales = trabajoRepositorio.findByEntidadNitEntidad(nid);
-        
-        // ==================== CORRECCIÓN 1 ====================
-        // La clave del mapa ahora es el ID primario del pensionado.
-        Map<Long, Trabajo> mapaTrabajosActuales = trabajosActuales.stream()
-            .collect(Collectors.toMap(trabajo -> trabajo.getPensionado().getIdPersona(), trabajo -> trabajo));
-
-        for (RegistroTrabajoPeticion trabajoPeticion : entidad.getTrabajos()) {
-            
-            // ==================== CORRECCIÓN 2 ====================
-            // Se busca al pensionado usando su tipo y número de identificación.
-            // Se busca al pensionado usando su número de identificación (cédula)
-            Long numeroIdentificacion = trabajoPeticion.getNumeroIdentificacion();
-            Pensionado pensionado = pensionadoRepositorio.findByCedula(numeroIdentificacion.toString())
-                .orElseThrow(() -> new RuntimeException(
-                    "El pensionado con cédula " + numeroIdentificacion + " no está registrado"));
-
-            // Obtenemos el ID primario para trabajar con el mapa.
-            Long idPersona = pensionado.getIdPersona();
-            Trabajo trabajo = mapaTrabajosActuales.get(idPersona);
-
-            if (trabajo != null) {
-                trabajo.setDiasDeServicio(trabajoPeticion.getDiasDeServicio());
-                trabajoRepositorio.save(trabajo);
-                cuotaParteServicio.registrarCuotaParte(trabajo);
-                mapaTrabajosActuales.remove(idPersona); // Se usa el ID primario para remover.
-            } else {
-                Trabajo nuevoTrabajo = new Trabajo();
-                nuevoTrabajo.setDiasDeServicio(trabajoPeticion.getDiasDeServicio());
-                nuevoTrabajo.setEntidad(entidadExistente);
-                nuevoTrabajo.setPensionado(pensionado);
-                trabajoRepositorio.save(nuevoTrabajo);
-                cuotaParteServicio.registrarCuotaParte(nuevoTrabajo);
-                entidadExistente.getTrabajos().add(nuevoTrabajo);
-            }
-
-            Long totalDiasTrabajo = trabajoRepositorio.findByPensionado(pensionado)
-                .stream()
-                .mapToLong(Trabajo::getDiasDeServicio)
-                .sum();
-            pensionado.setDiasTotalesTrabajados(totalDiasTrabajo.intValue());
-            pensionadoRepositorio.save(pensionado);
-            }
+        // Validaciones de unicidad (solo cuando cambian)
+        if (!entidadExistente.getNit().equalsIgnoreCase(request.getNit()) && entidadRepository.existsByNit(request.getNit())) {
+            throw new BusinessValidationException("Ya existe una entidad con el NIT: " + request.getNit());
         }
 
-        */
-    logCambioService.registrarActualizacion(nombreEntidad, entidadAntigua, entidadRepository.save(entidadExistente));
+        if (!entidadExistente.getName().equalsIgnoreCase(request.getName()) && entidadRepository.existsByName(request.getName())) {
+            throw new BusinessValidationException("Ya existe una entidad con el nombre: " + request.getName());
+        }
+
+        Entidad entidadAntigua = new Entidad();
+        BeanUtils.copyProperties(entidadExistente, entidadAntigua);
+
+        entidadExistente.setNit(request.getNit());
+        entidadExistente.setName(request.getName());
+        entidadExistente.setAddress(request.getAddress());
+        entidadExistente.setPhone(request.getPhone());
+        entidadExistente.setEmail(request.getEmail());
+        entidadExistente.setResponsibleOfficer(request.getResponsibleOfficer());
+        entidadExistente.setOfficerPosition(request.getOfficerPosition());
+
+        if (request.getEstado() != null) {
+            entidadExistente.setEstado(request.getEstado());
+        }
+
+        if (request.getIdPersonaEncargado() != null) {
+            Persona encargado = personaRepositorio.findById(request.getIdPersonaEncargado())
+                    .orElseThrow(() -> new RecursoNoEncontrado(
+                            "No se encontró la Persona encargada con ID: " + request.getIdPersonaEncargado()));
+            entidadExistente.setEncargado(encargado);
+        } else {
+            entidadExistente.setEncargado(null);
+        }
+
+        logCambioService.registrarActualizacion(nombreEntidad, entidadAntigua, entidadRepository.save(entidadExistente));
     }
 
     /**
@@ -418,7 +374,7 @@ public class EntidadServicio implements IEntidadServicio {
     public Entidad buscarPorNit(Long nit) {
         logCambioService.registrarConsulta(nombreEntidad);
         return entidadRepository.findByNit(nit.toString())
-            .orElseThrow(() -> new RuntimeException("No se encontró la entidad con NIT: " + nit));
+                .orElseThrow(() -> new RecursoNoEncontrado("No se encontró la entidad con NIT: " + nit));
 
     }
 
@@ -426,12 +382,13 @@ public class EntidadServicio implements IEntidadServicio {
     public Entidad buscarPorId(Long id) {
         logCambioService.registrarConsulta(nombreEntidad);
         return entidadRepository.findById(id)
-            .orElseThrow(() -> new RuntimeException("No se encontró la entidad con ID: " + id));
+                .orElseThrow(() -> new RecursoNoEncontrado("No se encontró la entidad con ID: " + id));
     }
 
     @Override
     public List<Entidad> listarTodos() {
-        return entidadRepository.findAll();
+        logCambioService.registrarConsulta(nombreEntidad);
+        return entidadRepository.findAllByOrderByNitAsc();
     }
 
     /**
@@ -446,16 +403,15 @@ public class EntidadServicio implements IEntidadServicio {
         List<Entidad> entidades = new ArrayList<>();
 
         // Buscar entidades por NIT
-        try {
-            Long nit = Long.parseLong(query);
-            entidadRepository.findByNit(nit.toString()).ifPresent(entidades::add);
-        } catch (NumberFormatException e) {
-            // Si no es un número, buscar por nombre o dirección
-            entidades.addAll(entidadRepository.findByNameContainingIgnoreCase(query));
-            entidades.addAll(entidadRepository.findByAddressContainingIgnoreCase(query));
+        if (query.chars().allMatch(Character::isDigit)) {
+            entidadRepository.findByNit(query).ifPresent(entidades::add);
         }
 
-        // Eliminar duplicados
+        // Buscar por texto
+        entidades.addAll(entidadRepository.findByNameContainingIgnoreCase(query));
+        entidades.addAll(entidadRepository.findByAddressContainingIgnoreCase(query));
+        entidades.addAll(entidadRepository.findByEmailContainingIgnoreCase(query));
+
         return entidades.stream().distinct().toList();
     }
 
@@ -604,7 +560,22 @@ public class EntidadServicio implements IEntidadServicio {
     public List<Entidad> buscarEntidadPorNombre(String nombre) {
         logCambioService.registrarConsulta(nombreEntidad);
         return entidadRepository.findByNameContainingIgnoreCase(nombre);
-    }   
+    }
+
+    @Transactional
+    @Override
+    public void eliminar(Long idEntidad) {
+        Entidad entidad = entidadRepository.findById(idEntidad)
+                .orElseThrow(() -> new RecursoNoEncontrado("No se encontró la entidad con ID: " + idEntidad));
+
+        // Evitar borrar entidades con dependencias
+        if (!trabajoRepositorio.findByEntidadNit(entidad.getNit()).isEmpty()) {
+            throw new BusinessValidationException(
+                    "No se puede eliminar la entidad porque tiene trabajos asociados. Use /desactivar si aplica.");
+        }
+
+        entidadRepository.delete(entidad);
+    }
 
     public List<Pensionado> listarPensionadosPorEntidad(Long idEntidad) {
     Entidad entidad = entidadRepository.findById(idEntidad)

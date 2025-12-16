@@ -1,7 +1,7 @@
 package com.unicauca.pensionados.backend.application.service.interfaces;
 
 
-import com.unicauca.pensionados.backend.application.dto.request.LogCambioPeticion;
+import com.unicauca.pensionados.backend.application.dto.request.logs.LogCambioPeticion;
 import com.unicauca.pensionados.backend.application.dto.response.LogCambioRespuesta;
 
 import java.util.List;

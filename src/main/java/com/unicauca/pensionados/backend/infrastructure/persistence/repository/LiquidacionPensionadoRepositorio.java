@@ -4,7 +4,6 @@ import java.util.List;
 
 import org.springframework.data.jpa.repository.JpaRepository;
 
-import com.unicauca.pensionados.backend.domain.model.entity.LiquidacionPensionado;
 import com.unicauca.pensionados.backend.domain.model.enums.EstadoLiquidacion;
 
 public interface LiquidacionPensionadoRepositorio extends JpaRepository<LiquidacionPensionado, Long> {

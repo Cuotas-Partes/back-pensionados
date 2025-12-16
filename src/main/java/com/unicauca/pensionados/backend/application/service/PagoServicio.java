@@ -12,16 +12,13 @@ import org.springframework.transaction.annotation.Transactional;
 import com.unicauca.pensionados.backend.domain.exception.RecursoNoEncontrado;
 import com.unicauca.pensionados.backend.application.service.interfaces.IPagoServicio;
 import com.unicauca.pensionados.backend.domain.model.entity.Entidad;
-import com.unicauca.pensionados.backend.domain.model.entity.Pago;
 import com.unicauca.pensionados.backend.domain.model.entity.Pensionado;
 import com.unicauca.pensionados.backend.infrastructure.persistence.repository.EntidadRepositorio;
 import com.unicauca.pensionados.backend.infrastructure.persistence.repository.IPCRepositorio;
 import com.unicauca.pensionados.backend.infrastructure.persistence.repository.PagoRepositorio;
 import com.unicauca.pensionados.backend.infrastructure.persistence.repository.PensionadoRepositorio;
-import com.unicauca.pensionados.backend.application.dto.request.FiltroPagoPeticion;
-import com.unicauca.pensionados.backend.application.dto.request.PagoDTOPeticion;
-import com.unicauca.pensionados.backend.application.dto.response.PagoDTORespuesta;
-import com.unicauca.pensionados.backend.application.dto.response.ResumenPagoDTORespuesta;
+import com.unicauca.pensionados.backend.application.dto.request.filtro.FiltroPagoPeticion;
+import com.unicauca.pensionados.backend.application.dto.request.pago.PagoDTOPeticion;
 
 import lombok.RequiredArgsConstructor;
 
@@ -88,7 +85,7 @@ public class PagoServicio implements IPagoServicio {
             ipcRepositorio.findByFechaIPC(peticion.getIpcInicialFecha())
                     .ifPresent(ipcInicial -> {
                         pago.setIpcInicial(ipcInicial);
-                        pago.setValorIpcInicial(ipcInicial.getValorIPC());
+                        pago.setValorIpcInicial(ipcInicial.ge());
                     });
         }
 
@@ -96,7 +93,7 @@ public class PagoServicio implements IPagoServicio {
             ipcRepositorio.findByFechaIPC(peticion.getIpcFinalFecha())
                     .ifPresent(ipcFinal -> {
                         pago.setIpcFinal(ipcFinal);
-                        pago.setValorIpcFinal(ipcFinal.getValorIPC());
+                        pago.setValorIpcFinal(ipcFinal.getIpc());
                     });
         }
 
@@ -174,7 +171,7 @@ public class PagoServicio implements IPagoServicio {
             ipcRepositorio.findByFechaIPC(peticion.getIpcInicialFecha())
                     .ifPresent(ipcInicial -> {
                         pago.setIpcInicial(ipcInicial);
-                        pago.setValorIpcInicial(ipcInicial.getValorIPC());
+                        pago.setValorIpcInicial(ipcInicial.getValorIPC();
                     });
         } else {
             pago.setIpcInicial(null);

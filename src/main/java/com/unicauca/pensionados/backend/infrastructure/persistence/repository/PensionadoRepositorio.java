@@ -9,7 +9,7 @@ import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 
 import com.unicauca.pensionados.backend.domain.model.entity.Pensionado;
-import com.unicauca.pensionados.backend.application.dto.response.EntidadCuotaParteRespuesta;
+import com.unicauca.pensionados.backend.application.dto.response.entidad.EntidadCuotaParteRespuesta;
 
 public interface PensionadoRepositorio extends JpaRepository<Pensionado, Long>{
     @Operation(
@@ -48,7 +48,7 @@ public interface PensionadoRepositorio extends JpaRepository<Pensionado, Long>{
         SELECT DISTINCT p
         FROM Pensionado p
         LEFT JOIN FETCH p.resoluciones
-        WHERE p.entityId = :entityId
+        WHERE p.entityId = :entity_id
     """)
-    List<Pensionado> findByEntidadId(@Param("entidadId") Long entidadId);
+    List<Pensionado> findByEntidadId(@Param("entity_id") Long entidadId);
 }

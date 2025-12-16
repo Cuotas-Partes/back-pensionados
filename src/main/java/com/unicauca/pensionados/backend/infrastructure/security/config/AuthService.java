@@ -17,9 +17,9 @@ import com.unicauca.pensionados.backend.domain.model.entity.Rol;
 import com.unicauca.pensionados.backend.domain.model.entity.Usuario;
 import com.unicauca.pensionados.backend.infrastructure.persistence.repository.RolRepositorio;
 import com.unicauca.pensionados.backend.infrastructure.persistence.repository.UsuarioRepositorio;
-import com.unicauca.pensionados.backend.application.dto.request.LoginPeticion;
-import com.unicauca.pensionados.backend.application.dto.request.RegistroPeticion;
-import com.unicauca.pensionados.backend.application.dto.response.AuthRespuesta;
+import com.unicauca.pensionados.backend.application.dto.request.auth.LoginPeticion;
+import com.unicauca.pensionados.backend.application.dto.request.auth.RegistroPeticion;
+import com.unicauca.pensionados.backend.application.dto.response.auth.AuthRespuesta;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;

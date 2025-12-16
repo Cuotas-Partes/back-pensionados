@@ -1,13 +1,16 @@
 package com.unicauca.pensionados.backend.presentation.controller;
 
+import com.unicauca.pensionados.backend.application.dto.request.dtf.DtfRequestDTO;
+import com.unicauca.pensionados.backend.application.dto.response.dtf.DTFDTO;
 import com.unicauca.pensionados.backend.application.service.interfaces.IDTFServicio;
-import com.unicauca.pensionados.backend.application.dto.response.DTFDTO;
+import com.unicauca.pensionados.backend.domain.exception.BusinessValidationException;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
-import java.time.LocalDate;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 @RestController
@@ -18,79 +21,110 @@ public class DTFControlador {
     @Autowired
     private IDTFServicio dtfServicio;
 
+
     @GetMapping
-    public ResponseEntity<?> getDTF(
-            @RequestParam(required = false) Long mes,
-            @RequestParam(required = false) Long anio,
-            @RequestParam(required = false) Long id
+    public ResponseEntity<?> obtener(
+            @RequestParam(required = false) Long id,
+            @RequestParam(required = false) String periodo
     ) {
         try {
-            if(id != null) return ResponseEntity.ok(dtfServicio.obtenerDTFPorId(id));
-            // Se requiere que lleguen ambos para mayor precision
-            // Se obtienen los de los meses de cualquier año y del año de cualquier mes
-            if(mes != null || anio != null) return ResponseEntity.ok(dtfServicio.obtenerDTFPorMesAnio(mes, anio));
-            return ResponseEntity.ok(dtfServicio.listarDTFs());
-        } catch (Exception e) {
-            Map<String, String> response = new HashMap<>();
-            response.put("estado", "error");
-            response.put("mensaje", "Error al obtener los DTFs: " + e.getMessage());
+            if (id != null) {
+                return ResponseEntity.ok(dtfServicio.obtenerDTFPorId(id));
+            }
 
-            return ResponseEntity.status(500).body(response);
+            if (periodo != null) {
+                return ResponseEntity.ok(dtfServicio.obtenerPorPeriodo(periodo));
+            }
+
+            List<DTFDTO> lista = dtfServicio.listarDTFs();
+            return ResponseEntity.ok(lista);
+
+        } catch (Exception e) {
+            return error("Error al obtener DTF", e);
         }
     }
+
 
     @PostMapping
-    public ResponseEntity<?> crearDTF(@RequestBody DTFDTO dtfDTO) {
-        Map<String, String> response = new HashMap<>();
+    public ResponseEntity<?> crear(@RequestBody DtfRequestDTO request) {
         try {
-            if (dtfDTO.getMes() == null || dtfDTO.getAnio() == null) throw new RuntimeException("El mes y el año son obligatorios");
-            if(dtfDTO.getMes() < 1 || dtfDTO.getMes() > 12) throw new RuntimeException("El mes debe estar entre 1 y 12");
-            if(dtfDTO.getAnio() < 1900 || dtfDTO.getAnio() > LocalDate.now().getYear()) throw new RuntimeException("El año debe estar entre 1900 y el año actual");
+            validarPeriodo(request.getPeriodo());
 
-            dtfDTO = dtfServicio.guardarDTF(dtfDTO);
-            return ResponseEntity.ok(dtfDTO);
-        } catch (RuntimeException e) {
-            response.put("estado", "error");
-            response.put("mensaje", e.getMessage());
-            return ResponseEntity.status(400).body(response);
-        }
-        catch (Exception e){
-            response.put("estado", "error");
-            response.put("mensaje", "Error al crear el DTF: " + e.getMessage());
-            return ResponseEntity.status(500).body(response);
-        }
-    }
+            DTFDTO creado = dtfServicio.guardarDTF(request);
+            return ResponseEntity.ok(creado);
 
-    @PutMapping
-    public ResponseEntity<?> actualizarDTF(@RequestBody com.unicauca.pensionados.backend.application.dto.response.DTFDTO dtfDTO) {
-        try {
-            if (dtfDTO.getMes() == null || dtfDTO.getAnio() == null) throw new RuntimeException("El mes y el año son obligatorios");
-            if(dtfDTO.getMes() < 1 || dtfDTO.getMes() > 12) throw new RuntimeException("El mes debe estar entre 1 y 12");
-            if(dtfDTO.getAnio() < 1900 || dtfDTO.getAnio() > LocalDate.now().getYear()) throw new RuntimeException("El año debe estar entre 1900 y el año actual");
-
-            dtfServicio.actualizarDTF(dtfDTO);
-            return ResponseEntity.ok(dtfDTO);
+        } catch (BusinessValidationException e) {
+            return badRequest(e.getMessage());
         } catch (Exception e) {
-            Map<String, String> response = new HashMap<>();
-            response.put("estado", "error");
-            response.put("mensaje", "Error al actualizar el DTF: " + e.getMessage());
-            return ResponseEntity.status(500).body(response);
+            return error("Error al crear DTF", e);
         }
     }
 
-    @DeleteMapping
-    public ResponseEntity<?> eliminarDTF(@RequestParam Long id) {
-        Map<String, String> response = new HashMap<>();
+
+    @PutMapping("/{id}")
+    public ResponseEntity<?> actualizar(
+            @PathVariable Long id,
+            @RequestBody DtfRequestDTO request
+    ) {
+        try {
+            validarPeriodo(request.getPeriodo());
+
+            DTFDTO actualizado = dtfServicio.actualizarDTF(id, request);
+            return ResponseEntity.ok(actualizado);
+
+        } catch (BusinessValidationException e) {
+            return badRequest(e.getMessage());
+        } catch (Exception e) {
+            return error("Error al actualizar DTF", e);
+        }
+    }
+
+
+    @DeleteMapping("/{id}")
+    public ResponseEntity<?> eliminar(@PathVariable Long id) {
         try {
             dtfServicio.eliminarDTF(id);
+
+            Map<String, String> response = new HashMap<>();
             response.put("estado", "exito");
             response.put("mensaje", "DTF eliminado correctamente");
+
             return ResponseEntity.ok(response);
+
+        } catch (BusinessValidationException e) {
+            return badRequest(e.getMessage());
         } catch (Exception e) {
-            response.put("estado", "error");
-            response.put("mensaje", "Error al eliminar el DTF: " + e.getMessage());
-            return ResponseEntity.status(500).body(response);
+            return error("Error al eliminar DTF", e);
         }
     }
 
+    /* =========================
+       VALIDACIONES
+       ========================= */
+
+    private void validarPeriodo(String periodo) {
+        if (periodo == null || !periodo.matches("\\d{4}-\\d{2}")) {
+            throw new BusinessValidationException(
+                    "El periodo debe tener el formato YYYY-MM"
+            );
+        }
+    }
+
+    /* =========================
+       RESPUESTAS COMUNES
+       ========================= */
+
+    private ResponseEntity<Map<String, String>> error(String mensaje, Exception e) {
+        Map<String, String> response = new HashMap<>();
+        response.put("estado", "error");
+        response.put("mensaje", mensaje + ": " + e.getMessage());
+        return ResponseEntity.status(500).body(response);
+    }
+
+    private ResponseEntity<Map<String, String>> badRequest(String mensaje) {
+        Map<String, String> response = new HashMap<>();
+        response.put("estado", "error");
+        response.put("mensaje", mensaje);
+        return ResponseEntity.badRequest().body(response);
+    }
 }

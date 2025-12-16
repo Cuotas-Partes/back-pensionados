@@ -6,7 +6,7 @@ import com.unicauca.pensionados.backend.domain.model.entity.LogCambio;
 import com.unicauca.pensionados.backend.domain.model.entity.Usuario;
 import com.unicauca.pensionados.backend.infrastructure.persistence.repository.LogCambioRepositorio;
 import com.unicauca.pensionados.backend.infrastructure.persistence.repository.UsuarioRepositorio;
-import com.unicauca.pensionados.backend.application.dto.request.LogCambioPeticion;
+import com.unicauca.pensionados.backend.application.dto.request.logs.LogCambioPeticion;
 import com.unicauca.pensionados.backend.application.dto.response.LogCambioRespuesta;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.Authentication;

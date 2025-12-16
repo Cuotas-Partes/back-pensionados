@@ -13,8 +13,8 @@ import com.unicauca.pensionados.backend.domain.model.entity.Pensionado;
 import com.unicauca.pensionados.backend.domain.model.entity.Resolucion;
 import com.unicauca.pensionados.backend.infrastructure.persistence.repository.PensionadoRepositorio;
 import com.unicauca.pensionados.backend.infrastructure.persistence.repository.ResolucionRepositorio;
-import com.unicauca.pensionados.backend.application.dto.request.ResolucionDTOPeticion;
-import com.unicauca.pensionados.backend.application.dto.response.ResolucionDTORespuesta;
+import com.unicauca.pensionados.backend.application.dto.request.resolucion.ResolucionDTOPeticion;
+import com.unicauca.pensionados.backend.application.dto.response.resolucion.ResolucionResponseDTO;
 
 import lombok.RequiredArgsConstructor;
 
@@ -27,7 +27,7 @@ public class ResolucionServicio implements IResolucionServicio {
 
     @Override
     @Transactional
-    public ResolucionDTORespuesta crear(ResolucionDTOPeticion peticion) {
+    public ResolucionResponseDTO crear(ResolucionDTOPeticion peticion) {
         Pensionado pensionado = pensionadoRepositorio.findById(peticion.getPensionadoId())
                 .orElseThrow(() -> new RecursoNoEncontrado("Pensionado no encontrado"));
 
@@ -46,7 +46,7 @@ public class ResolucionServicio implements IResolucionServicio {
 
     @Override
     @Transactional
-    public ResolucionDTORespuesta actualizar(Long id, ResolucionDTOPeticion peticion) {
+    public ResolucionResponseDTO actualizar(Long id, ResolucionDTOPeticion peticion) {
         Resolucion resolucion = resolucionRepositorio.findById(id)
                 .orElseThrow(() -> new RecursoNoEncontrado("Resolución no encontrada"));
 
@@ -78,7 +78,7 @@ public class ResolucionServicio implements IResolucionServicio {
 
     @Override
     @Transactional(readOnly = true)
-    public ResolucionDTORespuesta obtenerPorId(Long id) {
+    public ResolucionResponseDTO obtenerPorId(Long id) {
         Resolucion resolucion = resolucionRepositorio.findById(id)
                 .orElseThrow(() -> new RecursoNoEncontrado("Resolución no encontrada"));
         return mapearARespuesta(resolucion);
@@ -86,7 +86,7 @@ public class ResolucionServicio implements IResolucionServicio {
 
     @Override
     @Transactional(readOnly = true)
-    public List<ResolucionDTORespuesta> obtenerTodas() {
+    public List<ResolucionResponseDTO> obtenerTodas() {
         return resolucionRepositorio.findAll().stream()
                 .map(this::mapearARespuesta)
                 .collect(Collectors.toList());
@@ -94,7 +94,7 @@ public class ResolucionServicio implements IResolucionServicio {
 
     @Override
     @Transactional(readOnly = true)
-    public List<ResolucionDTORespuesta> obtenerPorPensionado(Long pensionadoId) {
+    public List<ResolucionResponseDTO> obtenerPorPensionado(Long pensionadoId) {
         return resolucionRepositorio.findByPensionadoIdPersona(pensionadoId).stream()
                 .map(this::mapearARespuesta)
                 .collect(Collectors.toList());
@@ -102,7 +102,7 @@ public class ResolucionServicio implements IResolucionServicio {
 
     @Override
     @Transactional(readOnly = true)
-    public List<ResolucionDTORespuesta> obtenerPorEstado(String estado) {
+    public List<ResolucionResponseDTO> obtenerPorEstado(String estado) {
         return resolucionRepositorio.findByEstado(estado).stream()
                 .map(this::mapearARespuesta)
                 .collect(Collectors.toList());
@@ -110,22 +110,20 @@ public class ResolucionServicio implements IResolucionServicio {
 
     @Override
     @Transactional(readOnly = true)
-    public ResolucionDTORespuesta obtenerPorNumero(String numeroResolucion) {
+    public ResolucionResponseDTO obtenerPorNumero(String numeroResolucion) {
         Resolucion resolucion = resolucionRepositorio.findByNumeroResolucion(numeroResolucion)
                 .orElseThrow(() -> new RecursoNoEncontrado("Resolución no encontrada"));
         return mapearARespuesta(resolucion);
     }
 
-    private ResolucionDTORespuesta mapearARespuesta(Resolucion resolucion) {
-        ResolucionDTORespuesta respuesta = new ResolucionDTORespuesta();
+    private ResolucionResponseDTO mapearARespuesta(Resolucion resolucion) {
+        ResolucionResponseDTO respuesta = new ResolucionResponseDTO();
         respuesta.setId(resolucion.getId());
         respuesta.setNumeroResolucion(resolucion.getNumeroResolucion());
         respuesta.setFechaResolucion(resolucion.getFechaResolucion());
         respuesta.setValorResolucion(resolucion.getValorResolucion());
         respuesta.setEstado(resolucion.getEstado());
         respuesta.setTipoResolucion(resolucion.getTipoResolucion());
-        respuesta.setPensionadoId(resolucion.getPensionado().getIdPersona());
-        respuesta.setPensionadoNombre(resolucion.getPensionado().getNombre() + " " + resolucion.getPensionado().getApellidos());
         respuesta.setCreatedAt(resolucion.getCreatedAt());
         respuesta.setUpdatedAt(resolucion.getUpdatedAt());
         return respuesta;

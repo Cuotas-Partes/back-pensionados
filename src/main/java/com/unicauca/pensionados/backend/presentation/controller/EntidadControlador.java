@@ -6,14 +6,15 @@ import io.swagger.v3.oas.annotations.media.Content;
 import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.tags.Tag;
+import com.unicauca.pensionados.backend.application.dto.request.entidad.RegistroEntidadPeticion;
+import com.unicauca.pensionados.backend.application.dto.request.RegistroTrabajoPeticion;
+import com.unicauca.pensionados.backend.application.service.interfaces.IEntidadServicio;
+import com.unicauca.pensionados.backend.domain.model.entity.Entidad;
+import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
-import com.unicauca.pensionados.backend.application.service.interfaces.IEntidadServicio;
-import com.unicauca.pensionados.backend.domain.model.entity.Entidad;
-import com.unicauca.pensionados.backend.application.dto.request.RegistroEntidadPeticion;
-import com.unicauca.pensionados.backend.application.dto.request.RegistroTrabajoPeticion;
 
 import java.util.List;
 
@@ -26,22 +27,11 @@ public class EntidadControlador {
     @Autowired
     private IEntidadServicio entidadService;
 
-    @PostMapping("/registrar")
-    @Operation(summary = "Registrar una nueva entidad", description = "Permite registrar una nueva entidad en el sistema.",
-        responses = {
-            @ApiResponse(responseCode = "200", description = "Entidad registrada exitosamente"),
-            @ApiResponse(responseCode = "400", description = "Error en la solicitud"),
-            @ApiResponse(responseCode = "500", description = "Error interno del servidor")
-        })
-    public ResponseEntity<?> registrarEntidad(@RequestBody RegistroEntidadPeticion entidad) {
-        try{
-            entidadService.registrarEntidad(entidad);
-            return ResponseEntity.ok("Entidad registrada exitosamente");
-        } catch (RuntimeException ex) {
-            return ResponseEntity.badRequest().body("Error al registrar entidad: " + ex.getMessage());
-        } catch (Exception ex) {
-            return ResponseEntity.status(500).body("Error interno del servidor: " + ex.getMessage());
-        }
+    @PostMapping
+    @Operation(summary = "Registrar una nueva entidad", description = "Permite registrar una nueva entidad en el sistema.")
+    public ResponseEntity<?> registrarEntidad(@Valid @RequestBody RegistroEntidadPeticion entidad) {
+        entidadService.registrarEntidad(entidad);
+        return ResponseEntity.status(HttpStatus.CREATED).body("Entidad registrada exitosamente");
     }
 
     @GetMapping("/buscar")
@@ -125,26 +115,23 @@ public class EntidadControlador {
         }
     }
 
-    @PutMapping("/actualizar/{nid}")
-    @Operation(summary = "Actualizar una entidad", description = "Actualiza los datos de una entidad existente.", 
-        responses = {
-            @ApiResponse(responseCode = "200", description = "Entidad actualizada exitosamente"),
-            @ApiResponse(responseCode = "400", description = "Error en la solicitud"),
-            @ApiResponse(responseCode = "404", description = "Entidad no encontrada"),
-            @ApiResponse(responseCode = "500", description = "Error interno del servidor")
-        })
+    @PutMapping("/{idEntidad}")
+    @Operation(summary = "Actualizar una entidad", description = "Actualiza los datos administrativos de una entidad existente.")
     public ResponseEntity<?> actualizarEntidad(
-        @Parameter(description = "Identificador único de la entidad", example = "9001234567")
-        @PathVariable("nid") Long id,
-        @RequestBody RegistroEntidadPeticion entidad) {
-        try {
-            entidadService.actualizar(id, entidad);
-            return ResponseEntity.ok("Entidad actualizada exitosamente");
-        } catch (RuntimeException ex) {
-            return ResponseEntity.badRequest().body("Error al actualizar entidad: " + ex.getMessage());
-        } catch (Exception ex) {
-            return ResponseEntity.status(500).body("Error interno del servidor: " + ex.getMessage());
-        }
+            @Parameter(description = "ID de la entidad", example = "1")
+            @PathVariable Long idEntidad,
+            @Valid @RequestBody RegistroEntidadPeticion entidad) {
+        entidadService.actualizar(idEntidad, entidad);
+        return ResponseEntity.ok("Entidad actualizada exitosamente");
+    }
+
+    @DeleteMapping("/{idEntidad}")
+    @Operation(summary = "Eliminar una entidad", description = "Elimina una entidad (solo si no tiene trabajos asociados).")
+    public ResponseEntity<?> eliminarEntidad(
+            @Parameter(description = "ID de la entidad", example = "1")
+            @PathVariable Long idEntidad) {
+        entidadService.eliminar(idEntidad);
+        return ResponseEntity.noContent().build();
     }
 
     @PutMapping("/activar/{nid}")

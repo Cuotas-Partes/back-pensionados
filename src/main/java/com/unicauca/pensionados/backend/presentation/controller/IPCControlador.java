@@ -1,8 +1,8 @@
 package com.unicauca.pensionados.backend.presentation.controller;
 
 import com.unicauca.pensionados.backend.application.service.interfaces.IIPCServicio;
-import com.unicauca.pensionados.backend.application.dto.request.RegistroIPCPeticion;
-import com.unicauca.pensionados.backend.application.dto.response.IPCRespuestaDTO;
+import com.unicauca.pensionados.backend.application.dto.request.ipc.RegistroIPCPeticion;
+import com.unicauca.pensionados.backend.application.dto.response.ipc.IPCRespuestaDTO;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -69,7 +69,7 @@ public class IPCControlador {
     @PutMapping("/actualizar/{anio}")
     public ResponseEntity<?> actualizarIPC(@PathVariable Integer anio, @RequestBody RegistroIPCPeticion peticion) {
         try {
-            ipcServicio.actualizarIPC(anio, peticion);
+            ipcServicio.actualizarIPC(peticion);
             return ResponseEntity.ok("IPC actualizado exitosamente");
         } catch (RuntimeException e) {
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Error al actualizar IPC: " + e.getMessage());

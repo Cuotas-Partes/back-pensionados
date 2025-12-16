@@ -10,9 +10,9 @@ import java.util.Optional;
 
 public interface DTFRepositorio extends JpaRepository<DTF, Long> {
 
-    @Query("SELECT d FROM DTF d WHERE (:mes IS NULL OR d.mes = :mes) AND (:anio IS NULL OR d.anio = :anio)")
-    List<DTF> findByMesOrAnio(@Param("mes") Long mes, @Param("anio") Long anio);
+    Optional<DTF> findByPeriodo(String periodo);
+    List<DTF> findByActivoTrue();
+    Optional<DTF> findByIdAndActivoTrue(Long id);
 
-    @Query("SELECT d FROM DTF d WHERE (:mes IS NULL OR d.mes = :mes) AND (:anio IS NULL OR d.anio = :anio)")
-    Optional<DTF> findByMesAndAnio(@Param("mes") Long mes, @Param("anio") Long anio);
+
 }

@@ -1,12 +1,14 @@
 package com.unicauca.pensionados.backend.application.service;
 
+import com.unicauca.pensionados.backend.application.dto.request.dtf.DtfRequestDTO;
 import com.unicauca.pensionados.backend.application.service.interfaces.IDTFServicio;
 import com.unicauca.pensionados.backend.application.service.interfaces.ILogCambioServicio;
 import com.unicauca.pensionados.backend.domain.exception.BusinessValidationException;
 import com.unicauca.pensionados.backend.domain.model.entity.DTF;
 import com.unicauca.pensionados.backend.domain.model.entity.LogCambio;
+import com.unicauca.pensionados.backend.domain.model.mappers.dtf.DtfMapper.DtfMapper;
 import com.unicauca.pensionados.backend.infrastructure.persistence.repository.DTFRepositorio;
-import com.unicauca.pensionados.backend.application.dto.response.DTFDTO;
+import com.unicauca.pensionados.backend.application.dto.response.dtf.DTFDTO;
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -29,56 +31,83 @@ public class DTFServicio implements IDTFServicio {
     private final String nombreEntidad = "DTF";
 
     @Override
-    public DTFDTO guardarDTF(DTFDTO dtf) {
-        try{
-            DTF nuevoDTF = modelMapper.map(dtf, DTF.class);
-            Optional<DTF> dtfExistente = dtfRepositorio.findByMesAndAnio(nuevoDTF.getMes(), nuevoDTF.getAnio());
-            if(dtfExistente.isPresent()) {
-                LogCambio logCambio = new LogCambio();
-                logCambio.setEntidad("DTF");
-                logCambio.setAccion(LogCambio.Accion.CREAR);
-                logCambio.setValorNuevo("Intento de crear DTF para mes " + nuevoDTF.getMes() + " y año " + nuevoDTF.getAnio() + " duplicado");
-                logCambio.setFecha(LocalDateTime.now());
-                throw new BusinessValidationException("Ya existe un DTF para el mes " + nuevoDTF.getMes() + " y año " + nuevoDTF.getAnio());
-            }
-            nuevoDTF.setFechaRegistro(LocalDate.now().toString());
-            nuevoDTF = dtfRepositorio.save(nuevoDTF);
-            logCambioServicio.registrarCreacion(nombreEntidad, nuevoDTF);
-            return modelMapper.map(nuevoDTF, DTFDTO.class);
-        }catch (Exception e){
-            throw new RuntimeException("No se ha podido guardar el DTF" + e.getMessage());
+    public DTFDTO guardarDTF(DtfRequestDTO dto) {
+
+        if (dto.getPeriodo() == null || dto.getValor() == null) {
+            throw new BusinessValidationException("Periodo y valor son obligatorios");
         }
+
+        // Validar duplicado
+        dtfRepositorio.findByPeriodo(dto.getPeriodo())
+                .ifPresent(dtf -> {
+                    throw new BusinessValidationException(
+                            "Ya existe un DTF para el periodo " + dto.getPeriodo()
+                    );
+                });
+
+        DTF nuevoDTF = DtfMapper.toEntity(dto);
+        DTF guardado = dtfRepositorio.save(nuevoDTF);
+
+        logCambioServicio.registrarCreacion(nombreEntidad, guardado);
+
+        return DtfMapper.toResponseDTO(guardado);
     }
+
+
 
     @Override
-    public DTFDTO actualizarDTF(DTFDTO dtf) {
-        try{
-            Optional<DTF> dtfToUpdate = dtfRepositorio.findById(dtf.getIdDtf());
-            if(dtfToUpdate.isEmpty()) throw new RuntimeException("El DTF con id " + dtf.getIdDtf() + " no existe");
-            DTF dtfToUpdateEntity = dtfToUpdate.get();
-            DTF dtfAntiguo = new DTF();
-            BeanUtils.copyProperties(dtfToUpdateEntity, dtfAntiguo);
+    public DTFDTO actualizarDTF(Long id, DtfRequestDTO dto) {
 
-            if (dtf.getValor() != null)  dtfToUpdateEntity.setValor(dtf.getValor());
-            if (dtf.getAnio() != null) dtfToUpdateEntity.setAnio(dtf.getAnio());
-            if (dtf.getMes() != null) dtfToUpdateEntity.setMes(dtf.getMes());
-            if (dtf.getUsuario() != null) dtfToUpdateEntity.setUsuario(dtf.getUsuario());
+        DTF dtf = dtfRepositorio.findById(id)
+                .orElseThrow(() -> new BusinessValidationException(
+                        "No existe DTF con id " + id
+                ));
 
-            dtfToUpdateEntity = dtfRepositorio.save(dtfToUpdateEntity);
-            logCambioServicio.registrarActualizacion(nombreEntidad, dtfAntiguo, dtfToUpdateEntity);
+        DTF estadoAnterior = new DTF();
+        BeanUtils.copyProperties(dtf, estadoAnterior);
 
-            return modelMapper.map(dtfToUpdate, DTFDTO.class);
-        }catch (Exception e){
-            throw new RuntimeException("No se ha podido actualizar el DTF" + e.getMessage());
+        if (dto.getPeriodo() != null && !dto.getPeriodo().equals(dtf.getPeriodo())) {
+
+            dtfRepositorio.findByPeriodo(dto.getPeriodo())
+                    .ifPresent(existente -> {
+                        throw new BusinessValidationException(
+                                "Ya existe un DTF para el periodo " + dto.getPeriodo()
+                        );
+                    });
+
+            dtf.setPeriodo(dto.getPeriodo());
         }
+
+        if (dto.getValor() != null) {
+            dtf.setValor(dto.getValor());
+        }
+
+        DTF actualizado = dtfRepositorio.save(dtf);
+
+        logCambioServicio.registrarActualizacion(nombreEntidad, estadoAnterior, actualizado);
+
+        return DtfMapper.toResponseDTO(actualizado);
     }
+
 
     @Override
     public void eliminarDTF(Long id) {
-        DTF dtf = dtfRepositorio.findById(id).orElseThrow(() -> new RuntimeException("El DTF con id " + id + " no existe"));
-        dtfRepositorio.deleteById(id);
+
+        DTF dtf = dtfRepositorio.findById(id)
+                .orElseThrow(() -> new BusinessValidationException(
+                        "No existe DTF con id " + id
+                ));
+
+        if (!dtf.isEstado()) {
+            throw new BusinessValidationException("El DTF ya se encuentra inactivo");
+        }
+
+        dtf.setEstado(false);
+        dtfRepositorio.save(dtf);
+
         logCambioServicio.registrarEliminacion(nombreEntidad, dtf);
     }
+
 
     @Override
     public DTFDTO obtenerDTFPorId(Long id) {
@@ -88,15 +117,20 @@ public class DTFServicio implements IDTFServicio {
     }
 
     @Override
-    public List<DTFDTO> obtenerDTFPorMesAnio(Long mes, Long anio) {
-        List<DTF> dtfs = dtfRepositorio.findByMesOrAnio(mes, anio);
+    public List<DTFDTO> obtenerPorPeriodo(String periodo) {
         logCambioServicio.registrarConsulta(nombreEntidad);
-        return dtfs.isEmpty() ? null : dtfs.stream().map(obj -> modelMapper.map(obj, DTFDTO.class)).toList();
+        return dtfRepositorio.findByPeriodo(periodo)
+                .stream()
+                .map(DtfMapper::toResponseDTO)
+                .toList();
     }
 
     @Override
     public List<DTFDTO> listarDTFs() {
         logCambioServicio.registrarConsulta(nombreEntidad);
-        return dtfRepositorio.findAll().stream().map(obj -> modelMapper.map(obj, DTFDTO.class)).toList();
+        return dtfRepositorio.findByActivoTrue()
+                .stream()
+                .map(DtfMapper::toResponseDTO)
+                .toList();
     }
 }

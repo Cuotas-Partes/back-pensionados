@@ -15,8 +15,7 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 @AllArgsConstructor
 @Table(
-        name = "dtf",
-        uniqueConstraints = @UniqueConstraint(columnNames = {"mes", "anio"})
+        name = "dtf"
 )
 public class DTF {
 
@@ -25,31 +24,18 @@ public class DTF {
     @Column(name = "idDtf", nullable = false, unique = true)
     private Long idDtf;
 
-    @Column(name = "mes", nullable = false)
-    private Long mes;
+    @Column(name = "periodo", nullable = false)
+    private String periodo; // Formato: "YYYY-MM"
 
-    @Column(name = "anio", nullable = false)
-    private Long anio;
-
-    @Column(name = "valor", nullable = false)
+    @Column(name="valor" , nullable = false, precision = 10, scale = 4)
     private Double valor;
 
-    @Column(name = "vigenciaDesde")
-    @Temporal(TemporalType.DATE)
-    private LocalDate vigenciaDesde;
-
-    @Column(name = "vigenciaHasta")
-    @Temporal(TemporalType.DATE)
-    private LocalDate vigenciaHasta;
-
-    @Column(name = "usuario", nullable = false)
-    private String usuario;
-
-    @Column(name = "fechaRegistro", nullable = false)
-    private String fechaRegistro = java.time.LocalDate.now().toString();
 
     @Column(name = "createdAt", nullable = false)
     private LocalDateTime createdAt = LocalDateTime.now();
+
+    @Column(name = "estado", nullable = false)
+    private boolean estado = true;
 
     @Column(name = "updatedAt")
     private LocalDateTime updatedAt;
@@ -57,5 +43,10 @@ public class DTF {
     @PreUpdate
     public void preUpdate() {
         this.updatedAt = LocalDateTime.now();
+    }
+
+    @PrePersist
+    public void prePersist() {
+        this.createdAt = LocalDateTime.now();
     }
 }

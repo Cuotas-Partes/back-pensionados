@@ -28,6 +28,9 @@ public class SMMLVHistorico {
     @Column(name = "valor", nullable = false, precision = 19, scale = 2)
     private BigDecimal valor;
 
+    @Column(name ="estado", nullable = false)
+    private boolean estado = true;
+
     @Column(name = "createdAt", nullable = false)
     private LocalDateTime createdAt = LocalDateTime.now();
 
@@ -37,5 +40,9 @@ public class SMMLVHistorico {
     @PreUpdate
     public void preUpdate() {
         this.updatedAt = LocalDateTime.now();
+    }
+    @PrePersist
+    public void prePersist() {
+        this.createdAt = LocalDateTime.now();
     }
 }

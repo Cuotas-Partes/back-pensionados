@@ -1,28 +1,36 @@
 package com.unicauca.pensionados.backend.application.service;
 
 
-import com.unicauca.pensionados.backend.application.dto.response.PensionadoDTO;
+import com.unicauca.pensionados.backend.application.dto.request.pensionado.RegistroPensionadoPeticion;
+import com.unicauca.pensionados.backend.application.dto.request.pensionado.RegistroResolucionPensionadoPeticion;
+import com.unicauca.pensionados.backend.application.dto.request.pensionado.RegistroSucesorPensionadoPeticion;
+import com.unicauca.pensionados.backend.application.dto.response.pensionado.PensionadoDTO;
 import com.unicauca.pensionados.backend.application.service.interfaces.ILogCambioServicio;
 import com.unicauca.pensionados.backend.application.service.interfaces.IPensionadoServicio;
+import com.unicauca.pensionados.backend.domain.exception.BusinessValidationException;
+import com.unicauca.pensionados.backend.domain.exception.RecursoNoEncontrado;
+import com.unicauca.pensionados.backend.domain.model.entity.Entidad;
+import com.unicauca.pensionados.backend.domain.model.entity.Pensionado;
 import com.unicauca.pensionados.backend.domain.model.entity.Resolucion;
-import com.unicauca.pensionados.backend.domain.model.enums.TipoPension;
-import com.unicauca.pensionados.backend.domain.model.mappers.PensionadoMapper;
+import com.unicauca.pensionados.backend.domain.model.entity.Sucesor;
+import com.unicauca.pensionados.backend.domain.model.enums.EstadoPersona;
+import com.unicauca.pensionados.backend.domain.model.enums.EstadoResolucion;
+import com.unicauca.pensionados.backend.domain.model.enums.EstadoSustituto;
+import com.unicauca.pensionados.backend.domain.model.mappers.pensionado.PensionadoMapper;
+import com.unicauca.pensionados.backend.infrastructure.persistence.repository.EntidadRepositorio;
+import com.unicauca.pensionados.backend.infrastructure.persistence.repository.PensionadoRepositorio;
+import com.unicauca.pensionados.backend.infrastructure.persistence.repository.PersonaRepositorio;
+import com.unicauca.pensionados.backend.infrastructure.persistence.repository.ResolucionRepositorio;
+import com.unicauca.pensionados.backend.infrastructure.persistence.repository.SucesorRepositorio;
+import jakarta.transaction.Transactional;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import com.unicauca.pensionados.backend.domain.model.entity.Entidad;
-import com.unicauca.pensionados.backend.domain.model.entity.Pensionado;
-import com.unicauca.pensionados.backend.domain.model.enums.EstadoPersona;
-
-import com.unicauca.pensionados.backend.infrastructure.persistence.repository.EntidadRepositorio;
-import com.unicauca.pensionados.backend.infrastructure.persistence.repository.PensionadoRepositorio;
-import com.unicauca.pensionados.backend.infrastructure.persistence.repository.PersonaRepositorio;
-import com.unicauca.pensionados.backend.application.dto.request.RegistroPensionadoPeticion;
-
-import jakarta.transaction.Transactional;
+import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 
 
 @Service
@@ -31,57 +39,47 @@ public class PensionadoServicio implements IPensionadoServicio {
     private final PersonaRepositorio personaRepositorio;
     private final PensionadoRepositorio pensionadoRepositorio;
     private final EntidadRepositorio entidadRepositorio;
+    private final ResolucionRepositorio resolucionRepositorio;
+    private final SucesorRepositorio sucesorRepositorio;
+
     @Autowired
     private ILogCambioServicio logCambioServicio;
     private final String nombreEntidad = "PENSIONADO";
 
     public PensionadoServicio(PersonaRepositorio personaRepositorio,
                               PensionadoRepositorio pensionadoRepositorio,
-                              EntidadRepositorio entidadRepositorio) {
+                              EntidadRepositorio entidadRepositorio,
+                              ResolucionRepositorio resolucionRepositorio,
+                              SucesorRepositorio sucesorRepositorio) {
         this.personaRepositorio = personaRepositorio;
         this.pensionadoRepositorio = pensionadoRepositorio;
         this.entidadRepositorio = entidadRepositorio;
+        this.resolucionRepositorio = resolucionRepositorio;
+        this.sucesorRepositorio = sucesorRepositorio;
     }
 
     
     @Transactional
     @Override
     public void registrarPensionado(RegistroPensionadoPeticion request) {
-        if (personaRepositorio.existsByTipoIdentificacionAndNumeroIdentificacion(request.getTipoIdentificacion(), request.getNumeroIdentificacion())) {
-            throw new RuntimeException("Ya existe una persona con ese tipo y número de identificación");
+        if (pensionadoRepositorio.findByCedula(request.getCedula()).isPresent()) {
+            throw new BusinessValidationException("Ya existe un pensionado con la cédula: " + request.getCedula());
         }
 
-        Entidad entidadJubilacion = entidadRepositorio.findByNit(request.getNitEntidad().toString())
-                .orElseThrow(() -> new RuntimeException("La Entidad de jubilación no se encuentra registrada"));
+        Entidad entidadJubilacion = entidadRepositorio.findByNit(request.getEntityNit())
+                .orElseThrow(() -> new RecursoNoEncontrado("La Entidad de jubilación no se encuentra registrada"));
 
-        TipoPension tipoPension;
-        try{
-             tipoPension = TipoPension.valueOf(request.getTipoPension().toUpperCase());
-        }catch (IllegalArgumentException e){
-            throw new RuntimeException("Tipo de pension no valido");
-        }
-
-        // Crear y guardar la entidad Pensionado usando los campos correctos
         Pensionado pensionado = new Pensionado();
-        pensionado.setCedula(request.getNumeroIdentificacion().toString());
-        pensionado.setFechaExpedicionCedula(request.getFechaExpedicionDocumentoIdPersona());
-        pensionado.setNombre(request.getNombrePersona());
-        pensionado.setApellidos(request.getApellidosPersona());
-        pensionado.setFechaNacimiento(request.getFechaNacimientoPersona());
-        pensionado.setTelefono(""); // Campo requerido, podría agregarse al DTO
-        pensionado.setCorreo(""); // Campo requerido, podría agregarse al DTO
-        pensionado.setEntidadJubilacion(entidadJubilacion.getName());
-        pensionado.setEntityNit(entidadJubilacion.getNit());
-        pensionado.setEntityId(entidadJubilacion.getIdEntidad().toString());
-        pensionado.setDiasTrabajadosEntidad(request.getDiasDeServicio() != null ? request.getDiasDeServicio().intValue() : 0);
-        pensionado.setDiasTotalesTrabajados(request.getTotalDiasTrabajo() != null ? request.getTotalDiasTrabajo().intValue() : 0);
-        pensionado.setPorcentajeCuota(java.math.BigDecimal.ZERO);
-        pensionado.setTipoJubilacion(tipoPension);
-        pensionado.setValorPension(request.getValorInicialPension());
-        pensionado.setEstado(request.getEstadoPersona() != null ? request.getEstadoPersona() : EstadoPersona.Activo);
-        pensionado.setFechaFallecimiento(request.getFechaDefuncionPersona());
+        aplicarDatosPensionado(pensionado, entidadJubilacion, request);
 
-        //Guardar log del registro
+        pensionado.setResoluciones(construirResoluciones(pensionado, request.getResoluciones()));
+        pensionado.setSustitutos(construirSustitutos(pensionado, request.getSustitutos()));
+        pensionado.setTieneSustituto(pensionado.getSustitutos() != null && !pensionado.getSustitutos().isEmpty());
+
+        if (pensionado.getSustitutos() != null && !pensionado.puedeAgregarSustituto()) {
+            throw new BusinessValidationException("No se pueden registrar más de 2 sustitutos activos");
+        }
+
         logCambioServicio.registrarCreacion(nombreEntidad, pensionadoRepositorio.save(pensionado));
     }
     /*==============================================================*/
@@ -95,27 +93,32 @@ public class PensionadoServicio implements IPensionadoServicio {
     @Override
     public void actualizarPensionado(Long idPersona, RegistroPensionadoPeticion request) {
         Pensionado pensionadoExistente = pensionadoRepositorio.findById(idPersona)
-                .orElseThrow(() -> new RuntimeException("No se encontró el pensionado con ID: " + idPersona));
+                .orElseThrow(() -> new RecursoNoEncontrado("No se encontró el pensionado con ID: " + idPersona));
 
-        Entidad entidadJubilacion = entidadRepositorio.findByNit(request.getNitEntidad().toString())
-                .orElseThrow(() -> new RuntimeException("La Entidad de jubilación no se encuentra registrada"));
+        if (!pensionadoExistente.getCedula().equalsIgnoreCase(request.getCedula())
+                && pensionadoRepositorio.findByCedula(request.getCedula()).isPresent()) {
+            throw new BusinessValidationException("Ya existe un pensionado con la cédula: " + request.getCedula());
+        }
+
+        Entidad entidadJubilacion = entidadRepositorio.findByNit(request.getEntityNit())
+                .orElseThrow(() -> new RecursoNoEncontrado("La Entidad de jubilación no se encuentra registrada"));
+
         Pensionado pensionadoAntiguo = new Pensionado();
         BeanUtils.copyProperties(pensionadoExistente, pensionadoAntiguo);
 
-        pensionadoExistente.setNombre(request.getNombrePersona());
-        pensionadoExistente.setApellidos(request.getApellidosPersona());
-        pensionadoExistente.setFechaNacimiento(request.getFechaNacimientoPersona());
-        pensionadoExistente.setFechaExpedicionCedula(request.getFechaExpedicionDocumentoIdPersona());
-        pensionadoExistente.setEstado(request.getEstadoPersona());
-        pensionadoExistente.setFechaFallecimiento(request.getFechaDefuncionPersona());
-        pensionadoExistente.setValorPension(request.getValorInicialPension());
-        pensionadoExistente.setEntidadJubilacion(entidadJubilacion.getName());
-        pensionadoExistente.setEntityNit(entidadJubilacion.getNit());
-        pensionadoExistente.setEntityId(entidadJubilacion.getIdEntidad().toString());
+        aplicarDatosPensionado(pensionadoExistente, entidadJubilacion, request);
+
+        // Reemplazo total (simple): si quieres "patch" fino por IDs, eso es otra capa.
+        pensionadoExistente.setResoluciones(construirResoluciones(pensionadoExistente, request.getResoluciones()));
+        pensionadoExistente.setSustitutos(construirSustitutos(pensionadoExistente, request.getSustitutos()));
+        pensionadoExistente.setTieneSustituto(pensionadoExistente.getSustitutos() != null && !pensionadoExistente.getSustitutos().isEmpty());
+
+        if (pensionadoExistente.getSustitutos() != null && !pensionadoExistente.puedeAgregarSustituto()) {
+            throw new BusinessValidationException("No se pueden registrar más de 2 sustitutos activos");
+        }
 
         pensionadoExistente = pensionadoRepositorio.save(pensionadoExistente);
         logCambioServicio.registrarActualizacion(nombreEntidad, pensionadoAntiguo, pensionadoExistente);
-        
     }
 
     @Override
@@ -136,20 +139,114 @@ public class PensionadoServicio implements IPensionadoServicio {
     public Pensionado buscarPensionadoPorId(Long id) {
         logCambioServicio.registrarConsulta(nombreEntidad);
         return pensionadoRepositorio.findById(id)
-                .orElseThrow(() -> new RuntimeException("No se encontró el pensionado con ID: " + id));
+                .orElseThrow(() -> new RecursoNoEncontrado("No se encontró el pensionado con ID: " + id));
+    }
+
+    /**
+     * Eliminación lógica (soft delete).
+     *
+     * Se delega a {@link #desactivarPensionado(Long)} para evitar duplicación de lógica.
+     * No se hace delete físico porque el pensionado puede estar referenciado por pagos/liquidaciones.
+     */
+    @Transactional
+    @Override
+    public void eliminarPensionado(Long id) {
+        desactivarPensionado(id);
     }
 
     @Transactional
     @Override
     public void desactivarPensionado(Long id) {
         Pensionado pensionado = pensionadoRepositorio.findById(id)
-                .orElseThrow(() -> new RuntimeException("Pensionado no encontrado con ID: " + id));
+                .orElseThrow(() -> new RecursoNoEncontrado("Pensionado no encontrado con ID: " + id));
         Pensionado pensionadoAntiguo = new Pensionado();
         BeanUtils.copyProperties(pensionado, pensionadoAntiguo);
-        
+
         pensionado.setEstado(EstadoPersona.Retirado);
         pensionado = pensionadoRepositorio.save(pensionado);
         logCambioServicio.registrarActualizacion(nombreEntidad, pensionadoAntiguo, pensionado);
+    }
+
+    private void aplicarDatosPensionado(Pensionado pensionado, Entidad entidadJubilacion, RegistroPensionadoPeticion request) {
+        pensionado.setCedula(request.getCedula());
+        pensionado.setFechaExpedicionCedula(request.getFechaExpedicionCedula());
+        pensionado.setNombre(request.getNombre());
+        pensionado.setApellidos(request.getApellidos());
+        pensionado.setFechaNacimiento(request.getFechaNacimiento());
+        pensionado.setTelefono(request.getTelefono());
+        pensionado.setCorreo(request.getCorreo());
+
+        pensionado.setEntidadJubilacion(entidadJubilacion.getName());
+        pensionado.setEntityNit(entidadJubilacion.getNit());
+        pensionado.setEntityId(entidadJubilacion.getIdEntidad());
+
+        pensionado.setDiasTrabajadosEntidad(request.getDiasTrabajadosEntidad());
+        pensionado.setDiasTotalesTrabajados(request.getDiasTotalesTrabajados());
+        pensionado.setTipoJubilacion(request.getTipoJubilacion());
+        pensionado.setValorPensionActual(request.getValorPension());
+
+        pensionado.setEstado(request.getEstado() != null ? request.getEstado() : EstadoPersona.Activo);
+        pensionado.setFechaFallecimiento(request.getFechaFallecimiento());
+    }
+
+    private List<Resolucion> construirResoluciones(Pensionado pensionado, List<RegistroResolucionPensionadoPeticion> peticiones) {
+        if (peticiones == null) {
+            return null;
+        }
+
+        List<Resolucion> resoluciones = new ArrayList<>();
+        for (RegistroResolucionPensionadoPeticion p : peticiones) {
+            Optional<Resolucion> existente = resolucionRepositorio.findByNumeroResolucion(p.getNumeroResolucion());
+            if (existente.isPresent()) {
+                Resolucion rExistente = existente.get();
+                if (rExistente.getPensionado() != null && pensionado.getIdPersona() != null
+                        && !rExistente.getPensionado().getIdPersona().equals(pensionado.getIdPersona())) {
+                    throw new BusinessValidationException("El número de resolución ya existe: " + p.getNumeroResolucion());
+                }
+            }
+
+            Resolucion r = new Resolucion();
+            r.setNumeroResolucion(p.getNumeroResolucion());
+            r.setFechaResolucion(p.getFechaResolucion());
+            r.setValorResolucion(p.getValorResolucion());
+            r.setEstado(p.getEstado() != null ? p.getEstado() : EstadoResolucion.VIGENTE);
+            r.setTipoResolucion(p.getTipoResolucion());
+            r.setPensionado(pensionado);
+            resoluciones.add(r);
+        }
+
+        return resoluciones;
+    }
+
+    private List<Sucesor> construirSustitutos(Pensionado pensionado, List<RegistroSucesorPensionadoPeticion> peticiones) {
+        if (peticiones == null) {
+            return null;
+        }
+
+        List<Sucesor> sucesores = new ArrayList<>();
+        for (RegistroSucesorPensionadoPeticion p : peticiones) {
+            Sucesor s = new Sucesor();
+            s.setNumeroIdentificacion(p.getNumeroIdentificacion());
+            s.setTipoIdentificacion(p.getTipoIdentificacion());
+            s.setNombrePersona(p.getNombrePersona());
+            s.setTelefono(p.getTelefono());
+            s.setEstado(p.getEstado() != null ? p.getEstado() : EstadoSustituto.Activo);
+            s.setFechaInicio(p.getFechaInicio());
+            s.setFechaFin(p.getFechaFin());
+            s.setPorcentajePension(p.getPorcentajePension());
+            s.setPensionadoSustituido(pensionado);
+
+            if (p.getNumeroResolucionNombramiento() != null && !p.getNumeroResolucionNombramiento().isBlank()) {
+                Resolucion resolucionNombramiento = resolucionRepositorio.findByNumeroResolucion(p.getNumeroResolucionNombramiento())
+                        .orElseThrow(() -> new RecursoNoEncontrado(
+                                "No se encontró resolución de nombramiento: " + p.getNumeroResolucionNombramiento()));
+                s.setResolucionNombramiento(resolucionNombramiento);
+            }
+
+            sucesores.add(s);
+        }
+
+        return sucesores;
     }
     
     // El resto de los métodos de búsqueda deberían funcionar, pero siempre es bueno revisarlos.

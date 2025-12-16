@@ -1,10 +1,8 @@
 package com.unicauca.pensionados.backend.infrastructure.persistence.repository;
 
-import com.unicauca.pensionados.backend.domain.model.entity.Deuda;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
-import org.springframework.security.core.parameters.P;
 
 import java.util.List;
 import java.util.Optional;

@@ -2,8 +2,8 @@ package com.unicauca.pensionados.backend.application.service.interfaces;
 
 import java.util.List;
 
-import com.unicauca.pensionados.backend.application.dto.request.LiquidacionEntidadDTOPeticion;
-import com.unicauca.pensionados.backend.application.dto.response.LiquidacionEntidadDTORespuesta;
+import com.unicauca.pensionados.backend.application.dto.request.liquidacion.LiquidacionEntidadDTOPeticion;
+import com.unicauca.pensionados.backend.application.dto.response.liquidacion.LiquidacionEntidadDTORespuesta;
 
 public interface ILiquidacionEntidadServicio {
     

@@ -5,7 +5,7 @@ import com.unicauca.pensionados.backend.application.service.interfaces.ISucesorS
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import com.unicauca.pensionados.backend.application.dto.request.RegistroSucesorPeticion;
+import com.unicauca.pensionados.backend.application.dto.request.sucesor.RegistroSucesorPeticion;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;

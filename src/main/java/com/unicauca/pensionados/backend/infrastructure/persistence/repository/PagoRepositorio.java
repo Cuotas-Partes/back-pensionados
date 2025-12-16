@@ -7,7 +7,6 @@ import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 
-import com.unicauca.pensionados.backend.domain.model.entity.Pago;
 import com.unicauca.pensionados.backend.domain.model.enums.TipoPago;
 
 public interface PagoRepositorio extends JpaRepository<Pago, Long> {

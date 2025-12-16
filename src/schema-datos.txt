@@ -1,0 +1,1996 @@
+{
+   "$schema":"http://json-schema.org/draft-07/schema#",
+   "title":"Sistema de Gestión de Cuotas Partes - Backend API Schema Completo",
+   "description":"Schema definitivo para el backend del Sistema de Gestión de Cuotas Partes de Pensiones",
+   "definitions":{
+      "Sustituto":{
+         "type":"object",
+         "description":"Información del sustituto de un pensionado",
+         "properties":{
+            "id":{
+               "type":"string",
+               "description":"ID único del sustituto"
+            },
+            "nombreCompleto":{
+               "type":"string",
+               "description":"Nombre completo del sustituto"
+            },
+            "identificacion":{
+               "type":"string",
+               "description":"Número de identificación (cédula, pasaporte, etc)"
+            },
+            "parentesco":{
+               "type":"string",
+               "nullable":true,
+               "description":"Relación con el pensionado"
+            },
+            "createdAt":{
+               "type":"string",
+               "format":"date-time"
+            },
+            "updatedAt":{
+               "type":"string",
+               "format":"date-time"
+            }
+         },
+         "required":[
+            "id",
+            "nombreCompleto",
+            "identificacion"
+         ]
+      },
+      "Resolucion":{
+         "type":"object",
+         "description":"Resolución de pensión asociada a un pensionado",
+         "properties":{
+            "id":{
+               "type":"string",
+               "description":"ID único de la resolución"
+            },
+            "numeroResolucion":{
+               "type":"string",
+               "description":"Número de la resolución (ej: RES-2024-001)"
+            },
+            "valorInicial":{
+               "type":"number",
+               "description":"Valor inicial de la pensión en COP"
+            },
+            "fechaInicio":{
+               "type":"string",
+               "format":"date",
+               "description":"Fecha de inicio de vigencia"
+            },
+            "estado":{
+               "type":"string",
+               "enum":[
+                  "Vigente",
+                  "Cancelada",
+                  "Suspendida",
+                  "Reliquidada"
+               ],
+               "default":"Vigente"
+            },
+            "createdAt":{
+               "type":"string",
+               "format":"date-time"
+            },
+            "updatedAt":{
+               "type":"string",
+               "format":"date-time"
+            }
+         },
+         "required":[
+            "id",
+            "numeroResolucion",
+            "valorInicial",
+            "fechaInicio"
+         ]
+      },
+      "Pensionado":{
+         "type":"object",
+         "description":"Información completa del pensionado",
+         "properties":{
+            "id":{
+               "type":"string",
+               "description":"ID único del pensionado"
+            },
+            "cedula":{
+               "type":"string",
+               "description":"Número de cédula (único)"
+            },
+            "fechaExpedicionCedula":{
+               "type":"string",
+               "format":"date",
+               "description":"Fecha de expedición de la cédula"
+            },
+            "nombre":{
+               "type":"string",
+               "description":"Nombres del pensionado"
+            },
+            "apellidos":{
+               "type":"string",
+               "description":"Apellidos del pensionado"
+            },
+            "fechaNacimiento":{
+               "type":"string",
+               "format":"date",
+               "description":"Fecha de nacimiento"
+            },
+            "telefono":{
+               "type":"string",
+               "description":"Teléfono de contacto"
+            },
+            "correo":{
+               "type":"string",
+               "format":"email",
+               "nullable":true,
+               "description":"Correo electrónico"
+            },
+            "entidadJubilacion":{
+               "type":"string",
+               "description":"Nombre de la entidad donde se jubiló"
+            },
+            "entityNit":{
+               "type":"string",
+               "description":"NIT de la entidad asociada"
+            },
+            "entityId":{
+               "type":"string",
+               "description":"ID de la entidad asociada"
+            },
+            "diasTrabajadosEntidad":{
+               "type":"integer",
+               "description":"Días trabajados en la entidad de jubilación"
+            },
+            "diasTotalesTrabajados":{
+               "type":"integer",
+               "description":"Total de días trabajados en toda su vida laboral"
+            },
+            "porcentajeCuota":{
+               "type":"number",
+               "description":"Porcentaje de cuota parte calculado (diasTrabajadosEntidad / diasTotalesTrabajados * 100)"
+            },
+            "tipoJubilacion":{
+               "type":"string",
+               "enum":[
+                  "Jubilación",
+                  "Invalidez",
+                  "Sustitución",
+                  "Otra"
+               ],
+               "description":"Tipo de jubilación"
+            },
+            "valorPension":{
+               "type":"number",
+               "description":"Valor actual de la pensión mensual"
+            },
+            "resoluciones":{
+               "type":"array",
+               "items":{
+                  "$ref":"#/definitions/Resolucion"
+               },
+               "description":"Array de múltiples resoluciones de pensión"
+            },
+            "estado":{
+               "type":"string",
+               "enum":[
+                  "Activo",
+                  "Fallecido",
+                  "Suspendido"
+               ],
+               "default":"Activo"
+            },
+            "fechaFallecimiento":{
+               "type":"string",
+               "format":"date",
+               "nullable":true,
+               "description":"Fecha de fallecimiento (si aplica)"
+            },
+            "pensionadoSustituido":{
+               "type":"string",
+               "nullable":true,
+               "description":"ID del pensionado que sustituyó (si es sustitución)"
+            },
+            "tienesustituto":{
+               "type":"boolean",
+               "default":false,
+               "description":"Indica si tiene un sustituto registrado"
+            },
+            "sustituto":{
+               "$ref":"#/definitions/Sustituto",
+               "nullable":true,
+               "description":"Información del sustituto"
+            },
+            "cuotasPendientes":{
+               "type":"integer",
+               "description":"Número de cuotas pendientes"
+            },
+            "totalPendiente":{
+               "type":"number",
+               "description":"Total de dinero pendiente"
+            },
+            "historialPensiones":{
+               "type":"array",
+               "items":{
+                  "$ref":"#/definitions/CuotaHistorial"
+               },
+               "description":"Historial completo de cuotas"
+            },
+            "createdAt":{
+               "type":"string",
+               "format":"date-time"
+            },
+            "updatedAt":{
+               "type":"string",
+               "format":"date-time"
+            }
+         },
+         "required":[
+            "id",
+            "cedula",
+            "fechaExpedicionCedula",
+            "nombre",
+            "apellidos",
+            "fechaNacimiento",
+            "telefono",
+            "entityNit",
+            "diasTrabajadosEntidad",
+            "diasTotalesTrabajados",
+            "tipoJubilacion",
+            "resoluciones",
+            "estado"
+         ]
+      },
+      "Entity":{
+         "type":"object",
+         "description":"Entidad pensional",
+         "properties":{
+            "id":{
+               "type":"string",
+               "description":"ID único de la entidad"
+            },
+            "nit":{
+               "type":"string",
+               "description":"NIT de la entidad (único)"
+            },
+            "name":{
+               "type":"string",
+               "description":"Nombre completo de la entidad"
+            },
+            "address":{
+               "type":"string",
+               "description":"Dirección de la entidad"
+            },
+            "email":{
+               "type":"string",
+               "format":"email",
+               "description":"Correo electrónico de contacto"
+            },
+            "phone":{
+               "type":"string",
+               "description":"Teléfono de contacto"
+            },
+            "responsibleOfficer":{
+               "type":"string",
+               "description":"Nombre del funcionario responsable"
+            },
+            "officerPosition":{
+               "type":"string",
+               "description":"Cargo del funcionario responsable"
+            },
+            "estado":{
+               "type":"string",
+               "enum":[
+                  "Activo",
+                  "Inactivo",
+                  "Suspendido"
+               ],
+               "default":"Activo"
+            },
+            "pensionados":{
+               "type":"array",
+               "items":{
+                  "$ref":"#/definitions/Pensionado"
+               },
+               "description":"Lista de pensionados asociados"
+            },
+            "createdAt":{
+               "type":"string",
+               "format":"date-time"
+            },
+            "updatedAt":{
+               "type":"string",
+               "format":"date-time"
+            }
+         },
+         "required":[
+            "id",
+            "nit",
+            "name",
+            "address",
+            "email",
+            "phone",
+            "responsibleOfficer",
+            "officerPosition"
+         ]
+      },
+      "Periodo":{
+         "type":"object",
+         "description":"Período fiscal con IPC aplicable",
+         "properties":{
+            "id":{
+               "type":"string"
+            },
+            "year":{
+               "type":"integer",
+               "description":"Año del período (ej: 2024)"
+            },
+            "ipc":{
+               "type":"number",
+               "description":"Porcentaje de IPC del período (ej: 9.28)"
+            },
+            "resolution":{
+               "type":"string",
+               "description":"Número de resolución que aprueba el IPC"
+            },
+            "resolutionDate":{
+               "type":"string",
+               "format":"date",
+               "description":"Fecha de expedición de la resolución"
+            },
+            "resolutionDetails":{
+               "type":"string",
+               "nullable":true,
+               "description":"Detalles adicionales de la resolución"
+            },
+            "estado":{
+               "type":"string",
+               "enum":[
+                  "Abierto",
+                  "Cerrado",
+                  "En Liquidación"
+               ],
+               "default":"Abierto"
+            },
+            "createdAt":{
+               "type":"string",
+               "format":"date-time"
+            },
+            "updatedAt":{
+               "type":"string",
+               "format":"date-time"
+            }
+         },
+         "required":[
+            "id",
+            "year",
+            "ipc",
+            "resolution",
+            "resolutionDate"
+         ]
+      },
+      "DTFHistorico":{
+         "type":"object",
+         "description":"Registro histórico de tasa DTF",
+         "properties":{
+            "id":{
+               "type":"string"
+            },
+            "period":{
+               "type":"string",
+               "description":"Período en formato YYYY-MM (ej: 2024-12)"
+            },
+            "rate":{
+               "type":"number",
+               "description":"Tasa DTF en porcentaje (ej: 10.25)"
+            },
+            "createdAt":{
+               "type":"string",
+               "format":"date-time"
+            },
+            "updatedAt":{
+               "type":"string",
+               "format":"date-time"
+            }
+         },
+         "required":[
+            "id",
+            "period",
+            "rate"
+         ]
+      },
+      "SMMLVHistorico":{
+         "type":"object",
+         "description":"Registro histórico de Salario Mínimo",
+         "properties":{
+            "id":{
+               "type":"string"
+            },
+            "year":{
+               "type":"integer",
+               "description":"Año del SMMLV (ej: 2025)"
+            },
+            "value":{
+               "type":"number",
+               "description":"Valor del SMMLV en COP (ej: 1423500)"
+            },
+            "createdAt":{
+               "type":"string",
+               "format":"date-time"
+            },
+            "updatedAt":{
+               "type":"string",
+               "format":"date-time"
+            }
+         },
+         "required":[
+            "id",
+            "year",
+            "value"
+         ]
+      },
+      "CuotaHistorial":{
+         "type":"object",
+         "description":"Registro de cuota en el historial de pensiones",
+         "properties":{
+            "id":{
+               "type":"string"
+            },
+            "periodo":{
+               "type":"string",
+               "description":"Período de la cuota (ej: 1/1/2024 a 31/12/2024)"
+            },
+            "mesadas":{
+               "type":"integer",
+               "description":"Número de mesadas en el período (típicamente 14)"
+            },
+            "valorPension":{
+               "type":"number",
+               "description":"Valor de la pensión base en COP"
+            },
+            "cuotaMensual":{
+               "type":"number",
+               "description":"Cuota parte mensual (valorPension * porcentajeCuota)"
+            },
+            "cuotaAnual":{
+               "type":"number",
+               "description":"Cuota parte total del año (cuotaMensual * mesadas)"
+            },
+            "ipc":{
+               "type":"number",
+               "description":"Porcentaje de IPC anual aplicado"
+            },
+            "leyEspecial":{
+               "type":"number",
+               "default":0,
+               "description":"Incremento por Ley 4/76 en COP"
+            },
+            "ajuste":{
+               "type":"number",
+               "default":0,
+               "description":"Ajuste aplicado en COP"
+            },
+            "esReliquidacion":{
+               "type":"boolean",
+               "default":false,
+               "description":"Indica si es una reliquidación"
+            },
+            "comentarios":{
+               "type":"string",
+               "nullable":true,
+               "description":"Comentarios u observaciones"
+            },
+            "estado":{
+               "type":"string",
+               "enum":[
+                  "Pendiente",
+                  "Pagado",
+                  "Cobrado",
+                  "Parcial",
+                  "Vencido"
+               ],
+               "default":"Pendiente"
+            },
+            "createdAt":{
+               "type":"string",
+               "format":"date-time"
+            },
+            "updatedAt":{
+               "type":"string",
+               "format":"date-time"
+            }
+         },
+         "required":[
+            "id",
+            "periodo",
+            "mesadas",
+            "valorPension",
+            "cuotaMensual",
+            "cuotaAnual",
+            "ipc",
+            "estado"
+         ]
+      },
+      "CuotaPagar":{
+         "type":"object",
+         "description":"Cuota parte por pagar a pensionados",
+         "properties":{
+            "id":{
+               "type":"string"
+            },
+            "pensionadoId":{
+               "type":"string"
+            },
+            "pensionadoCedula":{
+               "type":"string"
+            },
+            "pensionadoNombre":{
+               "type":"string"
+            },
+            "entityId":{
+               "type":"string"
+            },
+            "entityNit":{
+               "type":"string"
+            },
+            "entityName":{
+               "type":"string"
+            },
+            "periodoIPC":{
+               "type":"string",
+               "description":"Período con IPC seleccionado (ej: 2024 (IPC: 9.28%))"
+            },
+            "fechaInicio":{
+               "type":"string",
+               "format":"date",
+               "description":"Fecha de inicio del período"
+            },
+            "fechaLiquidacion":{
+               "type":"string",
+               "format":"date",
+               "description":"Fecha final del período"
+            },
+            "periodo":{
+               "type":"string",
+               "description":"Período formateado (ej: 01/01/2024 - 31/12/2024)"
+            },
+            "diasTotales":{
+               "type":"integer",
+               "description":"Días totales del período"
+            },
+            "valorPension":{
+               "type":"number",
+               "description":"Valor de la pensión base"
+            },
+            "porcentajeCuota":{
+               "type":"number",
+               "description":"Porcentaje de cuota parte (%)"
+            },
+            "cantidadCuotas":{
+               "type":"integer",
+               "description":"Cantidad de mesadas/cuotas"
+            },
+            "ipc":{
+               "type":"number",
+               "description":"IPC aplicado (%)"
+            },
+            "tasaDiaria":{
+               "type":"number",
+               "description":"Tasa diaria calculada desde IPC (%)"
+            },
+            "valorCuotaParte":{
+               "type":"number",
+               "description":"Valor de una cuota parte mensual"
+            },
+            "valorCuotasTotal":{
+               "type":"number",
+               "description":"Total de cuotas (valorCuotaParte * cantidadCuotas)"
+            },
+            "valorInteresTotal":{
+               "type":"number",
+               "description":"Total de intereses acumulados"
+            },
+            "ajuste":{
+               "type":"number",
+               "default":0,
+               "description":"Ajuste aplicado"
+            },
+            "totalPagar":{
+               "type":"number",
+               "description":"Total a pagar (cuotas + intereses + ajuste)"
+            },
+            "esReliquidacion":{
+               "type":"boolean",
+               "default":false
+            },
+            "comentarios":{
+               "type":"string",
+               "nullable":true
+            },
+            "detallesCuotas":{
+               "type":"array",
+               "items":{
+                  "type":"object",
+                  "properties":{
+                     "numero":{
+                        "type":"integer"
+                     },
+                     "valorCuota":{
+                        "type":"number"
+                     },
+                     "dias":{
+                        "type":"integer"
+                     },
+                     "interes":{
+                        "type":"number"
+                     }
+                  }
+               },
+               "description":"Desglose detallado por cada cuota"
+            },
+            "estado":{
+               "type":"string",
+               "enum":[
+                  "Pendiente",
+                  "Pagada",
+                  "Parcialmente Pagada",
+                  "Vencida"
+               ],
+               "default":"Pendiente"
+            },
+            "createdAt":{
+               "type":"string",
+               "format":"date-time"
+            },
+            "updatedAt":{
+               "type":"string",
+               "format":"date-time"
+            }
+         },
+         "required":[
+            "id",
+            "pensionadoId",
+            "entityId",
+            "periodo",
+            "valorPension",
+            "porcentajeCuota",
+            "cantidadCuotas",
+            "ipc",
+            "valorCuotaParte",
+            "valorCuotasTotal",
+            "totalPagar"
+         ]
+      },
+      "CuotaCobrar":{
+         "type":"object",
+         "description":"Cuota parte por cobrar a entidades",
+         "properties":{
+            "id":{
+               "type":"string"
+            },
+            "pensionadoId":{
+               "type":"string"
+            },
+            "pensionadoCedula":{
+               "type":"string"
+            },
+            "pensionadoNombre":{
+               "type":"string"
+            },
+            "entityId":{
+               "type":"string"
+            },
+            "entityNit":{
+               "type":"string"
+            },
+            "entityName":{
+               "type":"string"
+            },
+            "periodoIPC":{
+               "type":"string"
+            },
+            "fechaInicio":{
+               "type":"string",
+               "format":"date"
+            },
+            "fechaLiquidacion":{
+               "type":"string",
+               "format":"date"
+            },
+            "periodo":{
+               "type":"string"
+            },
+            "diasTotales":{
+               "type":"integer"
+            },
+            "valorPension":{
+               "type":"number"
+            },
+            "porcentajeCuota":{
+               "type":"number",
+               "description":"Porcentaje que debe la entidad (%)"
+            },
+            "porcentajeUniversidad":{
+               "type":"number",
+               "description":"Porcentaje que paga la Universidad (%)"
+            },
+            "valorPagaUniversidad":{
+               "type":"number",
+               "description":"Valor que paga la Universidad mensualmente"
+            },
+            "cantidadCuotas":{
+               "type":"integer"
+            },
+            "ipc":{
+               "type":"number"
+            },
+            "tasaDiaria":{
+               "type":"number"
+            },
+            "valorCuotaParte":{
+               "type":"number"
+            },
+            "valorCuotasTotal":{
+               "type":"number"
+            },
+            "valorInteresTotal":{
+               "type":"number"
+            },
+            "ajuste":{
+               "type":"number",
+               "default":0
+            },
+            "totalCobrar":{
+               "type":"number",
+               "description":"Total a cobrar a la entidad"
+            },
+            "esReliquidacion":{
+               "type":"boolean",
+               "default":false
+            },
+            "comentarios":{
+               "type":"string",
+               "nullable":true
+            },
+            "detallesCuotas":{
+               "type":"array",
+               "items":{
+                  "type":"object",
+                  "properties":{
+                     "numero":{
+                        "type":"integer"
+                     },
+                     "valorCuota":{
+                        "type":"number"
+                     },
+                     "dias":{
+                        "type":"integer"
+                     },
+                     "interes":{
+                        "type":"number"
+                     }
+                  }
+               }
+            },
+            "estado":{
+               "type":"string",
+               "enum":[
+                  "Pendiente",
+                  "Cobrada",
+                  "Parcialmente Cobrada",
+                  "Vencida"
+               ],
+               "default":"Pendiente"
+            },
+            "createdAt":{
+               "type":"string",
+               "format":"date-time"
+            },
+            "updatedAt":{
+               "type":"string",
+               "format":"date-time"
+            }
+         },
+         "required":[
+            "id",
+            "pensionadoId",
+            "entityId",
+            "periodo",
+            "valorPension",
+            "porcentajeCuota",
+            "porcentajeUniversidad",
+            "cantidadCuotas",
+            "ipc",
+            "valorCuotaParte",
+            "totalCobrar"
+         ]
+      },
+      "LiquidacionPensionado":{
+         "type":"object",
+         "description":"Liquidación de cuotas pendientes por pensionado",
+         "properties":{
+            "id":{
+               "type":"string"
+            },
+            "pensionadoId":{
+               "type":"string"
+            },
+            "pensionadoCedula":{
+               "type":"string"
+            },
+            "pensionadoNombre":{
+               "type":"string"
+            },
+            "periodo":{
+               "type":"string",
+               "description":"Período de la liquidación (ej: 2024-08)"
+            },
+            "fechaGeneracion":{
+               "type":"string",
+               "format":"date",
+               "description":"Fecha desde la cual se calculan intereses"
+            },
+            "valorCuota":{
+               "type":"number",
+               "description":"Valor capital de la cuota"
+            },
+            "diasMora":{
+               "type":"integer",
+               "description":"Días en mora desde fecha de generación"
+            },
+            "tasaDiaria":{
+               "type":"number",
+               "description":"Tasa DTF diaria aplicada (decimal, ej: 0.000164)"
+            },
+            "valorInteres":{
+               "type":"number",
+               "description":"Valor de intereses calculados"
+            },
+            "totalLiquidar":{
+               "type":"number",
+               "description":"Total a liquidar (valorCuota + valorInteres)"
+            },
+            "estado":{
+               "type":"string",
+               "enum":[
+                  "Pendiente",
+                  "Liquidada",
+                  "Pagada"
+               ],
+               "default":"Pendiente"
+            },
+            "createdAt":{
+               "type":"string",
+               "format":"date-time"
+            },
+            "updatedAt":{
+               "type":"string",
+               "format":"date-time"
+            }
+         },
+         "required":[
+            "id",
+            "pensionadoId",
+            "periodo",
+            "fechaGeneracion",
+            "valorCuota",
+            "diasMora",
+            "tasaDiaria",
+            "valorInteres"
+         ]
+      },
+      "LiquidacionEntidad":{
+         "type":"object",
+         "description":"Liquidación de cuotas pendientes por entidad",
+         "properties":{
+            "id":{
+               "type":"string"
+            },
+            "entityId":{
+               "type":"string"
+            },
+            "entityNit":{
+               "type":"string"
+            },
+            "entityName":{
+               "type":"string"
+            },
+            "periodo":{
+               "type":"string"
+            },
+            "fechaGeneracion":{
+               "type":"string",
+               "format":"date"
+            },
+            "totalCapital":{
+               "type":"number",
+               "description":"Suma total de cuotas capital"
+            },
+            "totalIntereses":{
+               "type":"number",
+               "description":"Suma total de intereses"
+            },
+            "totalLiquidar":{
+               "type":"number",
+               "description":"Total a liquidar"
+            },
+            "cuotasPendientes":{
+               "type":"integer",
+               "description":"Número de cuotas pendientes"
+            },
+            "pensionadosAfectados":{
+               "type":"integer",
+               "description":"Número de pensionados incluidos"
+            },
+            "detallePorPensionado":{
+               "type":"array",
+               "items":{
+                  "$ref":"#/definitions/LiquidacionPensionado"
+               },
+               "description":"Desglose por cada pensionado"
+            },
+            "estado":{
+               "type":"string",
+               "enum":[
+                  "Pendiente",
+                  "Liquidada",
+                  "Cobrada"
+               ],
+               "default":"Pendiente"
+            },
+            "createdAt":{
+               "type":"string",
+               "format":"date-time"
+            },
+            "updatedAt":{
+               "type":"string",
+               "format":"date-time"
+            }
+         },
+         "required":[
+            "id",
+            "entityId",
+            "periodo",
+            "totalCapital",
+            "totalIntereses",
+            "totalLiquidar"
+         ]
+      },
+      "Novedad":{
+         "type":"object",
+         "description":"Registro de novedades y auditoría del sistema",
+         "properties":{
+            "id":{
+               "type":"string"
+            },
+            "tipo":{
+               "type":"string",
+               "enum":[
+                  "Fallecimiento",
+                  "Sustitución",
+                  "Cambio de Resolución",
+                  "Agregar Pensión",
+                  "Cambio de Estado",
+                  "Otro"
+               ],
+               "description":"Tipo de novedad registrada"
+            },
+            "pensionado":{
+               "type":"string",
+               "description":"Nombre del pensionado afectado"
+            },
+            "cedula":{
+               "type":"string",
+               "description":"Cédula del pensionado afectado"
+            },
+            "descripcion":{
+               "type":"string",
+               "description":"Descripción detallada de la novedad"
+            },
+            "detalles":{
+               "type":"object",
+               "properties":{
+                  "pensioneAfectadas":{
+                     "type":"string",
+                     "description":"Resoluciones afectadas (para cambio de resolución)"
+                  },
+                  "cambioAnterior":{
+                     "type":"string",
+                     "description":"Valor anterior (para cambio de resolución)"
+                  },
+                  "cambioNuevo":{
+                     "type":"string",
+                     "description":"Valor nuevo (para cambio de resolución)"
+                  },
+                  "razon":{
+                     "type":"string",
+                     "nullable":true,
+                     "description":"Razón del cambio"
+                  }
+               },
+               "nullable":true
+            },
+            "usuarioId":{
+               "type":"string",
+               "description":"ID del usuario que registró"
+            },
+            "usuarioNombre":{
+               "type":"string"
+            },
+            "fecha":{
+               "type":"string",
+               "format":"date-time",
+               "description":"Fecha y hora del registro"
+            },
+            "createdAt":{
+               "type":"string",
+               "format":"date-time"
+            },
+            "updatedAt":{
+               "type":"string",
+               "format":"date-time"
+            }
+         },
+         "required":[
+            "id",
+            "tipo",
+            "pensionado",
+            "cedula",
+            "descripcion",
+            "usuarioId"
+         ]
+      },
+      "Reporte":{
+         "type":"object",
+         "description":"Estructura de reportes generados",
+         "properties":{
+            "id":{
+               "type":"string"
+            },
+            "titulo":{
+               "type":"string"
+            },
+            "tipo":{
+               "type":"string",
+               "enum":[
+                  "Cuotas por Pagar",
+                  "Cuotas por Cobrar",
+                  "Liquidaciones",
+                  "Novedades"
+               ]
+            },
+            "filtros":{
+               "type":"object",
+               "properties":{
+                  "entityNit":{
+                     "type":"string",
+                     "nullable":true
+                  },
+                  "periodoId":{
+                     "type":"string",
+                     "nullable":true
+                  },
+                  "estado":{
+                     "type":"string",
+                     "nullable":true
+                  },
+                  "fechaDesde":{
+                     "type":"string",
+                     "format":"date",
+                     "nullable":true
+                  },
+                  "fechaHasta":{
+                     "type":"string",
+                     "format":"date",
+                     "nullable":true
+                  }
+               }
+            },
+            "datos":{
+               "type":"array",
+               "items":{
+                  "type":"object"
+               }
+            },
+            "totales":{
+               "type":"object",
+               "properties":{
+                  "totalRegistros":{
+                     "type":"integer"
+                  },
+                  "totalValor":{
+                     "type":"number"
+                  },
+                  "totalCorriente":{
+                     "type":"number"
+                  },
+                  "totalNoCorriente":{
+                     "type":"number"
+                  },
+                  "totalPrescrito":{
+                     "type":"number"
+                  }
+               }
+            },
+            "generadoEn":{
+               "type":"string",
+               "format":"date-time"
+            },
+            "generadoPor":{
+               "type":"string"
+            },
+            "formato":{
+               "type":"string",
+               "enum":[
+                  "JSON",
+                  "Excel",
+                  "PDF",
+                  "CSV"
+               ]
+            }
+         },
+         "required":[
+            "id",
+            "titulo",
+            "tipo",
+            "datos"
+         ]
+      },
+      "Usuario":{
+         "type":"object",
+         "description":"Usuario del sistema",
+         "properties":{
+            "id":{
+               "type":"string"
+            },
+            "email":{
+               "type":"string",
+               "format":"email"
+            },
+            "name":{
+               "type":"string",
+               "description":"Nombre completo del usuario"
+            },
+            "role":{
+               "type":"string",
+               "enum":[
+                  "admin",
+                  "gestor",
+                  "consultor",
+                  "guest"
+               ],
+               "default":"consultor"
+            },
+            "permissions":{
+               "type":"array",
+               "items":{
+                  "type":"string"
+               },
+               "description":"Permisos: view_entities, edit_entities, view_pensionados, edit_pensionados, view_quotas, edit_quotas, manage_quotas, view_reports, export_reports, view_settings, edit_settings",
+               "example":[
+                  "view_entities",
+                  "view_pensionados",
+                  "view_quotas",
+                  "view_reports"
+               ]
+            },
+            "avatar":{
+               "type":"string",
+               "nullable":true,
+               "description":"URL del avatar"
+            },
+            "isGuest":{
+               "type":"boolean",
+               "default":false
+            },
+            "createdAt":{
+               "type":"string",
+               "format":"date-time"
+            },
+            "updatedAt":{
+               "type":"string",
+               "format":"date-time"
+            }
+         },
+         "required":[
+            "id",
+            "email",
+            "name",
+            "role",
+            "permissions"
+         ]
+      }
+   },
+   "endpoints":{
+      "auth":{
+         "POST /api/auth/login":{
+            "description":"Iniciar sesión",
+            "request":{
+               "type":"object",
+               "properties":{
+                  "email":{
+                     "type":"string",
+                     "format":"email"
+                  },
+                  "password":{
+                     "type":"string"
+                  }
+               },
+               "required":[
+                  "email",
+                  "password"
+               ]
+            },
+            "response":{
+               "type":"object",
+               "properties":{
+                  "user":{
+                     "$ref":"#/definitions/Usuario"
+                  },
+                  "token":{
+                     "type":"string"
+                  },
+                  "refreshToken":{
+                     "type":"string"
+                  }
+               }
+            }
+         },
+         "POST /api/auth/guest":{
+            "description":"Acceso como invitado",
+            "response":{
+               "$ref":"#/definitions/Usuario"
+            }
+         },
+         "GET /api/auth/me":{
+            "description":"Obtener usuario actual",
+            "response":{
+               "$ref":"#/definitions/Usuario"
+            }
+         },
+         "POST /api/auth/logout":{
+            "description":"Cerrar sesión",
+            "response":{
+               "type":"object",
+               "properties":{
+                  "success":{
+                     "type":"boolean"
+                  }
+               }
+            }
+         }
+      },
+      "entidades":{
+         "GET /api/entidades":{
+            "description":"Listar todas las entidades",
+            "parameters":{
+               "search":{
+                  "type":"string",
+                  "description":"Búsqueda por nombre o NIT"
+               },
+               "page":{
+                  "type":"integer"
+               },
+               "limit":{
+                  "type":"integer"
+               }
+            },
+            "response":{
+               "type":"object",
+               "properties":{
+                  "data":{
+                     "type":"array",
+                     "items":{
+                        "$ref":"#/definitions/Entity"
+                     }
+                  },
+                  "total":{
+                     "type":"integer"
+                  }
+               }
+            }
+         },
+         "GET /api/entidades/:id":{
+            "description":"Obtener entidad por ID",
+            "response":{
+               "$ref":"#/definitions/Entity"
+            }
+         },
+         "GET /api/entidades/:nit/pensionados":{
+            "description":"Obtener pensionados de una entidad",
+            "response":{
+               "type":"array",
+               "items":{
+                  "$ref":"#/definitions/Pensionado"
+               }
+            }
+         },
+         "POST /api/entidades":{
+            "description":"Crear nueva entidad",
+            "request":{
+               "type":"object",
+               "properties":{
+                  "nit":{
+                     "type":"string"
+                  },
+                  "name":{
+                     "type":"string"
+                  },
+                  "address":{
+                     "type":"string"
+                  },
+                  "email":{
+                     "type":"string",
+                     "format":"email"
+                  },
+                  "phone":{
+                     "type":"string"
+                  },
+                  "responsibleOfficer":{
+                     "type":"string"
+                  },
+                  "officerPosition":{
+                     "type":"string"
+                  }
+               },
+               "required":[
+                  "nit",
+                  "name",
+                  "address",
+                  "email",
+                  "phone",
+                  "responsibleOfficer",
+                  "officerPosition"
+               ]
+            },
+            "response":{
+               "$ref":"#/definitions/Entity"
+            }
+         },
+         "PUT /api/entidades/:id":{
+            "description":"Actualizar entidad",
+            "response":{
+               "$ref":"#/definitions/Entity"
+            }
+         },
+         "DELETE /api/entidades/:id":{
+            "description":"Eliminar entidad",
+            "response":{
+               "type":"object",
+               "properties":{
+                  "success":{
+                     "type":"boolean"
+                  }
+               }
+            }
+         }
+      },
+      "pensionados":{
+         "GET /api/pensionados":{
+            "description":"Listar pensionados con filtros",
+            "parameters":{
+               "entityNit":{
+                  "type":"string"
+               },
+               "estado":{
+                  "type":"string"
+               },
+               "search":{
+                  "type":"string"
+               }
+            },
+            "response":{
+               "type":"array",
+               "items":{
+                  "$ref":"#/definitions/Pensionado"
+               }
+            }
+         },
+         "GET /api/pensionados/:id":{
+            "description":"Obtener pensionado por ID con historial completo",
+            "response":{
+               "$ref":"#/definitions/Pensionado"
+            }
+         },
+         "POST /api/pensionados":{
+            "description":"Crear nuevo pensionado con resoluciones y sustituto opcional",
+            "request":{
+               "type":"object",
+               "properties":{
+                  "cedula":{
+                     "type":"string"
+                  },
+                  "fechaExpedicionCedula":{
+                     "type":"string",
+                     "format":"date"
+                  },
+                  "nombre":{
+                     "type":"string"
+                  },
+                  "apellidos":{
+                     "type":"string"
+                  },
+                  "fechaNacimiento":{
+                     "type":"string",
+                     "format":"date"
+                  },
+                  "telefono":{
+                     "type":"string"
+                  },
+                  "entidadJubilacion":{
+                     "type":"string"
+                  },
+                  "entityNit":{
+                     "type":"string"
+                  },
+                  "diasTrabajadosEntidad":{
+                     "type":"integer"
+                  },
+                  "diasTotalesTrabajados":{
+                     "type":"integer"
+                  },
+                  "tipoJubilacion":{
+                     "type":"string"
+                  },
+                  "resoluciones":{
+                     "type":"array",
+                     "items":{
+                        "$ref":"#/definitions/Resolucion"
+                     }
+                  },
+                  "estado":{
+                     "type":"string"
+                  },
+                  "fechaFallecimiento":{
+                     "type":"string",
+                     "format":"date",
+                     "nullable":true
+                  },
+                  "tienesustituto":{
+                     "type":"boolean"
+                  },
+                  "sustituto":{
+                     "$ref":"#/definitions/Sustituto",
+                     "nullable":true
+                  }
+               },
+               "required":[
+                  "cedula",
+                  "fechaExpedicionCedula",
+                  "nombre",
+                  "apellidos",
+                  "fechaNacimiento",
+                  "telefono",
+                  "entityNit",
+                  "diasTrabajadosEntidad",
+                  "diasTotalesTrabajados",
+                  "tipoJubilacion",
+                  "resoluciones"
+               ]
+            },
+            "response":{
+               "$ref":"#/definitions/Pensionado"
+            }
+         },
+         "PUT /api/pensionados/:id":{
+            "description":"Actualizar pensionado (datos, resoluciones, sustituto)",
+            "response":{
+               "$ref":"#/definitions/Pensionado"
+            }
+         },
+         "DELETE /api/pensionados/:id":{
+            "description":"Eliminar pensionado",
+            "response":{
+               "type":"object",
+               "properties":{
+                  "success":{
+                     "type":"boolean"
+                  }
+               }
+            }
+         }
+      },
+      "periodos":{
+         "GET /api/periodos":{
+            "description":"Listar todos los períodos",
+            "response":{
+               "type":"array",
+               "items":{
+                  "$ref":"#/definitions/Periodo"
+               }
+            }
+         },
+         "GET /api/periodos/:id":{
+            "description":"Obtener período por ID",
+            "response":{
+               "$ref":"#/definitions/Periodo"
+            }
+         },
+         "POST /api/periodos":{
+            "description":"Crear nuevo período",
+            "request":{
+               "type":"object",
+               "properties":{
+                  "year":{
+                     "type":"integer"
+                  },
+                  "ipc":{
+                     "type":"number"
+                  },
+                  "resolution":{
+                     "type":"string"
+                  },
+                  "resolutionDate":{
+                     "type":"string",
+                     "format":"date"
+                  },
+                  "resolutionDetails":{
+                     "type":"string",
+                     "nullable":true
+                  }
+               },
+               "required":[
+                  "year",
+                  "ipc",
+                  "resolution",
+                  "resolutionDate"
+               ]
+            },
+            "response":{
+               "$ref":"#/definitions/Periodo"
+            }
+         },
+         "PUT /api/periodos/:id":{
+            "description":"Actualizar período",
+            "response":{
+               "$ref":"#/definitions/Periodo"
+            }
+         },
+         "DELETE /api/periodos/:id":{
+            "description":"Eliminar período",
+            "response":{
+               "type":"object",
+               "properties":{
+                  "success":{
+                     "type":"boolean"
+                  }
+               }
+            }
+         }
+      },
+      "dtf":{
+         "GET /api/dtf":{
+            "description":"Listar histórico DTF",
+            "response":{
+               "type":"array",
+               "items":{
+                  "$ref":"#/definitions/DTFHistorico"
+               }
+            }
+         },
+         "POST /api/dtf":{
+            "description":"Crear registro DTF",
+            "request":{
+               "type":"object",
+               "properties":{
+                  "period":{
+                     "type":"string"
+                  },
+                  "rate":{
+                     "type":"number"
+                  }
+               },
+               "required":[
+                  "period",
+                  "rate"
+               ]
+            },
+            "response":{
+               "$ref":"#/definitions/DTFHistorico"
+            }
+         },
+         "PUT /api/dtf/:id":{
+            "description":"Actualizar DTF",
+            "response":{
+               "$ref":"#/definitions/DTFHistorico"
+            }
+         },
+         "DELETE /api/dtf/:id":{
+            "description":"Eliminar DTF",
+            "response":{
+               "type":"object",
+               "properties":{
+                  "success":{
+                     "type":"boolean"
+                  }
+               }
+            }
+         }
+      },
+      "smmlv":{
+         "GET /api/smmlv":{
+            "description":"Listar histórico SMMLV",
+            "response":{
+               "type":"array",
+               "items":{
+                  "$ref":"#/definitions/SMMLVHistorico"
+               }
+            }
+         },
+         "POST /api/smmlv":{
+            "description":"Crear registro SMMLV",
+            "request":{
+               "type":"object",
+               "properties":{
+                  "year":{
+                     "type":"integer"
+                  },
+                  "value":{
+                     "type":"number"
+                  }
+               },
+               "required":[
+                  "year",
+                  "value"
+               ]
+            },
+            "response":{
+               "$ref":"#/definitions/SMMLVHistorico"
+            }
+         },
+         "PUT /api/smmlv/:id":{
+            "description":"Actualizar SMMLV",
+            "response":{
+               "$ref":"#/definitions/SMMLVHistorico"
+            }
+         },
+         "DELETE /api/smmlv/:id":{
+            "description":"Eliminar SMMLV",
+            "response":{
+               "type":"object",
+               "properties":{
+                  "success":{
+                     "type":"boolean"
+                  }
+               }
+            }
+         }
+      },
+      "cuotas_pagar":{
+         "GET /api/cuotas-pagar":{
+            "description":"Listar cuotas por pagar con filtros",
+            "parameters":{
+               "entityNit":{
+                  "type":"string"
+               },
+               "pensionadoId":{
+                  "type":"string"
+               },
+               "estado":{
+                  "type":"string"
+               },
+               "esReliquidacion":{
+                  "type":"boolean"
+               }
+            },
+            "response":{
+               "type":"array",
+               "items":{
+                  "$ref":"#/definitions/CuotaPagar"
+               }
+            }
+         },
+         "GET /api/cuotas-pagar/:id":{
+            "description":"Obtener detalle de cuota por pagar",
+            "response":{
+               "$ref":"#/definitions/CuotaPagar"
+            }
+         },
+         "GET /api/cuotas-pagar/pensionado/:pensionadoId":{
+            "description":"Obtener historial de cuotas de un pensionado",
+            "response":{
+               "type":"array",
+               "items":{
+                  "$ref":"#/definitions/CuotaHistorial"
+               }
+            }
+         },
+         "POST /api/cuotas-pagar":{
+            "description":"Agregar nuevo período/cuota por pagar",
+            "request":{
+               "$ref":"#/definitions/CuotaPagar"
+            },
+            "response":{
+               "$ref":"#/definitions/CuotaPagar"
+            }
+         },
+         "PUT /api/cuotas-pagar/:id":{
+            "description":"Actualizar cuota por pagar (todos los campos editables)",
+            "response":{
+               "$ref":"#/definitions/CuotaPagar"
+            }
+         },
+         "DELETE /api/cuotas-pagar/:id":{
+            "description":"Eliminar cuota por pagar",
+            "response":{
+               "type":"object",
+               "properties":{
+                  "success":{
+                     "type":"boolean"
+                  }
+               }
+            }
+         }
+      },
+      "cuotas_cobrar":{
+         "GET /api/cuotas-cobrar":{
+            "description":"Listar cuotas por cobrar con filtros",
+            "parameters":{
+               "entityNit":{
+                  "type":"string"
+               },
+               "pensionadoId":{
+                  "type":"string"
+               },
+               "estado":{
+                  "type":"string"
+               },
+               "esReliquidacion":{
+                  "type":"boolean"
+               }
+            },
+            "response":{
+               "type":"array",
+               "items":{
+                  "$ref":"#/definitions/CuotaCobrar"
+               }
+            }
+         },
+         "GET /api/cuotas-cobrar/:id":{
+            "description":"Obtener detalle de cuota por cobrar",
+            "response":{
+               "$ref":"#/definitions/CuotaCobrar"
+            }
+         },
+         "GET /api/cuotas-cobrar/pensionado/:pensionadoId":{
+            "description":"Obtener historial de cuotas por cobrar de un pensionado",
+            "response":{
+               "type":"array",
+               "items":{
+                  "$ref":"#/definitions/CuotaHistorial"
+               }
+            }
+         },
+         "POST /api/cuotas-cobrar":{
+            "description":"Agregar nuevo período/cuota por cobrar",
+            "request":{
+               "$ref":"#/definitions/CuotaCobrar"
+            },
+            "response":{
+               "$ref":"#/definitions/CuotaCobrar"
+            }
+         },
+         "PUT /api/cuotas-cobrar/:id":{
+            "description":"Actualizar cuota por cobrar (todos los campos editables)",
+            "response":{
+               "$ref":"#/definitions/CuotaCobrar"
+            }
+         },
+         "DELETE /api/cuotas-cobrar/:id":{
+            "description":"Eliminar cuota por cobrar",
+            "response":{
+               "type":"object",
+               "properties":{
+                  "success":{
+                     "type":"boolean"
+                  }
+               }
+            }
+         }
+      },
+      "liquidaciones":{
+         "GET /api/liquidaciones/pensionado/:pensionadoId":{
+            "description":"Obtener liquidaciones pendientes de un pensionado",
+            "response":{
+               "type":"array",
+               "items":{
+                  "$ref":"#/definitions/LiquidacionPensionado"
+               }
+            }
+         },
+         "POST /api/liquidaciones/pensionado":{
+            "description":"Procesar liquidación para pensionado",
+            "response":{
+               "$ref":"#/definitions/LiquidacionPensionado"
+            }
+         },
+         "PUT /api/liquidaciones/pensionado/:id":{
+            "description":"Actualizar liquidación de pensionado (fecha, tasa)",
+            "response":{
+               "$ref":"#/definitions/LiquidacionPensionado"
+            }
+         },
+         "GET /api/liquidaciones/entidad/:entityNit":{
+            "description":"Obtener liquidaciones pendientes de una entidad",
+            "response":{
+               "$ref":"#/definitions/LiquidacionEntidad"
+            }
+         },
+         "POST /api/liquidaciones/entidad":{
+            "description":"Procesar liquidación para entidad",
+            "response":{
+               "$ref":"#/definitions/LiquidacionEntidad"
+            }
+         },
+         "PUT /api/liquidaciones/entidad/:id":{
+            "description":"Actualizar liquidación de entidad",
+            "response":{
+               "$ref":"#/definitions/LiquidacionEntidad"
+            }
+         }
+      },
+      "novedades":{
+         "GET /api/novedades":{
+            "description":"Listar novedades con filtros",
+            "parameters":{
+               "tipo":{
+                  "type":"string"
+               },
+               "desde":{
+                  "type":"string",
+                  "format":"date"
+               },
+               "hasta":{
+                  "type":"string",
+                  "format":"date"
+               },
+               "pensionadoCedula":{
+                  "type":"string"
+               }
+            },
+            "response":{
+               "type":"array",
+               "items":{
+                  "$ref":"#/definitions/Novedad"
+               }
+            }
+         },
+         "GET /api/novedades/:id":{
+            "description":"Obtener detalle de novedad",
+            "response":{
+               "$ref":"#/definitions/Novedad"
+            }
+         },
+         "POST /api/novedades":{
+            "description":"Registrar nueva novedad",
+            "request":{
+               "type":"object",
+               "properties":{
+                  "tipo":{
+                     "type":"string"
+                  },
+                  "pensionado":{
+                     "type":"string"
+                  },
+                  "cedula":{
+                     "type":"string"
+                  },
+                  "descripcion":{
+                     "type":"string"
+                  },
+                  "detalles":{
+                     "type":"object",
+                     "nullable":true
+                  }
+               },
+               "required":[
+                  "tipo",
+                  "pensionado",
+                  "cedula",
+                  "descripcion"
+               ]
+            },
+            "response":{
+               "$ref":"#/definitions/Novedad"
+            }
+         }
+      },
+      "reportes":{
+         "GET /api/reportes/cuotas-pagar":{
+            "description":"Generar reporte de cuotas por pagar por entidad",
+            "parameters":{
+               "entityNit":{
+                  "type":"string"
+               },
+               "periodoId":{
+                  "type":"string"
+               },
+               "formato":{
+                  "type":"string",
+                  "enum":[
+                     "JSON",
+                     "Excel",
+                     "PDF"
+                  ]
+               }
+            },
+            "response":{
+               "$ref":"#/definitions/Reporte"
+            }
+         },
+         "GET /api/reportes/cuotas-cobrar":{
+            "description":"Generar reporte de cuotas por cobrar por entidad",
+            "parameters":{
+               "entityNit":{
+                  "type":"string"
+               },
+               "periodoId":{
+                  "type":"string"
+               },
+               "formato":{
+                  "type":"string",
+                  "enum":[
+                     "JSON",
+                     "Excel",
+                     "PDF"
+                  ]
+               }
+            },
+            "response":{
+               "$ref":"#/definitions/Reporte"
+            }
+         },
+         "GET /api/reportes/liquidaciones":{
+            "description":"Generar reporte de liquidaciones",
+            "parameters":{
+               "entityNit":{
+                  "type":"string",
+                  "nullable":true
+               },
+               "pensionadoId":{
+                  "type":"string",
+                  "nullable":true
+               },
+               "formato":{
+                  "type":"string",
+                  "enum":[
+                     "JSON",
+                     "Excel",
+                     "PDF"
+                  ]
+               }
+            },
+            "response":{
+               "$ref":"#/definitions/Reporte"
+            }
+         },
+         "GET /api/reportes/novedades":{
+            "description":"Generar reporte de novedades",
+            "parameters":{
+               "tipo":{
+                  "type":"string",
+                  "nullable":true
+               },
+               "desde":{
+                  "type":"string",
+                  "format":"date"
+               },
+               "hasta":{
+                  "type":"string",
+                  "format":"date"
+               },
+               "formato":{
+                  "type":"string",
+                  "enum":[
+                     "JSON",
+                     "Excel",
+                     "PDF"
+                  ]
+               }
+            },
+            "response":{
+               "$ref":"#/definitions/Reporte"
+            }
+         }
+      }
+   }"per"

@@ -3,8 +3,7 @@ package com.unicauca.pensionados.backend.application.service.interfaces;
 import org.springframework.stereotype.Service;
 
 import com.unicauca.pensionados.backend.domain.model.entity.Pensionado;
-import com.unicauca.pensionados.backend.domain.model.entity.Trabajo;
-import com.unicauca.pensionados.backend.application.dto.response.ResultadoCobroPorPensionado;
+import com.unicauca.pensionados.backend.application.dto.response.cobro.ResultadoCobroPorPensionado;
 
 @Service
 public interface ICuotaParteServicio {
