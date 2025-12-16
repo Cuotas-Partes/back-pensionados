@@ -2,6 +2,7 @@ package com.unicauca.pensionados.backend.application.dto.response.resolucion;
 
 import java.math.BigDecimal;
 import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.util.Map;
 
 import com.unicauca.pensionados.backend.domain.model.enums.EstadoResolucion;
@@ -25,4 +26,6 @@ public class ResolucionResponseDTO {
     private TipoResolucion tipoResolucion;
     private String observaciones;
     private Map<String, Object> datosEspecificos;
+    private LocalDateTime createdAt;
+    private LocalDateTime updatedAt;
 }

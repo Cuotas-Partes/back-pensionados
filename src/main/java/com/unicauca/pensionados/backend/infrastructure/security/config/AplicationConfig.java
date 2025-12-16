@@ -2,6 +2,7 @@ package com.unicauca.pensionados.backend.infrastructure.security.config;
 
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.context.annotation.Lazy;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.AuthenticationProvider;
 import org.springframework.security.authentication.dao.DaoAuthenticationProvider;
@@ -13,13 +14,14 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 
 import com.unicauca.pensionados.backend.infrastructure.persistence.repository.UsuarioRepositorio;
 
-import lombok.RequiredArgsConstructor;
-
 @Configuration
-@RequiredArgsConstructor
 public class AplicationConfig {
 
     private final UsuarioRepositorio usuarioRepositorio;
+
+    public AplicationConfig(@Lazy UsuarioRepositorio usuarioRepositorio) {
+        this.usuarioRepositorio = usuarioRepositorio;
+    }
 
     @Bean
     public AuthenticationManager authenticationManager(AuthenticationConfiguration config) throws Exception{
@@ -43,6 +45,7 @@ public class AplicationConfig {
     }
 
     @Bean
+    @Lazy
     public UserDetailsService userDetailService() {
         return username -> usuarioRepositorio.findByUsername(username)
         .orElseThrow(()-> new UsernameNotFoundException("Usuario no encontrado"));

@@ -14,6 +14,7 @@ import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.math.BigDecimal;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.List;
@@ -79,7 +80,7 @@ public class DTFServicio implements IDTFServicio {
         }
 
         if (dto.getValor() != null) {
-            dtf.setValor(dto.getValor());
+            dtf.setValor(BigDecimal.valueOf(dto.getValor()));
         }
 
         DTF actualizado = dtfRepositorio.save(dtf);
@@ -128,7 +129,7 @@ public class DTFServicio implements IDTFServicio {
     @Override
     public List<DTFDTO> listarDTFs() {
         logCambioServicio.registrarConsulta(nombreEntidad);
-        return dtfRepositorio.findByActivoTrue()
+        return dtfRepositorio.findByEstadoTrue()
                 .stream()
                 .map(DtfMapper::toResponseDTO)
                 .toList();

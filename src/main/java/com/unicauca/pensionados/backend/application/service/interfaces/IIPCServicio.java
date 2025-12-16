@@ -9,5 +9,5 @@ public interface IIPCServicio {
     IPCRespuestaDTO buscarIPCPorAnio(Integer anio);
     void registrarIPC(RegistroIPCPeticion peticion);
     void actualizarIPC(Long id, RegistroIPCPeticion peticion);
-    void eliminarIPC(Integer anio);
+    void eliminarIPC(Long anio);
 }

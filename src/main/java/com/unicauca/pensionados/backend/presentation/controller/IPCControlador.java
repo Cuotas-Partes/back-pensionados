@@ -67,9 +67,9 @@ public class IPCControlador {
      * @return Mensaje de éxito o error.
      */
     @PutMapping("/actualizar/{anio}")
-    public ResponseEntity<?> actualizarIPC(@PathVariable Integer anio, @RequestBody RegistroIPCPeticion peticion) {
+    public ResponseEntity<?> actualizarIPC(@PathVariable Long anio, @RequestBody RegistroIPCPeticion peticion) {
         try {
-            ipcServicio.actualizarIPC(peticion);
+            ipcServicio.actualizarIPC(anio,peticion);
             return ResponseEntity.ok("IPC actualizado exitosamente");
         } catch (RuntimeException e) {
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Error al actualizar IPC: " + e.getMessage());
@@ -86,7 +86,7 @@ public class IPCControlador {
     @DeleteMapping("/eliminar/{anio}")
     public ResponseEntity<?> eliminarIPC(@PathVariable Integer anio) {
         try {
-            ipcServicio.eliminarIPC(anio);
+            ipcServicio.eliminarIPC(Long.valueOf(anio));
             return ResponseEntity.ok("IPC eliminado exitosamente");
         } catch (RuntimeException e) {
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Error al eliminar IPC: " + e.getMessage());

@@ -11,8 +11,6 @@ import java.util.Optional;
 public interface DTFRepositorio extends JpaRepository<DTF, Long> {
 
     Optional<DTF> findByPeriodo(String periodo);
-    List<DTF> findByActivoTrue();
-    Optional<DTF> findByIdAndActivoTrue(Long id);
-
+  List<DTF> findByEstadoTrue();
 
 }

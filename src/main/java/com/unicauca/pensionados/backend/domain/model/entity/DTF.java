@@ -1,9 +1,8 @@
 package com.unicauca.pensionados.backend.domain.model.entity;
 
-import java.time.LocalDate;
+import java.math.BigDecimal;
 import java.time.LocalDateTime;
 
-import com.unicauca.pensionados.backend.domain.model.enums.Periodicidad;
 
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
@@ -28,8 +27,7 @@ public class DTF {
     private String periodo; // Formato: "YYYY-MM"
 
     @Column(name="valor" , nullable = false, precision = 10, scale = 4)
-    private Double valor;
-
+    private BigDecimal valor;
 
     @Column(name = "createdAt", nullable = false)
     private LocalDateTime createdAt = LocalDateTime.now();

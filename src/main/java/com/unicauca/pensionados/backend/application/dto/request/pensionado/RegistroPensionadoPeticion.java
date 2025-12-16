@@ -89,4 +89,9 @@ public class RegistroPensionadoPeticion {
 
     @Schema(description = "Sustitutos (sucesores) del pensionado")
     private List<@Valid RegistroSucesorPensionadoPeticion> sustitutos;
+
+    @Schema(description = "Valor actual de la pensión", example = "1500000.00")
+    private float valorPensionActual;
+
+
 }

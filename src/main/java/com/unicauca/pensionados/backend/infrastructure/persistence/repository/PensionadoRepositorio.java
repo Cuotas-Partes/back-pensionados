@@ -31,24 +31,5 @@ public interface PensionadoRepositorio extends JpaRepository<Pensionado, Long>{
     // Buscar pensionado por cédula (número de identificación)
     Optional<Pensionado> findByCedula(String cedula);
 
-    @Query("SELECT new com.unicauca.pensionados.backend.application.dto.response.EntidadCuotaParteRespuesta(" +
-    "t.entidad.nit, t.entidad.name, SUM(p.cuotaParteTotalAnio)) " +
-    "FROM Trabajo t " +
-    "JOIN t.pensionado pn " +
-    "JOIN t.entidad e " +
-    "JOIN CuotaParte cp ON t.idTrabajo = cp.trabajo.idTrabajo " +
-    "JOIN Periodo p ON cp.idCuotaParte = p.cuotaParte.idCuotaParte " +
-
-    // Se cambia 'pn.numeroIdPersona' por 'pn.idPersona' para que coincida con el nuevo modelo.
-    "WHERE pn.idPersona = :pensionadoId " +
-    "AND e.nit != '8911500319' " +
-    "GROUP BY e.nit, e.name")
-    List<EntidadCuotaParteRespuesta> findEntidadesYCuotaParteByPensionadoId(@Param("pensionadoId") Long pensionadoId, @Param("unicaucaNit") Long unicaucaNit);
-    @Query("""
-        SELECT DISTINCT p
-        FROM Pensionado p
-        LEFT JOIN FETCH p.resoluciones
-        WHERE p.entityId = :entity_id
-    """)
-    List<Pensionado> findByEntidadId(@Param("entity_id") Long entidadId);
+    List<Pensionado> findByEntityId(@Param("entity_id") Long entidadId);
 }

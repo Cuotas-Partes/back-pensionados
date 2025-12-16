@@ -58,7 +58,10 @@ public class PensionadoMapper {
                 r.getValorResolucion(),
                 r.getEstado(),
                 r.getTipoResolucion(),
-                r.getDatosEspecificos()
+                r.getObservaciones(),
+                r.getDatosEspecificos(),
+                r.getCreatedAt(),
+                r.getUpdatedAt()
         );
     }
     public static SucesorRespuesta toSustitutoDTO(Sucesor s) {

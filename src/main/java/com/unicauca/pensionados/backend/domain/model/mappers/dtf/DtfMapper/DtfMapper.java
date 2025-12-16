@@ -4,13 +4,15 @@ import com.unicauca.pensionados.backend.application.dto.request.dtf.DtfRequestDT
 import com.unicauca.pensionados.backend.application.dto.response.dtf.DTFDTO;
 import com.unicauca.pensionados.backend.domain.model.entity.DTF;
 
+import java.math.BigDecimal;
+
 public class DtfMapper {
     private DtfMapper() {}
 
     public static DTF toEntity(DtfRequestDTO dto) {
         DTF dtf = new DTF();
         dtf.setPeriodo(dto.getPeriodo());
-        dtf.setValor(dto.getValor());
+        dtf.setValor(BigDecimal.valueOf(dto.getValor()));
         return dtf;
     }
 
@@ -18,7 +20,7 @@ public class DtfMapper {
         return DTFDTO.builder()
                 .idDtf(entity.getIdDtf())
                 .periodo(entity.getPeriodo())
-                .valor(entity.getValor())
+                .valor(entity.getValor().doubleValue())
                 .estado(entity.isEstado())
                 .createdAt(entity.getCreatedAt())
                 .updatedAt(entity.getUpdatedAt())

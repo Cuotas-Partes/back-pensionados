@@ -66,7 +66,7 @@ public class PensionadoServicio implements IPensionadoServicio {
             throw new BusinessValidationException("Ya existe un pensionado con la cédula: " + request.getCedula());
         }
 
-        Entidad entidadJubilacion = entidadRepositorio.findByNit(request.getEntityNit())
+        Entidad entidadJubilacion = entidadRepositorio.findById(request.getEntityId())
                 .orElseThrow(() -> new RecursoNoEncontrado("La Entidad de jubilación no se encuentra registrada"));
 
         Pensionado pensionado = new Pensionado();
@@ -100,7 +100,7 @@ public class PensionadoServicio implements IPensionadoServicio {
             throw new BusinessValidationException("Ya existe un pensionado con la cédula: " + request.getCedula());
         }
 
-        Entidad entidadJubilacion = entidadRepositorio.findByNit(request.getEntityNit())
+        Entidad entidadJubilacion = entidadRepositorio.findById(request.getEntityId())
                 .orElseThrow(() -> new RecursoNoEncontrado("La Entidad de jubilación no se encuentra registrada"));
 
         Pensionado pensionadoAntiguo = new Pensionado();
@@ -130,7 +130,7 @@ public class PensionadoServicio implements IPensionadoServicio {
     @Override
     public List<PensionadoDTO> listarPensionadoPorEntidad(Long entidadId) {
         logCambioServicio.registrarConsulta(nombreEntidad);
-        return pensionadoRepositorio.findByEntidadId(entidadId)
+        return pensionadoRepositorio.findByEntityId(entidadId)
                 .stream()
                 .map(PensionadoMapper::toDTO)
                 .toList();
@@ -183,7 +183,7 @@ public class PensionadoServicio implements IPensionadoServicio {
         pensionado.setDiasTrabajadosEntidad(request.getDiasTrabajadosEntidad());
         pensionado.setDiasTotalesTrabajados(request.getDiasTotalesTrabajados());
         pensionado.setTipoJubilacion(request.getTipoJubilacion());
-        pensionado.setValorPensionActual(request.getValorPension());
+        pensionado.setValorPensionActual(BigDecimal.valueOf(request.getValorPensionActual()));
 
         pensionado.setEstado(request.getEstado() != null ? request.getEstado() : EstadoPersona.Activo);
         pensionado.setFechaFallecimiento(request.getFechaFallecimiento());

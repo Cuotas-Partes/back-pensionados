@@ -13,9 +13,7 @@ import com.unicauca.pensionados.backend.domain.model.enums.EstadoResolucion;
 import com.unicauca.pensionados.backend.domain.model.enums.TipoResolucion;
 
 import jakarta.persistence.*;
-import lombok.AllArgsConstructor;
 import lombok.Getter;
-import lombok.NoArgsConstructor;
 import lombok.Setter;
 
 @Entity
@@ -48,15 +46,13 @@ public class Resolucion {
     @Enumerated(EnumType.STRING)
     @Column(name = "tipoResolucion", nullable = false, length  = 50)
     private TipoResolucion tipoResolucion;
-    @JsonIgnore
-    @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "idPensionado", nullable = false)
 
     //Campo JSON para datos específicos del tipo
     @Column(name = "datos_especificos", columnDefinition = "JSON")
     @Convert(converter = JsonConverter.class)
     private Map<String, Object> datosEspecificos;
 
+    @JsonIgnore
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "pensionado_id", nullable = false)
     @JsonBackReference

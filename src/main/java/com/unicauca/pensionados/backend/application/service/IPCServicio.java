@@ -39,7 +39,7 @@ public class IPCServicio implements IIPCServicio {
      */
     @Override
     public List<IPCRespuestaDTO> listarIPC() {
-        List<IPC> lista = ipcRepositorio.findByActivoTrue();
+        List<IPC> lista = ipcRepositorio.findByEstado(EstadoIPC.ACTIVO);
         logCambioServicio.registrarConsulta(nombreEntidad);
         return lista.stream().map(IpcMapper::toIpcDTO).toList();
     }
@@ -53,12 +53,12 @@ public class IPCServicio implements IIPCServicio {
     public IPCRespuestaDTO buscarIPCPorAnio(Integer anio) {
         int anioActual = Year.now().getValue();
         if(anio>anioActual) {
-            throw new RuntimeException("No se puede consultar el IPC de años futuros");
+            throw new BusinessValidationException("No se puede consultar el IPC de años futuros");
         }
-        IPC ipc = ipcRepositorio.findById(anio).orElse(null);
-        if (ipc == null) {
-            throw new RuntimeException("No existe un registro de IPC para el año " + anio);
-        }
+        IPC ipc = ipcRepositorio.findByYear(anio)
+                .orElseThrow(() -> new BusinessValidationException(
+                        "No existe un registro de IPC para el año " + anio
+                ));
         logCambioServicio.registrarConsulta(nombreEntidad);
         return IpcMapper.toIpcDTO(ipc);
     }
@@ -95,7 +95,7 @@ public class IPCServicio implements IIPCServicio {
             throw new BusinessValidationException("El id del IPC es obligatorio para actualizar");
         }
 
-        IPC ipc = ipcRepositorio.findById(Math.toIntExact(id))
+        IPC ipc = ipcRepositorio.findById(id)
                 .orElseThrow(() -> new BusinessValidationException(
                         "No existe un IPC con id " + id
                 ));
@@ -114,9 +114,9 @@ public class IPCServicio implements IIPCServicio {
      * @throws RuntimeException si el año es anterior al actual.
      */
     @Override
-    public void eliminarIPC(Integer id) {
+    public void eliminarIPC(Long id) {
 
-        IPC ipc = ipcRepositorio.findByIdAndActivoTrue(Long.valueOf(id))
+        IPC ipc = ipcRepositorio.findByIdAndEstado(id, EstadoIPC.ACTIVO)
                 .orElseThrow(() -> new BusinessValidationException(
                         "No existe un IPC activo con id " + id
                 ));
@@ -160,7 +160,7 @@ public class IPCServicio implements IIPCServicio {
 
 
     private void validarNoDuplicado(Integer anio) {
-        if (ipcRepositorio.findByFechaIPC(anio)) {
+        if (ipcRepositorio.findByYear(anio).isPresent()) {
             throw new BusinessValidationException(
                     "Ya existe un registro de IPC para el año " + anio
             );

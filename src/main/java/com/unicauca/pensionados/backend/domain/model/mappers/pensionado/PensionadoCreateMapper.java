@@ -1,11 +1,13 @@
 package com.unicauca.pensionados.backend.domain.model.mappers.pensionado;
 
 import com.unicauca.pensionados.backend.application.dto.request.pensionado.RegistroPensionadoPeticion;
+import com.unicauca.pensionados.backend.application.dto.request.resolucion.ResolucionDTOPeticion;
 import com.unicauca.pensionados.backend.application.dto.request.sucesor.RegistroSucesorPeticion;
 import com.unicauca.pensionados.backend.domain.model.entity.Pensionado;
 import com.unicauca.pensionados.backend.domain.model.entity.Resolucion;
 import com.unicauca.pensionados.backend.domain.model.entity.Sucesor;
 import com.unicauca.pensionados.backend.domain.model.enums.EstadoPersona;
+import com.unicauca.pensionados.backend.domain.model.enums.EstadoResolucion;
 
 public class PensionadoCreateMapper {
     public static Pensionado toEntity(RegistroPensionadoPeticion dto) {
@@ -27,13 +29,13 @@ public class PensionadoCreateMapper {
         return p;
     }
 
-    public static Resolucion toResolucionEntity(ResolucionCreateDTO dto, Pensionado p) {
+    public static Resolucion toResolucionEntity(ResolucionDTOPeticion dto, Pensionado p) {
         Resolucion r = new Resolucion();
         r.setNumeroResolucion(dto.getNumeroResolucion());
         r.setFechaResolucion(dto.getFechaResolucion());
         r.setTipoResolucion(dto.getTipoResolucion());
         r.setValorResolucion(dto.getValorResolucion());
-        r.setEstado("VIGENTE");
+        r.setEstado(EstadoResolucion.valueOf("Vigente"));
         r.setPensionado(p);
         return r;
     }
