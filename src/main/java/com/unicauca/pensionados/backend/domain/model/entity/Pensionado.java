@@ -96,9 +96,6 @@ public class Pensionado {
     @Column(name = "tiene_sustituto")
     private Boolean tieneSustituto = false;
 
-    @Column(name = "sustituto_id")
-    private Long sustitutoId;
-
     @Column(name = "cuotas_pendientes")
     private Integer cuotasPendientes = 0;
 
