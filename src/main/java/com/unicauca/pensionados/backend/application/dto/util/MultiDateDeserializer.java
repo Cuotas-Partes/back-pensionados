@@ -5,43 +5,44 @@ import com.fasterxml.jackson.databind.DeserializationContext;
 import com.fasterxml.jackson.databind.JsonDeserializer;
 
 import java.io.IOException;
-import java.text.ParseException;
-import java.text.SimpleDateFormat;
-import java.util.Date;
+import java.time.LocalDate;
+import java.time.format.DateTimeFormatter;
+import java.time.format.DateTimeParseException;
 
 /**
  * Deserializador personalizado para fechas que acepta múltiples formatos.
  */
-public class MultiDateDeserializer extends JsonDeserializer<Date> {
+public class MultiDateDeserializer extends JsonDeserializer<LocalDate> {
 
-    private static final String[] DATE_FORMATS = {
-            "yyyy-MM-dd",
-            "dd/MM/yyyy",
-            "yyyy-MM-dd'T'HH:mm:ss",
-            "yyyy-MM-dd'T'HH:mm:ss.SSS",
-            "yyyy-MM-dd'T'HH:mm:ss.SSSZ",
-            "dd-MM-yyyy"
+    private static final DateTimeFormatter[] DATE_FORMATTERS = {
+            DateTimeFormatter.ofPattern("yyyy-MM-dd"),
+            DateTimeFormatter.ofPattern("dd/MM/yyyy"),
+            DateTimeFormatter.ofPattern("dd-MM-yyyy"),
+            DateTimeFormatter.ISO_LOCAL_DATE,
+            DateTimeFormatter.ISO_DATE
     };
 
     @Override
-    public Date deserialize(JsonParser jsonParser, DeserializationContext context) throws IOException {
+    public LocalDate deserialize(JsonParser jsonParser, DeserializationContext context) throws IOException {
         String date = jsonParser.getText();
         
         if (date == null || date.trim().isEmpty()) {
             return null;
         }
 
-        for (String format : DATE_FORMATS) {
+        // Si la fecha contiene 'T' (formato ISO DateTime), extraer solo la fecha
+        if (date.contains("T")) {
+            date = date.split("T")[0];
+        }
+
+        for (DateTimeFormatter formatter : DATE_FORMATTERS) {
             try {
-                SimpleDateFormat sdf = new SimpleDateFormat(format);
-                sdf.setLenient(false);
-                return sdf.parse(date);
-            } catch (ParseException e) {
+                return LocalDate.parse(date, formatter);
+            } catch (DateTimeParseException e) {
                 // Intentar con el siguiente formato
             }
         }
 
-        throw new IOException("No se pudo parsear la fecha: " + date + ". Formatos soportados: " 
-                + String.join(", ", DATE_FORMATS));
+        throw new IOException("No se pudo parsear la fecha: " + date + ". Formatos soportados: yyyy-MM-dd, dd/MM/yyyy, dd-MM-yyyy");
     }
 }

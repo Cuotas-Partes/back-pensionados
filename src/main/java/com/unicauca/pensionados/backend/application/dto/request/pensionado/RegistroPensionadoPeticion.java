@@ -12,7 +12,6 @@ import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
-import java.math.BigDecimal;
 import java.time.LocalDate;
 import java.util.List;
 
@@ -59,8 +58,8 @@ public class RegistroPensionadoPeticion {
     private String correo;
 
     @Schema(description = "Id de la entidad de jubilación", example = "1")
-    @NotBlank(message = "El id de la entidad de jubilación es obligatorio")
-    @Size(max = 20)
+    @NotNull(message = "El id de la entidad de jubilación es obligatorio")
+    @Positive(message = "El id de la entidad debe ser un número positivo")
     private Long entityId;
 
     @Schema(description = "Días trabajados en la entidad de jubilación", example = "7500")

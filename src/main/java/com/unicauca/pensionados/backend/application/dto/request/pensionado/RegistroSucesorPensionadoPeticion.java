@@ -2,7 +2,9 @@ package com.unicauca.pensionados.backend.application.dto.request.pensionado;
 
 import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 import com.unicauca.pensionados.backend.application.dto.util.MultiDateDeserializer;
+import com.unicauca.pensionados.backend.domain.model.enums.EstadoCivil;
 import com.unicauca.pensionados.backend.domain.model.enums.EstadoSustituto;
+import com.unicauca.pensionados.backend.domain.model.enums.Genero;
 import com.unicauca.pensionados.backend.domain.model.enums.TipoIdentificacion;
 import io.swagger.v3.oas.annotations.media.Schema;
 import jakarta.validation.constraints.DecimalMax;
@@ -33,10 +35,15 @@ public class RegistroSucesorPensionadoPeticion {
     @NotNull(message = "El tipo de identificación es obligatorio")
     private TipoIdentificacion tipoIdentificacion;
 
-    @Schema(description = "Nombre completo", example = "Gloria Patricia Rodríguez")
+    @Schema(description = "Nombre completo", example = "Gloria Patricia ")
     @NotBlank(message = "El nombre es obligatorio")
     @Size(max = 200)
     private String nombrePersona;
+
+    @Schema(description = "Apellido completo", example = "Rodríguez")
+    @NotBlank(message = "El Apellido es obligatorio")
+    @Size(max = 200)
+    private String apellidoPersona;
 
     @Schema(description = "Teléfono", example = "3209876543")
     @NotBlank(message = "El teléfono es obligatorio")
@@ -45,6 +52,25 @@ public class RegistroSucesorPensionadoPeticion {
 
     @Schema(description = "Estado", example = "Activo")
     private EstadoSustituto estado;
+
+    @Schema(description = "Estado Civil", example = "VIUDO")
+    private EstadoCivil estadoCivil = EstadoCivil.VIUDO;
+
+    @Schema(description = "Fecha de nacimiento", example = "1980-05-10")
+    @NotNull(message = "La fecha de nacimiento es obligatoria")
+    @JsonDeserialize(using = MultiDateDeserializer.class)
+    private LocalDate fechaNacimientoPersona;
+
+    @Schema(description = "Fecha de expedición del documento", example = "2000-01-01")
+    @NotNull(message = "La fecha de expedición del documento es obligatoria")
+    @JsonDeserialize(using = MultiDateDeserializer.class)
+    private LocalDate fechaExpedicionDocumentoIdPersona;
+
+    @Schema(description = "Género", example = "FEMENINO")
+    private Genero generoPersona;
+
+    @Schema(description = "Discapacidad", example = "Ninguna")
+    private String discapacidad;
 
     @Schema(description = "Fecha inicio", example = "2023-06-01")
     @NotNull(message = "La fecha de inicio es obligatoria")

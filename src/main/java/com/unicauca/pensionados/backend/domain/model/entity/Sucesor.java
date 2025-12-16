@@ -26,8 +26,15 @@ public class Sucesor extends Persona{
     @Column (name = "tipo_identificacion", nullable = false, length = 50)
     private TipoIdentificacion tipoDocumento;
 
+    @Column(name="nombre_sucesor", nullable = false, length = 100)
+    private String nombreSucesor;
+
+    @Column(name="apellido_sucesor", nullable = false, length = 100)
+    private String apellidoSucesor;
+
     @Column(name="nombre_completo", nullable = false, length = 200)
     private String nombreCompleto;
+
     @Column(name = "telefono", nullable = false, length = 20)
     private String telefono;
 
