@@ -538,3 +538,32 @@ SELECT 2024, 1300000.00, TRUE, NOW(), NOW()
 INSERT INTO smmlvHistorico (ano, valor, estado, createdAt, updatedAt)
 SELECT 2025, 1423500.00, TRUE, NOW(), NOW()
     WHERE NOT EXISTS (SELECT 1 FROM smmlvHistorico WHERE ano = 2025);
+
+-- ============================================
+-- PERIODOS (solo si no existen)
+-- ============================================
+-- Periodo 2023
+INSERT INTO periodo (anio, fecha_inicio_periodo, fecha_fin_periodo, ipc, cuota_parte_total_periodo, estado_periodo, created_at, updated_at)
+SELECT 2023, '2023-01-01', '2023-12-31', 13.12, 0.00, 'CERRADO', NOW(), NOW()
+    WHERE NOT EXISTS (SELECT 1 FROM periodo WHERE anio = 2023);
+
+-- Periodo 2024
+INSERT INTO periodo (anio, fecha_inicio_periodo, fecha_fin_periodo, ipc, cuota_parte_total_periodo, estado_periodo, created_at, updated_at)
+SELECT 2024, '2024-01-01', '2024-12-31', 9.28, 0.00, 'CERRADO', NOW(), NOW()
+    WHERE NOT EXISTS (SELECT 1 FROM periodo WHERE anio = 2024);
+
+-- Periodo 2025 - Primer Semestre
+INSERT INTO periodo (anio, fecha_inicio_periodo, fecha_fin_periodo, ipc, cuota_parte_total_periodo, estado_periodo, created_at, updated_at)
+SELECT 2025, '2025-01-01', '2025-06-30', 5.50, 0.00, 'ACTIVO', NOW(), NOW()
+    WHERE NOT EXISTS (SELECT 1 FROM periodo WHERE anio = 2025 AND fecha_fin_periodo = '2025-06-30');
+
+-- Periodo 2025 - Segundo Semestre
+INSERT INTO periodo (anio, fecha_inicio_periodo, fecha_fin_periodo, ipc, cuota_parte_total_periodo, estado_periodo, created_at, updated_at)
+SELECT 2025, '2025-07-01', '2025-12-31', NULL, 0.00, 'ACTIVO', NOW(), NOW()
+    WHERE NOT EXISTS (SELECT 1 FROM periodo WHERE anio = 2025 AND fecha_fin_periodo = '2025-12-31');
+
+-- Periodo 2026 - Anual
+INSERT INTO periodo (anio, fecha_inicio_periodo, fecha_fin_periodo, ipc, cuota_parte_total_periodo, estado_periodo, created_at, updated_at)
+SELECT 2026, '2026-01-01', '2026-12-31', NULL, 0.00, 'ACTIVO', NOW(), NOW()
+    WHERE NOT EXISTS (SELECT 1 FROM periodo WHERE anio = 2026);
+
