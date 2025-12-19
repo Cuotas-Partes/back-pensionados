@@ -230,13 +230,11 @@ public class PensionadoServicio implements IPensionadoServicio {
             s.setNumeroDocumento(p.getNumeroIdentificacion());
             s.setTipoDocumento(p.getTipoIdentificacion());
             s.setNombreCompleto(p.getNombrePersona() + " " + p.getApellidoPersona());
-            s.setEstado(p.getEstado() != null ? p.getEstado() : EstadoSustituto.Activo);
 
             // Campos específicos de Sucesor
             s.setNumeroDocumento(p.getNumeroIdentificacion());
             s.setTipoDocumento(p.getTipoIdentificacion());
             s.setNombreCompleto(p.getNombrePersona() + " " + p.getApellidoPersona());
-            s.setEstado(p.getEstado() != null ? p.getEstado() : EstadoSustituto.Activo);
             s.setFechaInicio(p.getFechaInicio());
             s.setFechaFin(p.getFechaFin());
             s.setPorcentajePension(p.getPorcentajePension());

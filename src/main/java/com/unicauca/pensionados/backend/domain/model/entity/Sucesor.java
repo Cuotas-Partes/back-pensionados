@@ -43,12 +43,9 @@ public class Sucesor  {
     @JoinColumn(name = "resolucion_nombramiento_id")
     private Resolucion resolucionNombramiento;
 
-
     // Estado del sustituto
     @Enumerated(EnumType.STRING)
     private EstadoSustituto estado; // ACTIVO, INACTIVO, FALLECIDO
-
-
 
     @Column(name = "fecha_inicio", nullable = false)
     private LocalDate fechaInicio;

@@ -45,16 +45,6 @@ public class RegistroSucesorPensionadoPeticion {
     @Size(max = 200)
     private String apellidoPersona;
 
-    @Schema(description = "Estado", example = "Activo")
-    private EstadoSustituto estado;
-
-    @Schema(description = "Estado Civil", example = "VIUDO")
-    private EstadoCivil estadoCivil = EstadoCivil.VIUDO;
-
-
-    @Schema(description = "Género", example = "FEMENINO")
-    private Genero generoPersona;
-
 
     @Schema(description = "Fecha inicio", example = "2023-06-01")
     @NotNull(message = "La fecha de inicio es obligatoria")
