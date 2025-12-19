@@ -3,7 +3,6 @@ package com.unicauca.pensionados.backend.application.dto.response.pensionado;
 import java.math.BigDecimal;
 import java.util.List;
 
-import com.unicauca.pensionados.backend.application.dto.response.cuotaParte.CuotaParteDTO;
 import io.swagger.v3.oas.annotations.media.Schema;
 
 @Schema(description = "DTO para representar un pensionado con sus cuotas partes asociadas")

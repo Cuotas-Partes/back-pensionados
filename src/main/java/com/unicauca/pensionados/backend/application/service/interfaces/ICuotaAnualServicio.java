@@ -1,7 +1,5 @@
 package com.unicauca.pensionados.backend.application.service.interfaces;
 
-import com.unicauca.pensionados.backend.application.dto.response.cuotaParte.CuotaAnualDTO;
-
 import java.util.List;
 
 public interface ICuotaAnualServicio {
