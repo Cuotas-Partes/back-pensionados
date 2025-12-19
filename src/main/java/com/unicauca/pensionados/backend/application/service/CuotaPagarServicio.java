@@ -130,16 +130,21 @@ public class CuotaPagarServicio implements ICuotaPagarServicio {
         );
         cuota.setValorCuotasTotal(valorCuotasTotal);
 
-        // 3. Calcular el total de intereses (si aplica tasa de interés)
-        java.math.BigDecimal valorInteresTotal = calcularValorInteresTotal(
-            cuota.getValorCuotaParte(),
-            cuota.getTasaDiaria(),
-            cuota.getDiasTotales(),
-            cuota.getCantidadCuotas()
-        );
+        // 3. Calcular intereses SOLO si hay mora (tasa > 0 y días > 0)
+        java.math.BigDecimal valorInteresTotal = java.math.BigDecimal.ZERO;
+        if (cuota.getTasaDiaria() != null && cuota.getTasaDiaria().compareTo(java.math.BigDecimal.ZERO) > 0
+            && cuota.getDiasTotales() != null && cuota.getDiasTotales() > 0) {
+            // Solo calcular si hay mora o es reliquidación con intereses
+            valorInteresTotal = calcularValorInteresTotal(
+                cuota.getValorCuotaParte(),
+                cuota.getTasaDiaria(),
+                cuota.getDiasTotales(),
+                cuota.getCantidadCuotas()
+            );
+        }
         cuota.setValorInteresTotal(valorInteresTotal);
 
-        // 4. Calcular el total a pagar (cuotas + intereses + ajuste)
+        // 4. Calcular el total a pagar (cuotas + intereses de mora + ajuste)
         java.math.BigDecimal totalPagar = calcularTotalPagar(
             valorCuotasTotal,
             valorInteresTotal,
@@ -221,13 +226,16 @@ public class CuotaPagarServicio implements ICuotaPagarServicio {
     }
 
     /**
-     * Calcula el valor total de los intereses
-     * Fórmula: Interés = valorCuotaParte * tasaDiaria * diasTotales
-     * @param valorCuotaParte Valor base de cada cuota
-     * @param tasaDiaria Tasa de interés diaria
-     * @param diasTotales Total de días del periodo
-     * @param cantidadCuotas Número de cuotas (para cálculo proporcional si es necesario)
-     * @return Valor total de intereses
+     * Calcula el valor total de los intereses POR MORA
+     * NOTA: Este método solo debe usarse cuando hay retraso en el pago o reliquidación con intereses.
+     * Para cuotas normales sin mora, el interés debe ser 0.
+     *
+     * Fórmula: Interés de Mora = valorCuotaParte × tasaDiaria × diasMora
+     * @param valorCuotaParte Valor base adeudado
+     * @param tasaDiaria Tasa de interés diaria (solo para mora)
+     * @param diasTotales Total de días de mora/atraso
+     * @param cantidadCuotas Número de cuotas (no usado actualmente)
+     * @return Valor total de intereses por mora
      */
     private java.math.BigDecimal calcularValorInteresTotal(
             java.math.BigDecimal valorCuotaParte,
@@ -239,7 +247,7 @@ public class CuotaPagarServicio implements ICuotaPagarServicio {
             return java.math.BigDecimal.ZERO;
         }
 
-        // Cálculo de interés simple: Valor * Tasa * Tiempo
+        // Cálculo de interés simple por mora: Valor × Tasa × Días de Atraso
         java.math.BigDecimal interes = valorCuotaParte
                 .multiply(tasaDiaria)
                 .multiply(java.math.BigDecimal.valueOf(diasTotales))
