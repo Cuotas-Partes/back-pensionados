@@ -41,17 +41,12 @@ public abstract class CuotaBase {
     @Column(name = "cantidad_cuotas", nullable = false)
     private Integer cantidadCuotas;
 
-    @Column(name = "tasa_diaria", nullable = false, precision = 10, scale = 6)
-    private BigDecimal tasaDiaria;
-
     @Column(name = "valor_cuota_parte", nullable = false, precision = 19, scale = 2)
     private BigDecimal valorCuotaParte;
 
     @Column(name = "valor_cuotas_total", nullable = false, precision = 19, scale = 2)
     private BigDecimal valorCuotasTotal;
 
-    @Column(name = "valor_interes_total", nullable = false, precision = 19, scale = 2)
-    private BigDecimal valorInteresTotal;
 
     @Column(name = "ajuste", precision = 19, scale = 2)
     private BigDecimal ajuste;

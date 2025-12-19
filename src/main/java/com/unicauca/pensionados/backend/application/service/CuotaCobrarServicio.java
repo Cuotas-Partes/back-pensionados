@@ -95,7 +95,6 @@ public class CuotaCobrarServicio implements ICuotaCobrarServicio {
         cuota.setFechaLiquidacion(p.getFechaLiquidacion());
         cuota.setDiasTotales(p.getDiasTotales());
         cuota.setCantidadCuotas(p.getCantidadCuotas());
-        cuota.setTasaDiaria(p.getTasaDiaria() != null ? p.getTasaDiaria() : java.math.BigDecimal.ZERO);
         cuota.setAjuste(p.getAjuste() != null ? p.getAjuste() : java.math.BigDecimal.ZERO);
         cuota.setEsReliquidacion(p.getEsReliquidacion());
         cuota.setComentarios(p.getComentarios());
@@ -131,29 +130,16 @@ public class CuotaCobrarServicio implements ICuotaCobrarServicio {
         );
         cuota.setValorCuotasTotal(valorCuotasTotal);
 
-        // 3. Calcular intereses SOLO si hay mora (tasa > 0 y días > 0)
-        java.math.BigDecimal valorInteresTotal = java.math.BigDecimal.ZERO;
-        if (cuota.getTasaDiaria() != null && cuota.getTasaDiaria().compareTo(java.math.BigDecimal.ZERO) > 0
-            && cuota.getDiasTotales() != null && cuota.getDiasTotales() > 0) {
-            // Solo calcular si hay mora o es reliquidación con intereses
-            valorInteresTotal = calcularValorInteresTotal(
-                cuota.getValorCuotaParte(),
-                cuota.getTasaDiaria(),
-                cuota.getDiasTotales(),
-                cuota.getCantidadCuotas()
-            );
-        }
-        cuota.setValorInteresTotal(valorInteresTotal);
-
-        // 4. Calcular el total a cobrar (cuotas + intereses de mora + ajuste)
+        // 3. Calcular el total a cobrar (cuotas + ajuste)
+        // NO se calculan intereses en cuotas normales
         java.math.BigDecimal totalCobrar = calcularTotalCobrar(
             valorCuotasTotal,
-            valorInteresTotal,
+            java.math.BigDecimal.ZERO,  // Sin intereses
             cuota.getAjuste()
         );
         cuota.setTotalCobrar(totalCobrar);
 
-        // 5. Calcular el valor que paga la universidad (basado en porcentaje)
+        // 4. Calcular el valor que paga la universidad (basado en porcentaje)
         java.math.BigDecimal valorPagaUniversidad = calcularValorPagaUniversidad(
             totalCobrar,
             cuota.getPorcentajeUniversidad()
@@ -234,40 +220,10 @@ public class CuotaCobrarServicio implements ICuotaCobrarServicio {
     }
 
     /**
-     * Calcula el valor total de los intereses POR MORA
-     * NOTA: Este método solo debe usarse cuando hay retraso en el pago o reliquidación con intereses.
-     * Para cuotas normales sin mora, el interés debe ser 0.
-     *
-     * Fórmula: Interés de Mora = valorCuotaParte × tasaDiaria × diasMora
-     * @param valorCuotaParte Valor base adeudado
-     * @param tasaDiaria Tasa de interés diaria (solo para mora)
-     * @param diasTotales Total de días de mora/atraso
-     * @param cantidadCuotas Número de cuotas (no usado actualmente)
-     * @return Valor total de intereses por mora
-     */
-    private java.math.BigDecimal calcularValorInteresTotal(
-            java.math.BigDecimal valorCuotaParte,
-            java.math.BigDecimal tasaDiaria,
-            Integer diasTotales,
-            Integer cantidadCuotas) {
-
-        if (valorCuotaParte == null || tasaDiaria == null || diasTotales == null) {
-            return java.math.BigDecimal.ZERO;
-        }
-
-        // Cálculo de interés simple por mora: Valor × Tasa × Días de Atraso
-        java.math.BigDecimal interes = valorCuotaParte
-                .multiply(tasaDiaria)
-                .multiply(java.math.BigDecimal.valueOf(diasTotales))
-                .setScale(2, java.math.RoundingMode.HALF_UP);
-
-        return interes;
-    }
-
-    /**
-     * Calcula el total a cobrar (suma de cuotas + intereses + ajustes)
+     * Calcula el total a cobrar (suma de cuotas + ajustes)
+     * NOTA: Ya no se calculan intereses en cuotas normales.
      * @param valorCuotasTotal Total de las cuotas
-     * @param valorInteresTotal Total de intereses
+     * @param valorInteresTotal Siempre será ZERO (mantenido por compatibilidad)
      * @param ajuste Ajuste manual (puede ser positivo o negativo)
      * @return Total a cobrar
      */
@@ -281,7 +237,8 @@ public class CuotaCobrarServicio implements ICuotaCobrarServicio {
         if (valorCuotasTotal != null) {
             total = total.add(valorCuotasTotal);
         }
-        if (valorInteresTotal != null) {
+        // valorInteresTotal siempre será 0, pero se mantiene para no romper la firma
+        if (valorInteresTotal != null && valorInteresTotal.compareTo(java.math.BigDecimal.ZERO) > 0) {
             total = total.add(valorInteresTotal);
         }
         if (ajuste != null) {

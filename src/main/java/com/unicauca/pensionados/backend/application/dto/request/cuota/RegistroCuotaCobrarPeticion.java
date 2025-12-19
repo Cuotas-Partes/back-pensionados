@@ -25,10 +25,7 @@ public class RegistroCuotaCobrarPeticion {
     private Integer diasTotales;
     private Integer cantidadCuotas;
 
-    private BigDecimal tasaDiaria;
-    private BigDecimal valorCuotaParte;
-    private BigDecimal valorCuotasTotal;
-    private BigDecimal valorInteresTotal;
+    private BigDecimal valorCuotaParte;  // Opcional - se calcula automáticamente si no se proporciona
     private BigDecimal ajuste;
 
     private Boolean esReliquidacion;
