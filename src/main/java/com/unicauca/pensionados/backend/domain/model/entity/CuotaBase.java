@@ -47,7 +47,6 @@ public abstract class CuotaBase {
     @Column(name = "valor_cuotas_total", nullable = false, precision = 19, scale = 2)
     private BigDecimal valorCuotasTotal;
 
-
     @Column(name = "ajuste", precision = 19, scale = 2)
     private BigDecimal ajuste;
 

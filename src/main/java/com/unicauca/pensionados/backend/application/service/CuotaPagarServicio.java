@@ -4,6 +4,7 @@ import com.unicauca.pensionados.backend.application.dto.request.cuota.DetalleCuo
 import com.unicauca.pensionados.backend.application.dto.request.cuota.RegistroCuotaPagarPeticion;
 import com.unicauca.pensionados.backend.application.dto.response.cuota.CuotaPagarRespuestaDTO;
 import com.unicauca.pensionados.backend.application.service.interfaces.ICuotaPagarServicio;
+import com.unicauca.pensionados.backend.application.service.util.CalculadoraCuotas;
 import com.unicauca.pensionados.backend.domain.exception.RecursoNoEncontrado;
 import com.unicauca.pensionados.backend.domain.model.entity.CuotaPagar;
 import com.unicauca.pensionados.backend.domain.model.entity.DetalleCuota;
@@ -102,28 +103,27 @@ public class CuotaPagarServicio implements ICuotaPagarServicio {
         // ========== CÁLCULOS AUTOMÁTICOS ==========
 
         // 1. Calcular porcentaje y valor de cuota parte (si no viene en la petición)
-        java.math.BigDecimal porcentajeCuotaParte;
         if (p.getValorCuotaParte() != null) {
             // Si el cliente proporciona el valor directamente, lo usamos
             cuota.setValorCuotaParte(p.getValorCuotaParte());
         } else {
             // Calcular desde los datos del pensionado
-            // % Cuota Parte = (Días Entidad / Total Días) * 100
-            porcentajeCuotaParte = calcularPorcentajeCuotaParte(
+            // % Cuota Parte = (Días Entidad / Total Días) × 100
+            java.math.BigDecimal porcentajeCuotaParte = CalculadoraCuotas.calcularPorcentajeCuotaParte(
                 pensionado.getDiasTrabajadosEntidad(),
                 pensionado.getDiasTotalesTrabajados()
             );
 
-            // Valor Cuota Parte = Valor Pensión * (% / 100)
-            java.math.BigDecimal valorCuotaParte = calcularValorCuotaParte(
+            // Valor Cuota Parte = Valor Pensión × (% / 100)
+            java.math.BigDecimal valorCuotaParte = CalculadoraCuotas.calcularValorCuotaParte(
                 pensionado.getValorPensionActual(),
                 porcentajeCuotaParte
             );
             cuota.setValorCuotaParte(valorCuotaParte);
         }
 
-        // 2. Calcular el total de cuotas (valor mensual * cantidad de meses)
-        java.math.BigDecimal valorCuotasTotal = calcularValorCuotasTotal(
+        // 2. Calcular el total de cuotas (valor mensual × cantidad de meses)
+        java.math.BigDecimal valorCuotasTotal = CalculadoraCuotas.calcularValorCuotasTotal(
             cuota.getValorCuotaParte(),
             cuota.getCantidadCuotas()
         );
@@ -131,7 +131,7 @@ public class CuotaPagarServicio implements ICuotaPagarServicio {
 
         // 3. Calcular el total a pagar (cuotas + ajuste)
         // NO se calculan intereses en cuotas normales
-        java.math.BigDecimal totalPagar = calcularTotalPagar(
+        java.math.BigDecimal totalPagar = CalculadoraCuotas.calcularTotal(
             valorCuotasTotal,
             java.math.BigDecimal.ZERO,  // Sin intereses
             cuota.getAjuste()
@@ -161,82 +161,4 @@ public class CuotaPagarServicio implements ICuotaPagarServicio {
         }
     }
 
-    // ==================== MÉTODOS DE CÁLCULO ====================
-
-    /**
-     * Calcula el porcentaje de cuota parte basado en días trabajados
-     * Fórmula: % = (Días Entidad / Total Días) * 100
-     * @param diasEntidad Días trabajados en la entidad específica
-     * @param diasTotales Total de días trabajados del pensionado
-     * @return Porcentaje de cuota parte
-     */
-    private java.math.BigDecimal calcularPorcentajeCuotaParte(Integer diasEntidad, Integer diasTotales) {
-        if (diasEntidad == null || diasTotales == null || diasTotales == 0) {
-            return java.math.BigDecimal.ZERO;
-        }
-        return java.math.BigDecimal.valueOf(diasEntidad)
-                .divide(java.math.BigDecimal.valueOf(diasTotales), 6, java.math.RoundingMode.HALF_UP)
-                .multiply(java.math.BigDecimal.valueOf(100))
-                .setScale(2, java.math.RoundingMode.HALF_UP);
-    }
-
-    /**
-     * Calcula el valor mensual de la cuota parte
-     * Fórmula: Valor Cuota = Valor Pensión * (% Cuota Parte / 100)
-     * @param valorPension Valor de la pensión mensual del pensionado
-     * @param porcentajeCuotaParte Porcentaje que corresponde a la entidad
-     * @return Valor mensual de la cuota parte
-     */
-    private java.math.BigDecimal calcularValorCuotaParte(java.math.BigDecimal valorPension, java.math.BigDecimal porcentajeCuotaParte) {
-        if (valorPension == null || porcentajeCuotaParte == null) {
-            return java.math.BigDecimal.ZERO;
-        }
-        return valorPension
-                .multiply(porcentajeCuotaParte)
-                .divide(java.math.BigDecimal.valueOf(100), 2, java.math.RoundingMode.HALF_UP);
-    }
-
-    /**
-     * Calcula el valor total de las cuotas para múltiples meses
-     * Fórmula: Total = Valor Cuota Mensual * Cantidad de Meses
-     * @param valorCuotaParte Valor mensual de la cuota parte
-     * @param cantidadCuotas Número de meses/cuotas
-     * @return Valor total de todas las cuotas
-     */
-    private java.math.BigDecimal calcularValorCuotasTotal(java.math.BigDecimal valorCuotaParte, Integer cantidadCuotas) {
-        if (valorCuotaParte == null || cantidadCuotas == null) {
-            return java.math.BigDecimal.ZERO;
-        }
-        return valorCuotaParte.multiply(java.math.BigDecimal.valueOf(cantidadCuotas))
-                .setScale(2, java.math.RoundingMode.HALF_UP);
-    }
-
-    /**
-     * Calcula el total a pagar (suma de cuotas + ajustes)
-     * NOTA: Ya no se calculan intereses en cuotas normales.
-     * @param valorCuotasTotal Total de las cuotas
-     * @param valorInteresTotal Siempre será ZERO (mantenido por compatibilidad)
-     * @param ajuste Ajuste manual (puede ser positivo o negativo)
-     * @return Total a pagar
-     */
-    private java.math.BigDecimal calcularTotalPagar(
-            java.math.BigDecimal valorCuotasTotal,
-            java.math.BigDecimal valorInteresTotal,
-            java.math.BigDecimal ajuste) {
-
-        java.math.BigDecimal total = java.math.BigDecimal.ZERO;
-
-        if (valorCuotasTotal != null) {
-            total = total.add(valorCuotasTotal);
-        }
-        // valorInteresTotal siempre será 0, pero se mantiene para no romper la firma
-        if (valorInteresTotal != null && valorInteresTotal.compareTo(java.math.BigDecimal.ZERO) > 0) {
-            total = total.add(valorInteresTotal);
-        }
-        if (ajuste != null) {
-            total = total.add(ajuste);
-        }
-
-        return total.setScale(2, java.math.RoundingMode.HALF_UP);
-    }
 }

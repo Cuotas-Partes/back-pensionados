@@ -27,10 +27,8 @@ public class CuotaPagarRespuestaDTO {
     private Integer diasTotales;
     private Integer cantidadCuotas;
 
-    private BigDecimal tasaDiaria;
     private BigDecimal valorCuotaParte;
     private BigDecimal valorCuotasTotal;
-    private BigDecimal valorInteresTotal;
     private BigDecimal ajuste;
 
     private Boolean esReliquidacion;
