@@ -124,7 +124,6 @@ public class PensionadoServicio implements IPensionadoServicio {
     @Override
     public List<PensionadoDTO> listarPensionados() {
         logCambioServicio.registrarConsulta(nombreEntidad);
-        pensionadoRepositorio.findAll();
         return pensionadoRepositorio.findAll()
                 .stream()
                 .map(PensionadoMapper::toDTO)
@@ -232,25 +231,15 @@ public class PensionadoServicio implements IPensionadoServicio {
             Sucesor s = new Sucesor();
 
             // Campos heredados de Persona (OBLIGATORIOS)
-            s.setNumeroIdentificacion(p.getNumeroIdentificacion());
-            s.setTipoIdentificacion(p.getTipoIdentificacion());
-            s.setNombrePersona(p.getNombrePersona());
-            s.setApellidosPersona(p.getApellidoPersona());
-            s.setEstadoCivil(p.getEstadoCivil());
-            s.setFechaNacimientoPersona(p.getFechaNacimientoPersona());
-            s.setFechaExpedicionDocumentoIdPersona(p.getFechaExpedicionDocumentoIdPersona());
-            s.setEstadoPersona(p.getEstado() != null ? p.getEstado() : EstadoSustituto.Activo);
-
-            // Campos heredados de Persona (OPCIONALES)
-            s.setGeneroPersona(p.getGeneroPersona());
-            s.setFechaDefuncionPersona(p.getFechaFin()); // Si tiene fecha fin, puede ser fallecimiento
-            s.setDiscapacidad(p.getDiscapacidad());
+            s.setNumeroDocumento(p.getNumeroIdentificacion());
+            s.setTipoDocumento(p.getTipoIdentificacion());
+            s.setNombreCompleto(p.getNombrePersona() + " " + p.getApellidoPersona());
+            s.setEstado(p.getEstado() != null ? p.getEstado() : EstadoSustituto.Activo);
 
             // Campos específicos de Sucesor
             s.setNumeroDocumento(p.getNumeroIdentificacion());
             s.setTipoDocumento(p.getTipoIdentificacion());
             s.setNombreCompleto(p.getNombrePersona() + " " + p.getApellidoPersona());
-            s.setTelefono(p.getTelefono());
             s.setEstado(p.getEstado() != null ? p.getEstado() : EstadoSustituto.Activo);
             s.setFechaInicio(p.getFechaInicio());
             s.setFechaFin(p.getFechaFin());

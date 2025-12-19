@@ -55,10 +55,10 @@ public class SucesorServicio implements ISucesorServicio {
         // ==================== CORRECCIÓN 2: Creación del Sucesor ====================
         // Se usan los nuevos setters y se añade el campo 'estadoCivil'.
         Sucesor sucesor = new Sucesor();
-        sucesor.setNumeroIdentificacion(request.getNumeroDocumento());
-        sucesor.setTipoIdentificacion(request.getTipoIdentificacion());
-        sucesor.setNombrePersona(request.getNombreCompleto());// Campo nuevo
-        sucesor.setEstadoPersona(request.getEstado());
+        sucesor.setNumeroDocumento(request.getNumeroDocumento());
+        sucesor.setTipoDocumento(request.getTipoIdentificacion());
+        sucesor.setNombreCompleto(request.getNombreCompleto());// Campo nuevo
+        sucesor.setEstado(request.getEstado());
         sucesor.setFechaInicio(request.getFechaInicio());
         sucesor.setPorcentajePension(request.getPorcentajePension());
         sucesor.setPensionadoSustituido(pensionado);
@@ -79,9 +79,9 @@ public class SucesorServicio implements ISucesorServicio {
             // ==================== CORRECCIÓN 3: Mapeo a DTO ====================
             // Se usan los nuevos getters para poblar el DTO de respuesta.
             RegistroSucesorPeticion request = new RegistroSucesorPeticion();
-            request.setNumeroDocumento(sucesor.getNumeroIdentificacion());
-            request.setTipoIdentificacion(sucesor.getTipoIdentificacion());
-            request.setNombreCompleto(sucesor.getNombrePersona());
+            request.setNumeroDocumento(sucesor.getNumeroDocumento());
+            request.setTipoIdentificacion(sucesor.getTipoDocumento());
+            request.setNombreCompleto(sucesor.getNombreCompleto());
             request.setEstado(sucesor.getEstado());
             request.setFechaInicio(sucesor.getFechaInicio());
             // Se obtiene el ID primario del pensionado.
@@ -107,9 +107,9 @@ public class SucesorServicio implements ISucesorServicio {
 
         // ==================== CORRECCIÓN 4: Mapeo a DTO ====================
         RegistroSucesorPeticion request = new RegistroSucesorPeticion();
-        request.setNumeroDocumento(sucesor.getNumeroIdentificacion());
-        request.setTipoIdentificacion(sucesor.getTipoIdentificacion());
-        request.setEstado(sucesor.getEstadoPersona());
+        request.setNumeroDocumento(sucesor.getNumeroDocumento());
+        request.setTipoIdentificacion(sucesor.getTipoDocumento());
+        request.setEstado(sucesor.getEstado());
         request.setPensionadoSustituido(sucesor.getPensionadoSustituido().getIdPersona());
         request.setPorcentajePension(sucesor.getPorcentajePension());
 
@@ -136,8 +136,8 @@ public class SucesorServicio implements ISucesorServicio {
         // ==================== CORRECCIÓN 5: Actualización de Campos ====================
         // Se usan los setters correctos y se añade el nuevo campo.
         // No se permite cambiar el tipo o número de identificación en la edición.
-        sucesor.setNombrePersona(request.getNombreCompleto());
-        sucesor.setEstadoPersona(request.getEstado());
+        sucesor.setNombreCompleto(request.getNombreCompleto());
+        sucesor.setEstado(request.getEstado());
         sucesor.setFechaInicio(request.getFechaInicio());
 
         sucesor = sucesorRepositorio.save(sucesor);

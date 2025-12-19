@@ -43,9 +43,8 @@ public class PensionadoCreateMapper {
     public static Sucesor toSucesorEntity(RegistroSucesorPeticion dto, Pensionado p, Resolucion resolucion) {
         Sucesor s = new Sucesor();
         s.setNumeroDocumento(dto.getNumeroDocumento());
-        s.setTipoIdentificacion(dto.getTipoIdentificacion());
+        s.setTipoDocumento(dto.getTipoIdentificacion());
         s.setNombreCompleto(dto.getNombreCompleto());
-        s.setTelefono(dto.getTelefono());
         s.setFechaInicio(dto.getFechaInicio());
         s.setPorcentajePension(dto.getPorcentajePension());
         s.setResolucionNombramiento(resolucion);

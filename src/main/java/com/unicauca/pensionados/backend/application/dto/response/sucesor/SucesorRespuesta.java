@@ -27,7 +27,6 @@ public class SucesorRespuesta {
     Long numeroDocumento;
     TipoIdentificacion tipoIdentificacion;
     String nombreCompleto;
-    String telefono;
     EstadoSustituto estado;
     LocalDate fechaInicio;
     LocalDate fechaFin;

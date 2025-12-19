@@ -23,10 +23,7 @@ public class EventoServicio {
         Evento evento = new Evento();
         Pensionado pensionado = new Pensionado();
         pensionado.setIdPersona(idPensionado);
-        evento.setPensionado(pensionado);
-        Persona persona = new Sucesor(); // si Sucesor extiende Persona
-        persona.setIdPersona(idPersona);
-        evento.setPersona(persona);
+        evento.setPensionado(pensionado);// si Sucesor extiende Persona;
 
         evento.setTipoEvento(tipoEvento);
         evento.setUsuario(usuario);

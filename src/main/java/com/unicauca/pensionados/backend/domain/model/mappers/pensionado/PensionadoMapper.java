@@ -6,6 +6,7 @@ import com.unicauca.pensionados.backend.application.dto.response.sucesor.Sucesor
 import com.unicauca.pensionados.backend.domain.model.entity.Pensionado;
 import com.unicauca.pensionados.backend.domain.model.entity.Resolucion;
 import com.unicauca.pensionados.backend.domain.model.entity.Sucesor;
+import com.unicauca.pensionados.backend.domain.model.mappers.resoluciones.ResolucionesMapper;
 
 import java.util.List;
 
@@ -39,7 +40,7 @@ public class PensionadoMapper {
                 p.getResoluciones() == null
                         ? List.of()
                         : p.getResoluciones().stream()
-                        .map(PensionadoMapper::toResolucionDTO)
+                        .map(ResolucionesMapper::toResponseDTO)
                         .toList(),
                 p.getSustitutos() == null
                         ? List.of()
@@ -49,26 +50,11 @@ public class PensionadoMapper {
         );
     }
 
-    public static ResolucionResponseDTO toResolucionDTO(Resolucion r) {
-        return new ResolucionResponseDTO(
-                r.getId(),
-                r.getNumeroResolucion(),
-                r.getFechaResolucion(),
-                r.getValorResolucion(),
-                r.getEstado(),
-                r.getTipoResolucion(),
-                r.getObservaciones(),
-                r.getDatosEspecificos(),
-                r.getCreatedAt(),
-                r.getUpdatedAt()
-        );
-    }
     public static SucesorRespuesta toSustitutoDTO(Sucesor s) {
         return new SucesorRespuesta(
                 s.getNumeroDocumento(),
-                s.getTipoIdentificacion(),
+                s.getTipoDocumento(),
                 s.getNombreCompleto(),
-                s.getTelefono(),
                 s.getEstado(),
                 s.getFechaInicio(),
                 s.getFechaFin(),

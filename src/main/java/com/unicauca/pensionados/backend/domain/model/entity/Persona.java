@@ -26,43 +26,4 @@ public abstract class Persona {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long idPersona; // Un ID único para la persona, separado de su número de identificación
 
-    @Column(name = "numeroIdentificacion", nullable = false)
-    private Long numeroIdentificacion; // Campo renombrado
-    
-
-    @Enumerated(EnumType.STRING) // Indica a JPA que guarde el nombre del enum como String
-    @Column (name = "tipoIdentificacion", nullable = false, length = 50)
-    private TipoIdentificacion tipoIdentificacion; // Campo renombrado y de tipo Enum
-
-    @Column (name = "nombrePersona", nullable = false, length = 50)
-    private String nombrePersona;
-
-    @Column (name = "apellidosPersona", nullable = false, length = 50)
-    private String apellidosPersona;
-    
-    @Enumerated(EnumType.STRING)
-    @Column (name = "estadoCivil", nullable = false, length = 50)
-    private EstadoCivil estadoCivil; // Nuevo campo Estado Civil de tipo Enum
-
-    @Column (name = "fechaNacimientoPersona", nullable = false)
-    private LocalDate fechaNacimientoPersona;
-
-    @Column(name = "fechaExpedicionDocumentoIdPersona", nullable = false)
-    private LocalDate fechaExpedicionDocumentoIdPersona;
-
-    @Enumerated(EnumType.STRING)
-    @Column (name = "estadoPersona", nullable = false, length = 50)
-    private EstadoSustituto estadoPersona; // Campo cambiado a tipo Enum
-
-    @Enumerated(EnumType.STRING)
-    @Column (name = "generoPersona", length = 50)
-    private Genero generoPersona; // Campo cambiado a tipo Enum
-
-    @Column (name = "fechaDefuncionPersona")
-    @Temporal(TemporalType.DATE)
-    private LocalDate fechaDefuncionPersona;
-
-    @Column(name = "discapacidad", length = 255) // Campo para discapacidad (texto)
-    private String discapacidad;
-
 }

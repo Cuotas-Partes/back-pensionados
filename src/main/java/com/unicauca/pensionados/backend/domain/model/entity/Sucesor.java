@@ -28,10 +28,6 @@ public class Sucesor extends Persona{
 
     @Column(name="nombre_completo", nullable = false, length = 200)
     private String nombreCompleto;
-
-    @Column(name = "telefono", nullable = false, length = 20)
-    private String telefono;
-
     // Relación con el pensionado original
     @ManyToOne(fetch = FetchType.LAZY)
     @JsonIgnore
