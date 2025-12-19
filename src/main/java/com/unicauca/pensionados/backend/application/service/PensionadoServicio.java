@@ -249,8 +249,6 @@ public class PensionadoServicio implements IPensionadoServicio {
             // Campos específicos de Sucesor
             s.setNumeroDocumento(p.getNumeroIdentificacion());
             s.setTipoDocumento(p.getTipoIdentificacion());
-            s.setNombreSucesor(p.getNombrePersona());
-            s.setApellidoSucesor(p.getApellidoPersona());
             s.setNombreCompleto(p.getNombrePersona() + " " + p.getApellidoPersona());
             s.setTelefono(p.getTelefono());
             s.setEstado(p.getEstado() != null ? p.getEstado() : EstadoSustituto.Activo);
