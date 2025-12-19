@@ -8,20 +8,18 @@ import lombok.Data;
 @Builder
 @Schema(description = "DTO para representar un pensionado con información de un trabajo específico")
 public class PensionadoConTrabajoRespuesta {
-    @Schema(description = "ID único de la persona", example = "101")
-    private Long idPersona; // <-- CAMBIO: Se añade el ID
-    @Schema(description = "Número de identificación de la persona", example = "1061777777")
-    private Long numeroIdentificacion; // <-- CAMBIO: Renombrado
-    @Schema(description = "Tipo de identificación de la persona", example = "CC")
-    private String tipoIdentificacion; // <-- CAMBIO: Se añade el tipo
-    @Schema(description = "Nombre de la persona", example = "Juan")
-    private String nombrePersona;
-    @Schema(description = "Apellidos de la persona", example = "Perez")
-    private String apellidosPersona;
-    @Schema(description = "Información sobre la discapacidad de la persona", example = "Ninguna")
-    private String discapacidad;
-    @Schema(description = "Indica si la persona es un pensionado o sucesor activo", example = "true")
-    private boolean esPensionadoOSucesorActivo;
+    @Schema(description = "ID único del pensionado", example = "101")
+    private Long idPensionado;
+
+    @Schema(description = "Cédula del pensionado", example = "1061777777")
+    private String cedula;
+
+    @Schema(description = "Nombre del pensionado", example = "Juan")
+    private String nombre;
+
+    @Schema(description = "Apellidos del pensionado", example = "Pérez")
+    private String apellidos;
+
     @Schema(description = "Días de servicio del trabajo asociado a la entidad", example = "3650")
     private Long diasDeServicio; 
 }
