@@ -45,32 +45,16 @@ public class RegistroSucesorPensionadoPeticion {
     @Size(max = 200)
     private String apellidoPersona;
 
-    @Schema(description = "Teléfono", example = "3209876543")
-    @NotBlank(message = "El teléfono es obligatorio")
-    @Size(max = 20)
-    private String telefono;
-
     @Schema(description = "Estado", example = "Activo")
     private EstadoSustituto estado;
 
     @Schema(description = "Estado Civil", example = "VIUDO")
     private EstadoCivil estadoCivil = EstadoCivil.VIUDO;
 
-    @Schema(description = "Fecha de nacimiento", example = "1980-05-10")
-    @NotNull(message = "La fecha de nacimiento es obligatoria")
-    @JsonDeserialize(using = MultiDateDeserializer.class)
-    private LocalDate fechaNacimientoPersona;
-
-    @Schema(description = "Fecha de expedición del documento", example = "2000-01-01")
-    @NotNull(message = "La fecha de expedición del documento es obligatoria")
-    @JsonDeserialize(using = MultiDateDeserializer.class)
-    private LocalDate fechaExpedicionDocumentoIdPersona;
 
     @Schema(description = "Género", example = "FEMENINO")
     private Genero generoPersona;
 
-    @Schema(description = "Discapacidad", example = "Ninguna")
-    private String discapacidad;
 
     @Schema(description = "Fecha inicio", example = "2023-06-01")
     @NotNull(message = "La fecha de inicio es obligatoria")
