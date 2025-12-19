@@ -544,12 +544,12 @@ SELECT 2025, 1423500.00, TRUE, NOW(), NOW()
 -- ============================================
 -- Periodo 2023
 INSERT INTO periodo (anio, fecha_inicio_periodo, fecha_fin_periodo, ipc, cuota_parte_total_periodo, estado_periodo, created_at, updated_at)
-SELECT 2023, '2023-01-01', '2023-12-31', 13.12, 0.00, 'CERRADO', NOW(), NOW()
+SELECT 2023, '2023-01-01', '2023-12-31', 13.12, 0.00, 'INACTIVO', NOW(), NOW()
     WHERE NOT EXISTS (SELECT 1 FROM periodo WHERE anio = 2023);
 
 -- Periodo 2024
 INSERT INTO periodo (anio, fecha_inicio_periodo, fecha_fin_periodo, ipc, cuota_parte_total_periodo, estado_periodo, created_at, updated_at)
-SELECT 2024, '2024-01-01', '2024-12-31', 9.28, 0.00, 'CERRADO', NOW(), NOW()
+SELECT 2024, '2024-01-01', '2024-12-31', 9.28, 0.00, 'INACTIVO', NOW(), NOW()
     WHERE NOT EXISTS (SELECT 1 FROM periodo WHERE anio = 2024);
 
 -- Periodo 2025 - Primer Semestre
