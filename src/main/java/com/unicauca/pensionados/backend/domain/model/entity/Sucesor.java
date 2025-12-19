@@ -15,11 +15,15 @@ import lombok.Getter;
 import lombok.Setter;
 
 @Entity
-@PrimaryKeyJoinColumn (name = "idPersona")  //tiene la misma PK que Persona
 @Table(name="sucesor")//tiene la misma PK que Persona
 @Getter @Setter
 
-public class Sucesor extends Persona{
+public class Sucesor  {
+
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    private Long idSucesor; // Un ID único para la persona, separado de su número de identificación
+
     @Column(name="numero_documento", nullable = false, length = 50)
     private Long numeroDocumento;
     @Enumerated(EnumType.STRING) // Indica a JPA que guarde el nombre del enum como String

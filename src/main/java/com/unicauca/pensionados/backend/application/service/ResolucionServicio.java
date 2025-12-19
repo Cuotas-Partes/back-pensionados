@@ -57,7 +57,7 @@ public class ResolucionServicio implements IResolucionServicio {
         resolucion.setTipoResolucion(peticion.getTipoResolucion());
         resolucion.setUpdatedAt(LocalDateTime.now());
 
-        if (!resolucion.getPensionado().getIdPersona().equals(peticion.getPensionadoId())) {
+        if (!resolucion.getPensionado().getIdPensionado().equals(peticion.getPensionadoId())) {
             Pensionado pensionado = pensionadoRepositorio.findById(peticion.getPensionadoId())
                     .orElseThrow(() -> new RecursoNoEncontrado("Pensionado no encontrado"));
             resolucion.setPensionado(pensionado);
@@ -95,7 +95,7 @@ public class ResolucionServicio implements IResolucionServicio {
     @Override
     @Transactional(readOnly = true)
     public List<ResolucionResponseDTO> obtenerPorPensionado(Long pensionadoId) {
-        return resolucionRepositorio.findByPensionadoIdPersona(pensionadoId).stream()
+        return resolucionRepositorio.findByPensionadoIdPensionado(pensionadoId).stream()
                 .map(this::mapearARespuesta)
                 .collect(Collectors.toList());
     }

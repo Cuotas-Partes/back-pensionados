@@ -14,7 +14,7 @@ public class PensionadoMapper {
 
     public static PensionadoDTO toDTO(Pensionado p) {
         return new PensionadoDTO(
-                p.getIdPersona(),
+                p.getIdPensionado(),
                 p.getCedula(),
                 p.getFechaExpedicionCedula(),
                 p.getNombre(),

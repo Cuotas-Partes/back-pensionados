@@ -21,7 +21,7 @@ public class CuotaCobrarMapper {
 
         return CuotaCobrarRespuestaDTO.builder()
                 .id(cuota.getId())
-                .pensionadoId(cuota.getPensionado() != null ? cuota.getPensionado().getIdPersona() : null)
+                .pensionadoId(cuota.getPensionado() != null ? cuota.getPensionado().getIdPensionado() : null)
                 .entidadId(cuota.getEntidad() != null ? cuota.getEntidad().getIdEntidad() : null)
                 .periodoId(cuota.getPeriodo() != null ? cuota.getPeriodo().getIdPeriodo() : null)
                 .fechaInicio(cuota.getFechaInicio())

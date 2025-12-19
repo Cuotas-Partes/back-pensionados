@@ -2,8 +2,6 @@ package com.unicauca.pensionados.backend.application.service;
 
 import com.unicauca.pensionados.backend.domain.model.entity.Evento;
 import com.unicauca.pensionados.backend.domain.model.entity.Pensionado;
-import com.unicauca.pensionados.backend.domain.model.entity.Persona;
-import com.unicauca.pensionados.backend.domain.model.entity.Sucesor;
 import com.unicauca.pensionados.backend.infrastructure.persistence.repository.EventoRepository;
 import com.unicauca.pensionados.backend.domain.model.enums.TipoEvento;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -22,7 +20,7 @@ public class EventoServicio {
 
         Evento evento = new Evento();
         Pensionado pensionado = new Pensionado();
-        pensionado.setIdPersona(idPensionado);
+        pensionado.setIdPensionado(idPensionado);
         evento.setPensionado(pensionado);// si Sucesor extiende Persona;
 
         evento.setTipoEvento(tipoEvento);

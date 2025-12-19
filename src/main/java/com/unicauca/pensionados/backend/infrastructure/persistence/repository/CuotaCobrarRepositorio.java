@@ -6,6 +6,6 @@ import org.springframework.data.jpa.repository.JpaRepository;
 import java.util.List;
 
 public interface CuotaCobrarRepositorio extends JpaRepository<CuotaCobrar, Long> {
-    List<CuotaCobrar> findByPensionado_IdPersona(Long pensionadoId);
+    List<CuotaCobrar> findByPensionado_IdPensionado(Long pensionadoId);
     List<CuotaCobrar> findByEntidad_IdEntidad(Long entidadId);
 }

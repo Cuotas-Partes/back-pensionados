@@ -8,7 +8,6 @@ import com.unicauca.pensionados.backend.application.service.interfaces.ISucesorS
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 
-import com.unicauca.pensionados.backend.infrastructure.persistence.repository.PersonaRepositorio;
 import com.unicauca.pensionados.backend.infrastructure.persistence.repository.SucesorRepositorio;
 import com.unicauca.pensionados.backend.infrastructure.persistence.repository.PensionadoRepositorio;
 import com.unicauca.pensionados.backend.domain.model.entity.Sucesor;
@@ -21,8 +20,6 @@ import org.springframework.stereotype.Service;
 
 @Service
 public class SucesorServicio implements ISucesorServicio {
-    @Autowired
-    private PersonaRepositorio personaRepositorio;
     @Autowired
     private SucesorRepositorio sucesorRepositorio;
     @Autowired
@@ -44,7 +41,7 @@ public class SucesorServicio implements ISucesorServicio {
     public void registrarSucesor(RegistroSucesorPeticion request) {
         // ==================== CORRECCIÓN 1: Validación de Existencia ====================
         // Se valida usando el método correcto del repositorio para el tipo y número de ID.
-        if (personaRepositorio.existsByTipoIdentificacionAndNumeroIdentificacion(request.getTipoIdentificacion(), request.getNumeroDocumento())) {
+        if (sucesorRepositorio.existsByTipoDocumentoAndNumeroDocumento(request.getTipoIdentificacion(), request.getNumeroDocumento())) {
             throw new RuntimeException("Ya existe una persona con ese tipo y número de identificación");
         }
 
@@ -85,7 +82,7 @@ public class SucesorServicio implements ISucesorServicio {
             request.setEstado(sucesor.getEstado());
             request.setFechaInicio(sucesor.getFechaInicio());
             // Se obtiene el ID primario del pensionado.
-            request.setPensionadoSustituido(sucesor.getPensionadoSustituido().getIdPersona());
+            request.setPensionadoSustituido(sucesor.getPensionadoSustituido().getIdPensionado());
             request.setPorcentajePension(sucesor.getPorcentajePension());
             return request;
         }).collect(Collectors.toList()); // Usar .collect(Collectors.toList()) para compatibilidad
@@ -110,7 +107,7 @@ public class SucesorServicio implements ISucesorServicio {
         request.setNumeroDocumento(sucesor.getNumeroDocumento());
         request.setTipoIdentificacion(sucesor.getTipoDocumento());
         request.setEstado(sucesor.getEstado());
-        request.setPensionadoSustituido(sucesor.getPensionadoSustituido().getIdPersona());
+        request.setPensionadoSustituido(sucesor.getPensionadoSustituido().getIdPensionado());
         request.setPorcentajePension(sucesor.getPorcentajePension());
 
         return request;

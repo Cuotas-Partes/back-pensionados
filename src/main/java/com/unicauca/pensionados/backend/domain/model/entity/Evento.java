@@ -20,10 +20,6 @@ public class Evento {
     private Long idEvento;
 
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "idPersona")
-    private Persona persona;
-
-    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "idPensionado")
     private Pensionado pensionado;
 

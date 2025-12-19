@@ -11,7 +11,7 @@ public interface ResolucionRepositorio extends JpaRepository<Resolucion, Long> {
     
     Optional<Resolucion> findByNumeroResolucion(String numeroResolucion);
     
-    List<Resolucion> findByPensionadoIdPersona(Long pensionadoId);
+    List<Resolucion> findByPensionadoIdPensionado(Long pensionadoId);
     
     List<Resolucion> findByEstado(String estado);
     

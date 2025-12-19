@@ -28,8 +28,8 @@ import com.unicauca.pensionados.backend.domain.model.enums.TipoPension;
 public class Pensionado {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(name = "idPersona")
-    private Long idPersona;
+    @Column(name = "idPensionado")
+    private Long idPensionado;
 
     @Column(name = "cedula", nullable = false, unique = true, length = 20)
     private String cedula;

@@ -8,11 +8,9 @@ import com.unicauca.pensionados.backend.domain.exception.BusinessValidationExcep
 import com.unicauca.pensionados.backend.domain.exception.RecursoNoEncontrado;
 import com.unicauca.pensionados.backend.domain.model.entity.Entidad;
 import com.unicauca.pensionados.backend.domain.model.entity.Pensionado;
-import com.unicauca.pensionados.backend.domain.model.entity.Persona;
 import com.unicauca.pensionados.backend.domain.model.enums.EstadoEntidad;
 import com.unicauca.pensionados.backend.infrastructure.persistence.repository.EntidadRepositorio;
 import com.unicauca.pensionados.backend.infrastructure.persistence.repository.PensionadoRepositorio;
-import com.unicauca.pensionados.backend.infrastructure.persistence.repository.PersonaRepositorio;
 import jakarta.transaction.Transactional;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -29,8 +27,6 @@ public class EntidadServicio implements IEntidadServicio {
 
     @Autowired
     private EntidadRepositorio entidadRepository;
-    @Autowired
-    private PersonaRepositorio personaRepositorio;
 
     // TODO: esto debería moverse a un servicio separado (Trabajos/CuotasPartes) para no mezclar responsabilidades.
     @Autowired
@@ -66,13 +62,6 @@ public class EntidadServicio implements IEntidadServicio {
         entidad.setResponsibleOfficer(request.getResponsibleOfficer());
         entidad.setOfficerPosition(request.getOfficerPosition());
         entidad.setEstado(request.getEstado() != null ? request.getEstado() : EstadoEntidad.Activo);
-
-        if (request.getIdPersonaEncargado() != null) {
-            Persona encargado = personaRepositorio.findById(request.getIdPersonaEncargado())
-                    .orElseThrow(() -> new RecursoNoEncontrado(
-                            "No se encontró la Persona encargada con ID: " + request.getIdPersonaEncargado()));
-            entidad.setEncargado(encargado);
-        }
 
         logCambioService.registrarCreacion(nombreEntidad, entidadRepository.save(entidad));
     }
@@ -133,15 +122,6 @@ public class EntidadServicio implements IEntidadServicio {
 
         if (request.getEstado() != null) {
             entidadExistente.setEstado(request.getEstado());
-        }
-
-        if (request.getIdPersonaEncargado() != null) {
-            Persona encargado = personaRepositorio.findById(request.getIdPersonaEncargado())
-                    .orElseThrow(() -> new RecursoNoEncontrado(
-                            "No se encontró la Persona encargada con ID: " + request.getIdPersonaEncargado()));
-            entidadExistente.setEncargado(encargado);
-        } else {
-            entidadExistente.setEncargado(null);
         }
 
         logCambioService.registrarActualizacion(nombreEntidad, entidadAntigua, entidadRepository.save(entidadExistente));

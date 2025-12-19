@@ -28,7 +28,8 @@ public class IPC {
     @Column(name = "resolution_date", nullable = false)
     private LocalDate resolutionDate;
 
-    @Column(name="estado", nullable = false)
+    @Enumerated(EnumType.STRING)
+    @Column(name="estado", nullable = false, length = 20)
     private EstadoIPC estado = EstadoIPC.ACTIVO;
 
     @Column(name = "resolution_details", columnDefinition = "TEXT")

@@ -57,8 +57,4 @@ public class Entidad {
         this.updatedAt = LocalDateTime.now();
     }
 
-    @JsonIgnore
-    @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "idPersonaEncargado", nullable = true)
-    private Persona encargado;
 }

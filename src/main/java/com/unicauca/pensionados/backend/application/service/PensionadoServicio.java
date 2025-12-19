@@ -19,7 +19,6 @@ import com.unicauca.pensionados.backend.domain.model.enums.EstadoSustituto;
 import com.unicauca.pensionados.backend.domain.model.mappers.pensionado.PensionadoMapper;
 import com.unicauca.pensionados.backend.infrastructure.persistence.repository.EntidadRepositorio;
 import com.unicauca.pensionados.backend.infrastructure.persistence.repository.PensionadoRepositorio;
-import com.unicauca.pensionados.backend.infrastructure.persistence.repository.PersonaRepositorio;
 import com.unicauca.pensionados.backend.infrastructure.persistence.repository.ResolucionRepositorio;
 import com.unicauca.pensionados.backend.infrastructure.persistence.repository.SucesorRepositorio;
 import jakarta.transaction.Transactional;
@@ -36,7 +35,6 @@ import java.util.Optional;
 @Service
 public class PensionadoServicio implements IPensionadoServicio {
 
-    private final PersonaRepositorio personaRepositorio;
     private final PensionadoRepositorio pensionadoRepositorio;
     private final EntidadRepositorio entidadRepositorio;
     private final ResolucionRepositorio resolucionRepositorio;
@@ -46,12 +44,10 @@ public class PensionadoServicio implements IPensionadoServicio {
     private ILogCambioServicio logCambioServicio;
     private final String nombreEntidad = "PENSIONADO";
 
-    public PensionadoServicio(PersonaRepositorio personaRepositorio,
-                              PensionadoRepositorio pensionadoRepositorio,
+    public PensionadoServicio(PensionadoRepositorio pensionadoRepositorio,
                               EntidadRepositorio entidadRepositorio,
                               ResolucionRepositorio resolucionRepositorio,
                               SucesorRepositorio sucesorRepositorio) {
-        this.personaRepositorio = personaRepositorio;
         this.pensionadoRepositorio = pensionadoRepositorio;
         this.entidadRepositorio = entidadRepositorio;
         this.resolucionRepositorio = resolucionRepositorio;
@@ -202,8 +198,8 @@ public class PensionadoServicio implements IPensionadoServicio {
             Optional<Resolucion> existente = resolucionRepositorio.findByNumeroResolucion(p.getNumeroResolucion());
             if (existente.isPresent()) {
                 Resolucion rExistente = existente.get();
-                if (rExistente.getPensionado() != null && pensionado.getIdPersona() != null
-                        && !rExistente.getPensionado().getIdPersona().equals(pensionado.getIdPersona())) {
+                if (rExistente.getPensionado() != null && pensionado.getIdPensionado() != null
+                        && !rExistente.getPensionado().getIdPensionado().equals(pensionado.getIdPensionado())) {
                     throw new BusinessValidationException("El número de resolución ya existe: " + p.getNumeroResolucion());
                 }
             }
