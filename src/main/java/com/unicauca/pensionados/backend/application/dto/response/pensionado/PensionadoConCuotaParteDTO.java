@@ -18,8 +18,6 @@ public class PensionadoConCuotaParteDTO {
     private String nombres;
     @Schema(description = "Apellidos del pensionado", example = "Perez")
     private String apellidos;
-    @Schema(description = "Lista de cuotas partes asociadas al pensionado")
-    private List<CuotaParteDTO> cuotasParte;
     @Schema(description = "Valor total del cobro de las cuotas partes", example = "2500000.50")
     private BigDecimal valorTotalCobro;
 
@@ -28,12 +26,11 @@ public class PensionadoConCuotaParteDTO {
     public PensionadoConCuotaParteDTO() {}
 
     // Constructor actualizado
-    public PensionadoConCuotaParteDTO(String tipoIdentificacion, Long numeroIdentificacion, String nombres, String apellidos, List<CuotaParteDTO> cuotasParte, BigDecimal valorTotalCobro) {
+    public PensionadoConCuotaParteDTO(String tipoIdentificacion, Long numeroIdentificacion, String nombres, String apellidos, BigDecimal valorTotalCobro) {
         this.tipoIdentificacion = tipoIdentificacion;
         this.numeroIdentificacion = numeroIdentificacion;
         this.nombres = nombres;
         this.apellidos = apellidos;
-        this.cuotasParte = cuotasParte;
         this.valorTotalCobro = valorTotalCobro;
     }
 
@@ -48,8 +45,6 @@ public class PensionadoConCuotaParteDTO {
     public void setNombres(String nombres) { this.nombres = nombres; }
     public String getApellidos() { return apellidos; }
     public void setApellidos(String apellidos) { this.apellidos = apellidos; }
-    public List<CuotaParteDTO> getCuotasParte() { return cuotasParte; }
-    public void setCuotasParte(List<CuotaParteDTO> cuotasParte) { this.cuotasParte = cuotasParte; }
     public BigDecimal getValorTotalCobro() { return valorTotalCobro; }
     public void setValorTotalCobro(BigDecimal valorTotalCobro) { this.valorTotalCobro = valorTotalCobro; }
 }
