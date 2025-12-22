@@ -1,0 +1,138 @@
+@MappedSuperclass
+@Getter
+@Setter
+public abstract class CuotaBase {
+    
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    private Long id;
+
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "pensionado_id", nullable = false)
+    private Pensionado pensionado;
+
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "entidad_id", nullable = false)
+    private Entidad entidad;
+
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "periodo_id", nullable = false)
+    private Periodo periodo;
+
+    @Column(name = "fecha_inicio", nullable = false)
+    private LocalDate fechaInicio;
+
+    @Column(name = "fecha_liquidacion", nullable = false)
+    private LocalDate fechaLiquidacion;
+
+    @Column(name = "dias_totales", nullable = false)
+    private Integer diasTotales;
+
+    @Column(name = "cantidad_cuotas", nullable = false)
+    private Integer cantidadCuotas;
+
+    @Column(name = "tasa_diaria", nullable = false, precision = 10, scale = 6)
+    private BigDecimal tasaDiaria;
+
+    @Column(name = "valor_cuota_parte", nullable = false, precision = 19, scale = 2)
+    private BigDecimal valorCuotaParte;
+
+    @Column(name = "valor_cuotas_total", nullable = false, precision = 19, scale = 2)
+    private BigDecimal valorCuotasTotal;
+
+    @Column(name = "valor_interes_total", nullable = false, precision = 19, scale = 2)
+    private BigDecimal valorInteresTotal;
+
+    @Column(name = "ajuste", precision = 19, scale = 2)
+    private BigDecimal ajuste;
+
+    @Column(name = "es_reliquidacion")
+    private Boolean esReliquidacion;
+
+    @Column(name = "comentarios", columnDefinition = "TEXT")
+    private String comentarios;
+
+    @Column(name = "created_at", nullable = false, updatable = false)
+    private LocalDateTime createdAt;
+
+    @Column(name = "updated_at")
+    private LocalDateTime updatedAt;
+
+    @PrePersist
+    protected void onCreate() {
+        createdAt = LocalDateTime.now();
+        updatedAt = LocalDateTime.now();
+        if (esReliquidacion == null) esReliquidacion = false;
+        if (ajuste == null) ajuste = BigDecimal.ZERO;
+    }
+
+    @PreUpdate
+    protected void onUpdate() {
+        updatedAt = LocalDateTime.now();
+    }
+}
+
+
+@Entity
+@Table(name = "cuota_pagar")
+@Getter
+@Setter
+@AllArgsConstructor
+@NoArgsConstructor
+public class CuotaPagar extends CuotaBase {
+    
+    @Column(name = "total_pagar", nullable = false, precision = 19, scale = 2)
+    private BigDecimal totalPagar;
+
+    @OneToMany(mappedBy = "cuotaPagar", cascade = CascadeType.ALL, orphanRemoval = true)
+    private List<DetalleCuota> detallesCuotas = new ArrayList<>();
+
+    @Enumerated(EnumType.STRING)
+    @Column(name = "estado", nullable = false, length = 30)
+    private EstadoCuota estado;
+
+    @PrePersist
+    protected void onCreatePagar() {
+        super.onCreate();
+        if (estado == null) estado = EstadoCuota.PENDIENTE;
+    }
+}
+
+@Entity
+@Table(name = "cuota_cobrar")
+@Getter
+@Setter
+@AllArgsConstructor
+@NoArgsConstructor
+public class CuotaCobrar extends CuotaBase {
+    
+    // ✅ Campos específicos de cobrar
+    @Column(name = "porcentaje_universidad", nullable = false, precision = 5, scale = 2)
+    private BigDecimal porcentajeUniversidad;
+
+    @Column(name = "valor_paga_universidad", nullable = false, precision = 19, scale = 2)
+    private BigDecimal valorPagaUniversidad;
+
+    @Column(name = "total_cobrar", nullable = false, precision = 19, scale = 2)
+    private BigDecimal totalCobrar;
+
+    @OneToMany(mappedBy = "cuotaCobrar", cascade = CascadeType.ALL, orphanRemoval = true)
+    private List<DetalleCuota> detallesCuotas = new ArrayList<>();
+
+    @Enumerated(EnumType.STRING)
+    @Column(name = "estado", nullable = false, length = 30)
+    private EstadoCuotaCobrar estado;
+
+    @PrePersist
+    protected void onCreateCobrar() {
+        super.onCreate();
+        if (estado == null) estado = EstadoCuotaCobrar.PENDIENTE;
+    }
+}
+
+
+
+
+
+
+
